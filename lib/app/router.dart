@@ -1,14 +1,15 @@
 import 'package:go_router/go_router.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/admin_home_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/user_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 
 import '../common/gates/startup_gate.dart';
 import '../common/screens/guidelines_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
+import '../features/admin/presentation/manage_users/manage_users_screen.dart';
+import '../features/admin/presentation/user_home_screen.dart';
 import '../features/auth/presentation/onboarding/onboarding_screen.dart';
 
 import '../features/auth/presentation/set_password/set_password_screen.dart';
@@ -18,6 +19,7 @@ import '../features/auth/presentation/verify_email/verify_email_screen.dart';
 
 final router = GoRouter(
   routes: [
+    /// Common Screens Routing
     GoRoute(
       path: '/',
       name: 'startup',
@@ -34,6 +36,18 @@ final router = GoRouter(
       name: 'onboarding',
       builder: (_, __) => const OnboardingScreen(),
     ),
+    GoRoute(
+      path: '/need-help',
+      name: 'needHelp',
+      builder: (_, __) => const NeedHelpScreen(),
+    ),
+    GoRoute(
+      path: '/guidelines',
+      name: 'guidelines',
+      builder: (_, __) => const GuidelinesScreen(),
+    ),
+
+    /// Auth Screens Routing
     GoRoute(
       path: '/sign-in',
       name: 'signIn',
@@ -69,12 +83,6 @@ final router = GoRouter(
         return VerifyOtpScreen(email: email);
       },
     ),
-
-    GoRoute(
-      path: '/admin-home',
-      name: 'adminHome',
-      builder: (_, __) => const AdminHomeScreen(),
-    ),
     GoRoute(
       path: '/teacher-home',
       name: 'teacherHome',
@@ -91,15 +99,16 @@ final router = GoRouter(
       builder: (_, __) => const GuestHomeScreen(),
     ),
 
+    /// Admin Features Screens Routing
     GoRoute(
-      path: '/need-help',
-      name: 'needHelp',
-      builder: (_, __) => const NeedHelpScreen(),
+      path: '/admin-home',
+      name: 'adminHome',
+      builder: (_, __) => const AdminDashboardHomeScreen(),
     ),
     GoRoute(
-      path: '/guidelines',
-      name: 'guidelines',
-      builder: (_, __) => const GuidelinesScreen(),
+      path: '/manage-users',
+      name: 'manage-users',
+      builder: (_, __) => const ManageUsersScreen(),
     ),
   ],
 );
