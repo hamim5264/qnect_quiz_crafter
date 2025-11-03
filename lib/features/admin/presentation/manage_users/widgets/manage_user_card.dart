@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -88,16 +89,21 @@ class ManageUserCard extends StatelessWidget {
 
           const SizedBox(width: 10),
 
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.secondaryDark,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Icon(
-              LucideIcons.chevronRight,
-              color: AppColors.textPrimary,
-              size: 22,
+          GestureDetector(
+            onTap: () {
+              context.push('/user-details/Teacher');
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primaryDark.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                LucideIcons.chevronRight,
+                color: AppColors.textPrimary,
+                size: 20,
+              ),
             ),
           ),
         ],

@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import '../../../../../ui/design_system/tokens/colors.dart';
+import '../../../../../ui/design_system/tokens/typography.dart';
+
+class CommonRoundedAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  final String title;
+  final VoidCallback? onBack;
+
+  const CommonRoundedAppBar({super.key, required this.title, this.onBack});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(110);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: preferredSize.height,
+      decoration: const BoxDecoration(
+        color: AppColors.secondaryDark,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Align(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: onBack ?? () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primaryDark,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 40),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

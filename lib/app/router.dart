@@ -9,6 +9,7 @@ import '../common/screens/guidelines_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
+import '../features/admin/presentation/user_details/user_details_screen.dart';
 import '../features/admin/presentation/user_home_screen.dart';
 import '../features/auth/presentation/onboarding/onboarding_screen.dart';
 
@@ -109,6 +110,14 @@ final router = GoRouter(
       path: '/manage-users',
       name: 'manage-users',
       builder: (_, __) => const ManageUsersScreen(),
+    ),
+    GoRoute(
+      path: '/user-details/:role',
+      name: 'user-details',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'Teacher';
+        return UserDetailsScreen(role: role);
+      },
     ),
   ],
 );
