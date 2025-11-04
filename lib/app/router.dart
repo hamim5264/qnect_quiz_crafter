@@ -8,7 +8,9 @@ import '../common/gates/startup_gate.dart';
 import '../common/screens/guidelines_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
+import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
+import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
 import '../features/admin/presentation/user_home_screen.dart';
 import '../features/auth/presentation/onboarding/onboarding_screen.dart';
@@ -40,12 +42,12 @@ final router = GoRouter(
     GoRoute(
       path: '/need-help',
       name: 'needHelp',
-      builder: (_, __) => const NeedHelpScreen(),
+      builder: (context, state) => const NeedHelpScreen(),
     ),
     GoRoute(
       path: '/guidelines',
       name: 'guidelines',
-      builder: (_, __) => const GuidelinesScreen(),
+      builder: (context, state) => const GuidelinesScreen(),
     ),
 
     /// Auth Screens Routing
@@ -117,6 +119,16 @@ final router = GoRouter(
         final role = state.pathParameters['role'] ?? 'Teacher';
         return UserDetailsScreen(role: role);
       },
+    ),
+    GoRoute(
+      path: '/teacher-sells-report',
+      name: 'teacherSellsReport',
+      builder: (context, state) => const TeacherSellsReportScreen(),
+    ),
+    GoRoute(
+      path: '/admin-profile',
+      name: 'adminProfile',
+      builder: (context, state) => const AdminProfileScreen(),
     ),
   ],
 );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 import 'user_details_header.dart';
+import '../../teacher_sells_report/teacher_sells_report_screen.dart';
 
 class UserOverviewCard extends StatelessWidget {
   final String role;
@@ -72,10 +73,24 @@ class UserOverviewCard extends StatelessWidget {
                     textColor: AppColors.textPrimary,
                   ),
                   const SizedBox(width: 10),
+
+                  // 🔹 Now this one will navigate if it's teacher
                   _ChipButton(
                     label: isTeacher ? "Sells Report" : "Leaderboard #1",
                     color: Colors.white,
                     textColor: AppColors.textPrimary,
+                    onTap:
+                        isTeacher
+                            ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => const TeacherSellsReportScreen(),
+                                ),
+                              );
+                            }
+                            : null,
                   ),
                 ],
               ),
@@ -127,28 +142,33 @@ class _ChipButton extends StatelessWidget {
   final String label;
   final Color color;
   final Color textColor;
+  final VoidCallback? onTap;
 
   const _ChipButton({
     required this.label,
     required this.color,
     required this.textColor,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 13,
-          fontFamily: AppTypography.family,
-          fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 13,
+            fontFamily: AppTypography.family,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

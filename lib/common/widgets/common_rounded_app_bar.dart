@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../ui/design_system/tokens/colors.dart';
-import '../../../../../ui/design_system/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
+import '../../ui/design_system/tokens/colors.dart';
+import '../../ui/design_system/tokens/typography.dart';
 
 class CommonRoundedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -30,7 +31,16 @@ class CommonRoundedAppBar extends StatelessWidget
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: onBack ?? () => Navigator.pop(context),
+                  onTap:
+                      onBack ??
+                      () {
+                        final router = GoRouter.of(context);
+                        if (router.canPop()) {
+                          router.pop();
+                        } else {
+                          Navigator.of(context).maybePop();
+                        }
+                      },
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(
@@ -44,7 +54,6 @@ class CommonRoundedAppBar extends StatelessWidget
                     ),
                   ),
                 ),
-
                 Expanded(
                   child: Center(
                     child: Text(
@@ -58,7 +67,6 @@ class CommonRoundedAppBar extends StatelessWidget
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 40),
               ],
             ),

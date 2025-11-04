@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../common/widgets/common_rounded_app_bar.dart';
 import '../../ui/design_system/tokens/colors.dart';
 import '../../ui/design_system/tokens/typography.dart';
 
@@ -21,56 +22,11 @@ class _GuidelinesScreenState extends State<GuidelinesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(90),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.secondaryDark,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(26),
-              bottomRight: Radius.circular(26),
-            ),
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () => context.pop(),
-                    borderRadius: BorderRadius.circular(30),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  const Text(
-                    "Guidelines",
-                    style: TextStyle(
-                      fontFamily: AppTypography.family,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 42),
-                ],
-              ),
-            ),
-          ),
-        ),
+      appBar: CommonRoundedAppBar(
+        title: 'Guidelines',
+        onBack: () => context.pop(),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -124,7 +80,7 @@ class _GuidelinesScreenState extends State<GuidelinesScreen> {
                 "You control: update profile, export/delete account.",
               ]),
 
-            _sectionHeader("Course purchases", purchaseOpen, () {
+            _sectionHeader("Course Purchases", purchaseOpen, () {
               setState(() => purchaseOpen = !purchaseOpen);
             }),
             if (purchaseOpen)

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
@@ -42,12 +43,17 @@ class DashboardAppBar extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const CircleAvatar(
-                        radius: 28,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          LucideIcons.userCog,
-                          color: AppColors.primaryDark,
+                      GestureDetector(
+                        onTap: () {
+                          context.pushNamed('adminProfile');
+                        },
+                        child: const CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            LucideIcons.userCog,
+                            color: AppColors.primaryDark,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
