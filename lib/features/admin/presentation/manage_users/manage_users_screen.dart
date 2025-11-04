@@ -87,6 +87,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                       name: user['name']!,
                       email: user['email']!,
                       image: user['image']!,
+                      role: user['role']!,
                     ),
 
                   const SizedBox(height: 60),

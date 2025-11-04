@@ -8,12 +8,14 @@ class ManageUserCard extends StatelessWidget {
   final String name;
   final String email;
   final String image;
+  final String role;
 
   const ManageUserCard({
     super.key,
     required this.name,
     required this.email,
     required this.image,
+    required this.role,
   });
 
   @override
@@ -91,7 +93,7 @@ class ManageUserCard extends StatelessWidget {
 
           GestureDetector(
             onTap: () {
-              context.push('/user-details/Teacher');
+              context.push('/user-details/$role');
             },
             child: Container(
               padding: const EdgeInsets.all(8),

@@ -113,7 +113,6 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/user-details/:role',
-      name: 'user-details',
       builder: (context, state) {
         final role = state.pathParameters['role'] ?? 'Teacher';
         return UserDetailsScreen(role: role);
