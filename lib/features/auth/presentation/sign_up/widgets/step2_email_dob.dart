@@ -16,7 +16,6 @@ class Step2EmailDob extends ConsumerWidget {
 
     return Column(
       children: [
-        // ✅ Removed auto-fill email field controller
         TextFormField(
           textInputAction: TextInputAction.next,
           keyboardType: TextInputType.emailAddress,
@@ -45,9 +44,10 @@ class Step2EmailDob extends ConsumerWidget {
           textInputAction: TextInputAction.done,
           readOnly: true,
           controller: TextEditingController(
-            text: state.dob != null
-                ? DateFormat('dd/MM/yyyy').format(state.dob!)
-                : '',
+            text:
+                state.dob != null
+                    ? DateFormat('dd/MM/yyyy').format(state.dob!)
+                    : '',
           ),
           decoration: pillInput(
             label: 'Date of Birth',
@@ -66,19 +66,24 @@ class Step2EmailDob extends ConsumerWidget {
               firstDate: DateTime(1960),
               lastDate: DateTime(now.year - 5, now.month, now.day),
               initialDate: DateTime(now.year - 15),
-              builder: (ctx, child) => Theme(
-                data: Theme.of(ctx).copyWith(
-                  textButtonTheme: TextButtonThemeData(
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.secondaryDark,
+              builder:
+                  (ctx, child) => Theme(
+                    data: Theme.of(ctx).copyWith(
+                      colorScheme: const ColorScheme.dark(
+                        primary: AppColors.secondaryDark,
+                        surface: AppColors.primaryLight,
+                      ),
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.secondaryDark,
+                        ),
+                      ),
+                      dialogTheme: const DialogTheme(
+                        backgroundColor: AppColors.primaryDark,
+                      ),
                     ),
+                    child: child!,
                   ),
-                  dialogTheme: DialogThemeData(
-                    backgroundColor: AppColors.primaryDark,
-                  ),
-                ),
-                child: child!,
-              ),
             );
             c.setDob(picked);
           },
