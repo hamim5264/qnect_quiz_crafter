@@ -1,14 +1,22 @@
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 
 import '../common/gates/startup_gate.dart';
+import '../common/screens/edit_profile/edit_profile_screen.dart';
 import '../common/screens/guidelines_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
+import '../features/admin/presentation/certificates/certificates_screen.dart';
+import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
+import '../features/admin/presentation/certificates/templates_screen.dart';
+import '../features/admin/presentation/invoice/invoice_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
 import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
@@ -48,6 +56,11 @@ final router = GoRouter(
       path: '/guidelines',
       name: 'guidelines',
       builder: (context, state) => const GuidelinesScreen(),
+    ),
+    GoRoute(
+      path: '/developer-info',
+      name: 'developerInfo',
+      builder: (_, __) => const DevInfoScreen(),
     ),
 
     /// Auth Screens Routing
@@ -129,6 +142,47 @@ final router = GoRouter(
       path: '/admin-profile',
       name: 'adminProfile',
       builder: (context, state) => const AdminProfileScreen(),
+    ),
+    GoRoute(
+      path: '/edit-profile/:role',
+      name: 'editProfile',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'admin';
+        return EditProfileScreen(role: role);
+      },
+    ),
+    GoRoute(
+      path: '/certificates',
+      name: 'certificates',
+      builder: (context, state) => const CertificatesScreen(),
+    ),
+    GoRoute(
+      path: '/certificate-templates',
+      name: 'certificateTemplates',
+      builder: (context, state) => const CertificateTemplatesScreen(),
+    ),
+    GoRoute(
+      name: 'generatedCertificates',
+      path: '/generated-certificates',
+      builder: (context, state) {
+        final data = state.extra as List<Map<String, String>>?;
+        return GeneratedCertificatesScreen(certificates: data);
+      },
+    ),
+    GoRoute(
+      path: '/invoice',
+      name: 'invoice',
+      builder: (context, state) => const InvoiceScreen(),
+    ),
+    GoRoute(
+      path: '/course-feedback',
+      name: 'courseFeedback',
+      builder: (context, state) => const FeedbackScreen(),
+    ),
+    GoRoute(
+      path: '/app-ratings',
+      name: 'appRatings',
+      builder: (context, state) => const AppRatingsScreen(),
     ),
   ],
 );

@@ -109,7 +109,7 @@ class FeedbackCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    'Avg. Performance: $average',
+                    'Average: $average',
                     style: const TextStyle(
                       fontFamily: AppTypography.family,
                       color: Colors.white,

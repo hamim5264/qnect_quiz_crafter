@@ -38,35 +38,40 @@ class AdminProfileScreen extends StatelessWidget {
 
                   const SectionTitle(title: 'Profile Actions'),
                   const SizedBox(height: 12),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.edit,
                     title: 'Edit Profile',
                     description: 'Update your info',
+                    onTap: () => context.push('/edit-profile/admin'),
                   ),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.workspace_premium_rounded,
                     title: 'Certificates',
                     description: 'Manage user certificates',
+                    onTap: () => context.pushNamed('certificates'),
                   ),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.receipt_long_rounded,
                     title: 'Invoice',
                     description: 'Manage payments',
+                    onTap: () => context.pushNamed('invoice'),
                   ),
 
                   const SizedBox(height: 28),
 
                   const SectionTitle(title: 'Support & Feedback'),
                   const SizedBox(height: 12),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.feedback_rounded,
                     title: 'Course Feedback',
                     description: 'Manage and see users feedback',
+                    onTap: () => context.pushNamed('courseFeedback'),
                   ),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.star_rate_rounded,
                     title: 'App Ratings',
                     description: 'See users needs on app',
+                    onTap: () => context.pushNamed('appRatings'),
                   ),
                   ProfileActionCard(
                     icon: Icons.gavel_rounded,
@@ -80,10 +85,11 @@ class AdminProfileScreen extends StatelessWidget {
                     description: 'Get help and support',
                     onTap: () => context.pushNamed('needHelp'),
                   ),
-                  const ProfileActionCard(
+                  ProfileActionCard(
                     icon: Icons.developer_mode_rounded,
                     title: 'Developer Information',
                     description: 'Know about app developer',
+                    onTap: () => context.pushNamed('developerInfo'),
                   ),
                 ],
               ),
