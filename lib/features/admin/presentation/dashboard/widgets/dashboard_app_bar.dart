@@ -84,7 +84,7 @@ class DashboardAppBar extends StatelessWidget {
                                 ),
                                 child: const Icon(
                                   Icons.edit_rounded,
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   size: 14,
                                 ),
                               ),
@@ -143,7 +143,12 @@ class DashboardAppBar extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.pushNamed(
+                            'messages',
+                            extra: 'admin', // or 'teacher', 'student'
+                          );
+                        },
                         icon: const Icon(
                           CupertinoIcons.ellipses_bubble,
                           color: Colors.white,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../common/widgets/common_rounded_app_bar.dart';
-import '../../../../ui/design_system/tokens/colors.dart';
-import '../widgets/notification_card.dart';
+import '../../../../../common/widgets/common_rounded_app_bar.dart';
+import '../../../../../ui/design_system/tokens/colors.dart';
+import 'widgets/notification_card.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});

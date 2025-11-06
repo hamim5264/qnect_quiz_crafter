@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../../../ui/design_system/tokens/colors.dart';
-import '../../../../../ui/design_system/tokens/typography.dart';
+import '../../../../../../ui/design_system/tokens/colors.dart';
+import '../../../../../../ui/design_system/tokens/typography.dart';
 
 class NotificationCard extends StatelessWidget {
   final String title;
