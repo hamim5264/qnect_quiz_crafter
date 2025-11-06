@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
-import '../../../ui/design_system/tokens/typography.dart';
+import '../../../../ui/design_system/tokens/typography.dart';
 import 'widgets/chat_app_bar.dart';
 import 'widgets/chat_input_bar.dart';
 import 'widgets/chat_bubble.dart';
@@ -22,10 +22,10 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final _controller = TextEditingController();
+  final _scrollController = ScrollController();
 
-  List<Map<String, dynamic>> messages = [
+  final List<Map<String, dynamic>> _messages = [
     {
       'text': 'Hello mam, can you help me with calculus quiz?',
       'time': '08:15 PM',
@@ -44,13 +44,14 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage(String text) {
     if (text.trim().isEmpty) return;
     setState(() {
-      messages.add({
+      _messages.add({
         'text': text.trim(),
         'time': _formattedTime(),
         'isMe': true,
         'seen': false,
       });
     });
+    _controller.clear();
     _scrollToBottom();
   }
 
@@ -63,19 +64,63 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 150), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + 100,
-          duration: const Duration(milliseconds: 200),
+          _scrollController.position.maxScrollExtent + 80,
+          duration: const Duration(milliseconds: 250),
           curve: Curves.easeOut,
         );
       }
     });
   }
 
-  void _deleteMessage(int index) {
-    setState(() => messages.removeAt(index));
+  Future<void> _confirmDeleteMessage(int index) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            backgroundColor: AppColors.primaryLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text(
+              'Delete Message?',
+              style: TextStyle(
+                fontFamily: AppTypography.family,
+                color: Colors.white,
+              ),
+            ),
+            content: const Text(
+              'Are you sure you want to delete this message?',
+              style: TextStyle(
+                fontFamily: AppTypography.family,
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm == true) {
+      setState(() => _messages.removeAt(index));
+    }
   }
 
   @override
@@ -90,70 +135,39 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final msg = messages[index];
-                return GestureDetector(
-                  onLongPress: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder:
-                          (_) => AlertDialog(
-                            backgroundColor: AppColors.primaryLight,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            title: const Text(
-                              'Delete Message?',
-                              style: TextStyle(
-                                fontFamily: AppTypography.family,
-                                color: Colors.white,
-                              ),
-                            ),
-                            content: const Text(
-                              'Are you sure you want to delete this message?',
-                              style: TextStyle(
-                                fontFamily: AppTypography.family,
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.redAccent),
-                                ),
-                              ),
-                            ],
+            child:
+                _messages.isEmpty
+                    ? const Center(
+                      child: Text(
+                        'Start your conversation',
+                        style: TextStyle(
+                          fontFamily: AppTypography.family,
+                          color: Colors.white70,
+                          fontSize: 15,
+                        ),
+                      ),
+                    )
+                    : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = _messages[index];
+                        return GestureDetector(
+                          onLongPress: () => _confirmDeleteMessage(index),
+                          child: ChatBubble(
+                            text: msg['text'],
+                            time: msg['time'],
+                            isMe: msg['isMe'],
+                            seen: msg['seen'],
+                            avatar: widget.avatar,
                           ),
-                    );
-
-                    if (confirm == true) {
-                      setState(() => messages.removeAt(index));
-                    }
-                  },
-                  child: ChatBubble(
-                    text: msg['text'],
-                    time: msg['time'],
-                    isMe: msg['isMe'],
-                    seen: msg['seen'],
-                    avatar: widget.avatar,
-                  ),
-                );
-              },
-            ),
+                        );
+                      },
+                    ),
           ),
           ChatInputBar(controller: _controller, onSend: _sendMessage),
         ],

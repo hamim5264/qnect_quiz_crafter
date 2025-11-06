@@ -65,7 +65,17 @@ class ManageUserCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(
+                        '/chat',
+                        extra: {
+                          'name': name,
+                          'avatar': image,
+                          'isActive': true,
+                          'messages': _loadUserMessages(name),
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryLight,
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -111,5 +121,26 @@ class ManageUserCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<Map<String, dynamic>> _loadUserMessages(String userName) {
+    // you can later replace this with Firestore query
+    if (userName == 'Hamim') {
+      return [
+        {
+          'text': 'Hello! Can you check my quiz?',
+          'time': '08:30 PM',
+          'isMe': false,
+          'seen': true,
+        },
+        {
+          'text': 'Sure, I’ll review it shortly!',
+          'time': '08:32 PM',
+          'isMe': true,
+          'seen': true,
+        },
+      ];
+    }
+    return [];
   }
 }

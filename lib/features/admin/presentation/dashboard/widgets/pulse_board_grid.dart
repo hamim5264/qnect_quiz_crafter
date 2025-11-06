@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -303,7 +304,9 @@ class _PulseCardWide extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed('sellsReport');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryLight,
                 elevation: 0,

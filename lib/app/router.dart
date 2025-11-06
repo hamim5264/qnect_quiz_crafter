@@ -6,6 +6,7 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_r
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 
@@ -94,6 +95,7 @@ final router = GoRouter(
         );
       },
     ),
+
     GoRoute(
       path: '/community-chat',
       name: 'communityChat',
@@ -220,6 +222,11 @@ final router = GoRouter(
       path: '/app-ratings',
       name: 'appRatings',
       builder: (context, state) => const AppRatingsScreen(),
+    ),
+    GoRoute(
+      path: '/sales-report',
+      name: 'salesReport',
+      builder: (context, state) => const SalesReportScreen(),
     ),
   ],
 );
