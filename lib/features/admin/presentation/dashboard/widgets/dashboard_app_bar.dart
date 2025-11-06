@@ -130,7 +130,9 @@ class DashboardAppBar extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.pushNamed('notification');
+                        },
                         icon: const Icon(
                           CupertinoIcons.bell_fill,
                           color: Colors.white,

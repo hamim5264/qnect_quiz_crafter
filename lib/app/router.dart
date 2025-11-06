@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
+import 'package:qnect_quiz_crafter/common/screens/notification_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
@@ -61,6 +62,12 @@ final router = GoRouter(
       path: '/developer-info',
       name: 'developerInfo',
       builder: (_, __) => const DevInfoScreen(),
+    ),
+
+    GoRoute(
+      path: '/notification',
+      name: 'notification',
+      builder: (_, __) => const NotificationScreen(),
     ),
 
     /// Auth Screens Routing
