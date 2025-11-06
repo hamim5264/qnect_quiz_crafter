@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/common/screens/community_chat/community_chat_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
-import 'package:qnect_quiz_crafter/common/screens/notification_screen.dart';
+import 'package:qnect_quiz_crafter/common/screens/notification/notification_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
@@ -9,8 +10,10 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_scre
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 
 import '../common/gates/startup_gate.dart';
+import '../common/screens/chat/chat_screen.dart';
 import '../common/screens/edit_profile/edit_profile_screen.dart';
 import '../common/screens/guidelines_screen.dart';
+import '../common/screens/messages/message_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
@@ -68,6 +71,33 @@ final router = GoRouter(
       path: '/notification',
       name: 'notification',
       builder: (_, __) => const NotificationScreen(),
+    ),
+    GoRoute(
+      path: '/messages',
+      name: 'messages',
+      builder: (context, state) {
+        final role = state.extra as String? ?? 'admin';
+        return MessageScreen(role: role);
+      },
+    ),
+    GoRoute(
+      path: '/chat',
+      name: 'chat',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return ChatScreen(
+          name: extra['name'] as String? ?? 'Unknown',
+          avatar:
+              extra['avatar'] as String? ??
+              'assets/images/admin/sample_teacher3.png',
+          isActive: extra['isActive'] as bool? ?? false,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/community-chat',
+      name: 'communityChat',
+      builder: (context, state) => const CommunityChatScreen(),
     ),
 
     /// Auth Screens Routing
