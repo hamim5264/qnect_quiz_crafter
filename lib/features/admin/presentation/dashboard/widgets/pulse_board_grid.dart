@@ -305,7 +305,7 @@ class _PulseCardWide extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                context.pushNamed('sellsReport');
+                context.pushNamed('salesReport');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryLight,

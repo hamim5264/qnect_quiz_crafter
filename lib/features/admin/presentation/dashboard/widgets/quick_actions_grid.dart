@@ -14,7 +14,7 @@ class QuickActionsGrid extends StatelessWidget {
         'title': "Teacher's Request",
         'subtitle': 'Manage & Verify Request',
         'icon': LucideIcons.userCheck,
-        'route': '/teacher-requests',
+        'route': '/teacher-request',
       },
       {
         'title': 'Manage Users',

@@ -56,6 +56,12 @@ class AdminProfileScreen extends StatelessWidget {
                     description: 'Manage payments',
                     onTap: () => context.pushNamed('invoice'),
                   ),
+                  ProfileActionCard(
+                    icon: Icons.campaign_rounded,
+                    title: 'Notify Hub',
+                    description: 'Send notice to all user',
+                    onTap: () => context.pushNamed('notifyHub'),
+                  ),
 
                   const SizedBox(height: 28),
 

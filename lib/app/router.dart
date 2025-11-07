@@ -23,6 +23,10 @@ import '../features/admin/presentation/certificates/generated_certificates_scree
 import '../features/admin/presentation/certificates/templates_screen.dart';
 import '../features/admin/presentation/invoice/invoice_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
+import '../features/admin/presentation/notify_hub/add_notice_screen.dart';
+import '../features/admin/presentation/notify_hub/edit_notice_screen.dart';
+import '../features/admin/presentation/notify_hub/notify_hub_screen.dart';
+import '../features/admin/presentation/teacher_request/teacher_request_screen.dart';
 import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
 import '../features/admin/presentation/user_home_screen.dart';
@@ -227,6 +231,32 @@ final router = GoRouter(
       path: '/sales-report',
       name: 'salesReport',
       builder: (context, state) => const SalesReportScreen(),
+    ),
+    GoRoute(
+      name: 'teacherRequest',
+      path: '/teacher-request',
+      builder: (context, state) => const TeacherRequestScreen(),
+    ),
+
+    GoRoute(
+      name: 'notifyHub',
+      path: '/notify-hub',
+      builder: (context, state) => const NotifyHubScreen(),
+    ),
+
+    GoRoute(
+      name: 'addNotice',
+      path: '/add-notice',
+      builder: (context, state) => const AddNoticeScreen(),
+    ),
+    GoRoute(
+      path: '/edit-notice',
+      builder: (context, state) {
+        final extra = state.extra;
+        final Map<String, dynamic> notice =
+            (extra is Map<String, dynamic>) ? extra : <String, dynamic>{};
+        return EditNoticeScreen(notice: notice);
+      },
     ),
   ],
 );
