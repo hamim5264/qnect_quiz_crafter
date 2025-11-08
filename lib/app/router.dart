@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/common/screens/community_chat/community_chat_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/notification/notification_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/achievements/admin_achievements_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
@@ -257,6 +258,11 @@ final router = GoRouter(
             (extra is Map<String, dynamic>) ? extra : <String, dynamic>{};
         return EditNoticeScreen(notice: notice);
       },
+    ),
+    GoRoute(
+      name: 'adminAchievementBadge',
+      path: '/admin-achievement-badge',
+      builder: (context, state) => const AdminAchievementsScreen(),
     ),
   ],
 );

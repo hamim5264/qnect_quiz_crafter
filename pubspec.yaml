@@ -55,6 +55,7 @@ dependencies:
   image_picker: ^1.0.8
   qr_flutter: ^4.1.0
   url_launcher: ^6.2.5
+  lottie: ^3.1.2
 
 
 dev_dependencies:
@@ -89,6 +90,7 @@ flutter:
     - assets/images/certificates/
     - assets/images/company/
     - assets/images/dummy_user_avatar/
+    - assets/badges/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

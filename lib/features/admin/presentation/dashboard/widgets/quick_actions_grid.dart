@@ -68,7 +68,7 @@ class QuickActionsGrid extends StatelessWidget {
         'title': 'Achievements',
         'subtitle': 'Manage Badges...',
         'icon': LucideIcons.award,
-        'route': '/achievements',
+        'route': '/admin-achievement-badge',
       },
     ];
 
