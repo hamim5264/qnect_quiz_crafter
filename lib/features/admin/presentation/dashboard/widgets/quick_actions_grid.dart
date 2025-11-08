@@ -32,7 +32,7 @@ class QuickActionsGrid extends StatelessWidget {
         'title': 'All Course',
         'subtitle': 'Manage Every Course',
         'icon': LucideIcons.bookOpen,
-        'route': '/all-course',
+        'route': '/admin-all-course',
       },
       {
         'title': 'QuizGenie',

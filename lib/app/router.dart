@@ -3,7 +3,9 @@ import 'package:qnect_quiz_crafter/common/screens/community_chat/community_chat_
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/notification/notification_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/achievements/admin_achievements_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/all_course/all_course_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/course_details/course_details_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
@@ -263,6 +265,19 @@ final router = GoRouter(
       name: 'adminAchievementBadge',
       path: '/admin-achievement-badge',
       builder: (context, state) => const AdminAchievementsScreen(),
+    ),
+    GoRoute(
+      name: 'adminCourseAllCourse',
+      path: '/admin-all-course',
+      builder: (context, state) => const AllCourseScreen(),
+    ),
+    GoRoute(
+      name: 'adminCourseDetails',
+      path: '/admin-course-details',
+      builder: (context, state) {
+        final courseData = state.extra as Map<String, dynamic>?;
+        return CourseDetailsScreen(courseData: courseData ?? {});
+      },
     ),
   ],
 );
