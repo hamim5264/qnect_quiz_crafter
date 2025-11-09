@@ -24,6 +24,7 @@ import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
 import '../features/admin/presentation/certificates/certificates_screen.dart';
 import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
 import '../features/admin/presentation/certificates/templates_screen.dart';
+import '../features/admin/presentation/course_edit/edit_course_screen.dart';
 import '../features/admin/presentation/invoice/invoice_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
 import '../features/admin/presentation/notify_hub/add_notice_screen.dart';
@@ -278,6 +279,11 @@ final router = GoRouter(
         final courseData = state.extra as Map<String, dynamic>?;
         return CourseDetailsScreen(courseData: courseData ?? {});
       },
+    ),
+    GoRoute(
+      name: 'adminEditCourse',
+      path: '/admin-edit-course',
+      builder: (context, state) => const EditCourseScreen(),
     ),
   ],
 );

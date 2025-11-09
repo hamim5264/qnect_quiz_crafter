@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -196,7 +197,9 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
               ),
               const SizedBox(height: 2),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  context.push('/user-details/Teacher');
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -300,7 +303,9 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: widget.onEditCourse,
+                  onPressed: () {
+                    context.push('/admin-edit-course');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.secondaryDark,
                     padding: const EdgeInsets.symmetric(vertical: 6),
