@@ -1,6 +1,6 @@
-import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -32,23 +32,6 @@ class QuizItemCard extends StatefulWidget {
 
 class _QuizItemCardState extends State<QuizItemCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _clockController;
-
-  @override
-  void initState() {
-    super.initState();
-    _clockController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _clockController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -187,18 +170,14 @@ class _QuizItemCardState extends State<QuizItemCard>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AnimatedBuilder(
-                  animation: _clockController,
-                  builder: (context, child) {
-                    return Transform.rotate(
-                      angle: _clockController.value * 2 * math.pi,
-                      child: const Icon(
-                        Icons.timer,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    );
-                  },
+                SizedBox(
+                  height: 28,
+                  width: 28,
+                  child: Lottie.asset(
+                    'assets/icons/quiz_time.json',
+                    repeat: true,
+                    animate: true,
+                  ),
                 ),
                 const SizedBox(width: 6),
                 Text(

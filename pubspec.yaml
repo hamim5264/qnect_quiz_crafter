@@ -91,6 +91,7 @@ flutter:
     - assets/images/company/
     - assets/images/dummy_user_avatar/
     - assets/badges/
+    - assets/icons/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

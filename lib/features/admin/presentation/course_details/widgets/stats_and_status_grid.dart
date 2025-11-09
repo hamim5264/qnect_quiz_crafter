@@ -1,6 +1,6 @@
-import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -43,24 +43,13 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
     with SingleTickerProviderStateMixin {
   late String status;
   String? rejection;
-  late AnimationController _clockController;
+  bool _showSuggestions = false;
 
   @override
   void initState() {
     super.initState();
     status = widget.initialStatus;
     rejection = widget.initialRejection;
-
-    _clockController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _clockController.dispose();
-    super.dispose();
   }
 
   @override
@@ -83,7 +72,7 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
     return Column(
       children: [
         _buildSmallCard(
-          fixedHeight: 120,
+          fixedHeight: 110,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,10 +83,10 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 7),
 
         _buildSmallCard(
-          fixedHeight: 120,
+          fixedHeight: 110,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,36 +97,45 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 7),
 
         _buildSmallCard(
-          fixedHeight: 100,
+          fixedHeight: 130,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedBuilder(
-                animation: _clockController,
-                builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _clockController.value * 2 * math.pi,
-                    child: const Icon(
-                      CupertinoIcons.clock_fill,
-                      color: AppColors.cardOthers,
-                      size: 48,
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 6),
-              Text(
-                widget.durationText,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: AppTypography.family,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+              SizedBox(
+                height: 60,
+                width: 60,
+                child: Lottie.asset(
+                  'assets/icons/calendar.json',
+                  repeat: true,
+                  animate: true,
                 ),
+              ),
+              const SizedBox(height: 4),
+              Column(
+                children: [
+                  const Text(
+                    "The course will end in",
+                    style: TextStyle(
+                      fontFamily: AppTypography.family,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    widget.durationText,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: AppTypography.family,
+                      color: AppColors.secondaryDark,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -193,19 +191,29 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
                 style: const TextStyle(
                   fontFamily: AppTypography.family,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.secondaryDark,
+                  color: AppColors.white,
                 ),
               ),
               const SizedBox(height: 2),
               GestureDetector(
                 onTap: () {},
-                child: const Text(
-                  'View Profile',
-                  style: TextStyle(
-                    fontFamily: AppTypography.family,
-                    color: AppColors.chip2,
-                    decoration: TextDecoration.underline,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'View Profile',
+                      style: TextStyle(
+                        fontFamily: AppTypography.family,
+                        color: AppColors.secondaryDark,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      CupertinoIcons.arrow_up_right_square_fill,
+                      size: 16,
+                      color: AppColors.secondaryDark,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -228,50 +236,64 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
             ignoring: status != 'Rejected',
             child: Opacity(
               opacity: status == 'Rejected' ? 1 : 0.5,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: rejection,
-                    hint: const Text(
-                      'Suggestion',
-                      style: TextStyle(
-                        fontFamily: AppTypography.family,
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => _showSuggestions = !_showSuggestions);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              rejection ?? 'Suggestion',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: AppTypography.family,
+                                fontSize: 13,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            _showSuggestions
+                                ? Icons.keyboard_arrow_up_rounded
+                                : Icons.keyboard_arrow_down_rounded,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
                     ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'Quiz issue',
-                        child: Text('Quiz issue'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Content quality',
-                        child: Text('Content quality'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Policy violation',
-                        child: Text('Policy violation'),
-                      ),
-                    ],
-                    onChanged: (v) {
-                      setState(() => rejection = v);
-                      widget.onStatusChanged(status, reason: rejection);
-                    },
                   ),
-                ),
+
+                  const SizedBox(height: 6),
+
+                  AnimatedCrossFade(
+                    duration: const Duration(milliseconds: 250),
+                    crossFadeState:
+                        _showSuggestions
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                    firstChild: _buildSuggestionCard(),
+                    secondChild: const SizedBox.shrink(),
+                  ),
+                ],
               ),
             ),
           ),
+
           const SizedBox(height: 10),
 
           Row(
@@ -343,7 +365,7 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
             value,
             style: const TextStyle(
               fontFamily: AppTypography.family,
-              color: AppColors.secondaryDark,
+              color: AppColors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -382,6 +404,136 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSuggestionCard() {
+    final Map<String, List<String>> sections = {
+      'Content & Syllabus': [
+        '[C01] Not aligned with syllabus',
+        '[C02] Incomplete content',
+        '[C03] Outdated/incorrect facts',
+        '[C04] Low originality',
+        '[C05] Wrong language/terminology',
+      ],
+      'Assessment': [
+        '[A01] Ambiguous questions/options',
+        '[A02] Incorrect answer keys',
+        '[A03] Difficulty imbalance',
+        '[A04] Duplicated items',
+        '[A05] Missing solutions/rationales',
+      ],
+      'Structure & Formatting': [
+        '[S01] Missing objectives/prereqs',
+        '[S02] Disorganized flow',
+        '[S03] Inconsistent formatting',
+        '[S04] Excessive typos/grammar',
+      ],
+      'Media & Assets': [
+        '[M01] Unlicensed/uncited media',
+        '[M02] Low-quality images/audio',
+        '[M03] Accessibility gaps',
+        '[M04] Heavy files/slow load',
+      ],
+      'Technical': [
+        '[T01] Broken links/resources',
+        '[T02] Mobile/responsive issues',
+        '[T03] Embedded items not loading',
+      ],
+      'Policy & Compliance': [
+        '[P01] Copyright concerns',
+        '[P02] Inappropriate content',
+        '[P03] Personal data/shared contacts',
+        '[P04] External advertising',
+      ],
+      'Pricing & Metadata': [
+        '[R01] Price/content mismatch',
+        '[R02] Wrong category/group',
+        '[R03] Duplicate course',
+      ],
+    };
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: Column(
+          children:
+              sections.entries.map((entry) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: ExpansionTile(
+                    tilePadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 0,
+                    ),
+                    collapsedShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    iconColor: Colors.white,
+                    collapsedIconColor: Colors.white54,
+                    title: Text(
+                      entry.key,
+                      style: const TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                    childrenPadding: const EdgeInsets.only(
+                      left: 14,
+                      right: 12,
+                      bottom: 6,
+                    ),
+                    children:
+                        entry.value.map((reason) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                rejection = reason;
+                                _showSuggestions = false;
+                              });
+                              widget.onStatusChanged(status, reason: rejection);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    '• ',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      reason,
+                                      style: const TextStyle(
+                                        fontFamily: AppTypography.family,
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                );
+              }).toList(),
+        ),
+      ),
     );
   }
 }
