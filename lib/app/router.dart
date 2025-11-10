@@ -25,11 +25,14 @@ import '../features/admin/presentation/certificates/certificates_screen.dart';
 import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
 import '../features/admin/presentation/certificates/templates_screen.dart';
 import '../features/admin/presentation/course_edit/edit_course_screen.dart';
+import '../features/admin/presentation/edit_quiz/edit_quiz_screen.dart';
 import '../features/admin/presentation/invoice/invoice_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
 import '../features/admin/presentation/notify_hub/add_notice_screen.dart';
 import '../features/admin/presentation/notify_hub/edit_notice_screen.dart';
 import '../features/admin/presentation/notify_hub/notify_hub_screen.dart';
+import '../features/admin/presentation/quiz_details/quiz_details_screen.dart';
+import '../features/admin/presentation/quiz_questions_info/quiz_questions_info_screen.dart';
 import '../features/admin/presentation/teacher_request/teacher_request_screen.dart';
 import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
@@ -284,6 +287,21 @@ final router = GoRouter(
       name: 'adminEditCourse',
       path: '/admin-edit-course',
       builder: (context, state) => const EditCourseScreen(),
+    ),
+    GoRoute(
+      path: '/edit-quiz',
+      name: 'editQuiz',
+      builder: (context, state) => const EditQuizScreen(),
+    ),
+    GoRoute(
+      name: 'adminQuizDetails',
+      path: '/admin-quiz-details',
+      builder: (context, state) => const QuizDetailsScreen(),
+    ),
+    GoRoute(
+      name: 'adminQuizQuestionsInfo',
+      path: '/admin-quiz-questions-info',
+      builder: (context, state) => const QuizQuestionsInfoScreen(),
     ),
   ],
 );

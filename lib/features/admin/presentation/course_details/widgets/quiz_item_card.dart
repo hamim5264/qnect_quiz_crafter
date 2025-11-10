@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -99,7 +100,8 @@ class _QuizItemCardState extends State<QuizItemCard>
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    onPressed: widget.onEdit,
+                                    onPressed:
+                                        () => context.pushNamed('editQuiz'),
                                     icon: const Icon(
                                       Icons.edit,
                                       color: Colors.green,
@@ -147,7 +149,9 @@ class _QuizItemCardState extends State<QuizItemCard>
                 bottom: 0,
                 child: Center(
                   child: IconButton(
-                    onPressed: widget.onDetails,
+                    onPressed: () {
+                      context.pushNamed('adminQuizQuestionsInfo');
+                    },
                     icon: const Icon(
                       CupertinoIcons.right_chevron,
                       color: AppColors.chip1,
@@ -217,7 +221,9 @@ class _QuizItemCardState extends State<QuizItemCard>
 
   Widget _filledChip(String text, VoidCallback onTap) {
     return InkWell(
-      onTap: onTap,
+      onTap: () {
+        context.pushNamed('adminQuizDetails', extra: 'Science & Tech Quiz');
+      },
       borderRadius: BorderRadius.circular(24),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
