@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/add/add_surprise_quiz_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/widgets/surprise_quiz_card.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/widgets/surprise_quiz_filter_bar.dart';
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
@@ -38,9 +39,28 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
           (_) => CommonConfirmDialog(
             title: title,
             message: message,
-            icon: Icons.help_outline,
+            icon: CupertinoIcons.trash,
             iconColor: Colors.white,
-            confirmColor: AppColors.secondaryDark,
+            confirmColor: Colors.redAccent,
+            onConfirm: onConfirm,
+          ),
+    );
+  }
+
+  void showConfirmDialogOnPublish({
+    required String title,
+    required String message,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => CommonConfirmDialog(
+            title: title,
+            message: message,
+            icon: CupertinoIcons.paperplane,
+            iconColor: Colors.white,
+            confirmColor: AppColors.chip2,
             onConfirm: onConfirm,
           ),
     );
@@ -92,7 +112,7 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
                       isPublished: quiz["published"] as bool,
                       publishedDate: quiz["publishedDate"] as String,
                       onPublish: () {
-                        showConfirmDialog(
+                        showConfirmDialogOnPublish(
                           title: "Publish Quiz",
                           message:
                               "Are you sure you want to publish this surprise quiz?",
@@ -130,9 +150,9 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.white,
         onPressed: () {
-          showSuccessDialog(
-            "Coming Soon",
-            "Quiz creation for Surprise Tests will be added later.",
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddSurpriseQuizScreen()),
           );
         },
         child: const Icon(

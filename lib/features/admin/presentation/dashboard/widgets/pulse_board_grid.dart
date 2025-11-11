@@ -159,7 +159,9 @@ class _PulseCard extends StatelessWidget {
             width: double.infinity,
             height: 36,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed('adminCourseAllCourse');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryLight,
                 elevation: 0,
