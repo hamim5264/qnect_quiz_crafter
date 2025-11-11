@@ -62,7 +62,7 @@ class QuickActionsGrid extends StatelessWidget {
         'title': 'Surprise Test',
         'subtitle': 'Let Students Grow...',
         'icon': LucideIcons.alertTriangle,
-        'route': '/surprise-test',
+        'route': '/admin-surprise-quiz',
       },
       {
         'title': 'Achievements',

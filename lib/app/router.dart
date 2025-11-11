@@ -11,6 +11,7 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/practice_quizzes/practice_quizzes_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/surprise_quiz_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 
@@ -308,6 +309,11 @@ final router = GoRouter(
       name: 'adminPracticeQuiz',
       path: '/admin-practice-quiz',
       builder: (context, state) => const PracticeQuizzesScreen(),
+    ),
+    GoRoute(
+      name: 'adminSurpriseQuiz',
+      path: '/admin-surprise-quiz',
+      builder: (context, state) => const SurpriseQuizScreen(),
     ),
   ],
 );
