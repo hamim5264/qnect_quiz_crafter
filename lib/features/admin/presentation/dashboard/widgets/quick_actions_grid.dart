@@ -97,7 +97,14 @@ class QuickActionsGrid extends StatelessWidget {
                     onTap: () {
                       final route = e['route'] as String?;
                       if (route != null && route.isNotEmpty) {
-                        context.push(route);
+                        if (route == '/leaderboard') {
+                          context.push(
+                            route,
+                            extra: {'role': 'admin', 'userId': 'u1'},
+                          );
+                        } else {
+                          context.push(route);
+                        }
                       }
                     },
                     child: Container(

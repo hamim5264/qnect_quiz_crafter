@@ -93,6 +93,7 @@ flutter:
     - assets/images/dummy_user_avatar/
     - assets/badges/
     - assets/icons/
+    - assets/trophy/
     - assets/sounds/swipe.mp3
     - .env
 

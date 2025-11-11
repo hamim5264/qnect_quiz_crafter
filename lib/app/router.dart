@@ -20,6 +20,7 @@ import '../common/gates/startup_gate.dart';
 import '../common/screens/chat/chat_screen.dart';
 import '../common/screens/edit_profile/edit_profile_screen.dart';
 import '../common/screens/guidelines_screen.dart';
+import '../common/screens/leaderboard/leaderboard_screen.dart';
 import '../common/screens/messages/message_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
@@ -320,6 +321,17 @@ final router = GoRouter(
       name: 'addSurpriseNewQuiz',
       path: '/add-surprise-new-quiz',
       builder: (context, state) => const AddSurpriseQuizScreen(),
+    ),
+    GoRoute(
+      path: '/leaderboard',
+      name: 'leaderboard',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return LeaderboardScreen(
+          userRole: extra?['role'] ?? 'student',
+          currentUserId: extra?['userId'] ?? '',
+        );
+      },
     ),
   ],
 );
