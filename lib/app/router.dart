@@ -9,6 +9,7 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/course_details/co
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/practice_quizzes/practice_quizzes_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
@@ -302,6 +303,11 @@ final router = GoRouter(
       name: 'adminQuizQuestionsInfo',
       path: '/admin-quiz-questions-info',
       builder: (context, state) => const QuizQuestionsInfoScreen(),
+    ),
+    GoRoute(
+      name: 'adminPracticeQuiz',
+      path: '/admin-practice-quiz',
+      builder: (context, state) => const PracticeQuizzesScreen(),
     ),
   ],
 );

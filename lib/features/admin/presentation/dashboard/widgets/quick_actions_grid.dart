@@ -26,7 +26,7 @@ class QuickActionsGrid extends StatelessWidget {
         'title': 'Practice Quizzes',
         'subtitle': 'Update & Delete...',
         'icon': LucideIcons.penTool,
-        'route': '/practice-quizzes',
+        'route': '/admin-practice-quiz',
       },
       {
         'title': 'All Course',
