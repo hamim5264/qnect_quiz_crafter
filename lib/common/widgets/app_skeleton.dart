@@ -7,23 +7,18 @@ class AppSkeleton extends StatelessWidget {
   final double? height;
   final BorderRadius? borderRadius;
 
-  const AppSkeleton({
-    super.key,
-    this.width,
-    this.height,
-    this.borderRadius,
-  });
+  const AppSkeleton({super.key, this.width, this.height, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: AppColors.secondaryLight.withValues(alpha: 0.4),
-      highlightColor: AppColors.secondaryDark.withValues(alpha: 0.3),
+      baseColor: AppColors.white.withValues(alpha: 0.4),
+      highlightColor: AppColors.white.withValues(alpha: 0.3),
       child: Container(
         width: width ?? double.infinity,
         height: height ?? 16,
         decoration: BoxDecoration(
-          color: AppColors.secondaryLight.withValues(alpha: 0.6),
+          color: AppColors.white.withValues(alpha: 0.6),
           borderRadius: borderRadius ?? BorderRadius.circular(10),
         ),
       ),

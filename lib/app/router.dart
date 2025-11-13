@@ -2,6 +2,9 @@ import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/common/screens/community_chat/community_chat_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/notification/notification_screen.dart';
+import 'package:qnect_quiz_crafter/common/screens/qc_vault/qc_vault_add_question_screen.dart';
+import 'package:qnect_quiz_crafter/common/screens/qc_vault/qc_vault_screen.dart';
+import 'package:qnect_quiz_crafter/common/screens/qc_vault/qc_vault_view_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/achievements/admin_achievements_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/all_course/all_course_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
@@ -167,6 +170,34 @@ final router = GoRouter(
       path: '/guest-home',
       name: 'guestHome',
       builder: (_, __) => const GuestHomeScreen(),
+    ),
+
+    GoRoute(
+      path: '/qc-vault',
+      name: 'qcVault',
+      builder: (context, state) => const QCVaultScreen(),
+    ),
+    GoRoute(
+      name: 'qcVaultView',
+      path: '/qc-vault-view/:courseId/:courseTitle',
+      builder: (context, state) {
+        final courseId = state.pathParameters['courseId']!;
+        final courseTitle = state.pathParameters['courseTitle']!;
+        return QCVaultViewScreen(courseId: courseId, courseTitle: courseTitle);
+      },
+    ),
+
+    GoRoute(
+      name: 'qcVaultAddQuestion',
+      path: '/qc-vault-add-question/:courseId/:courseTitle',
+      builder: (context, state) {
+        final courseId = state.pathParameters['courseId']!;
+        final courseTitle = state.pathParameters['courseTitle']!;
+        return QCVaultAddQuestionScreen(
+          courseId: courseId,
+          courseTitle: courseTitle,
+        );
+      },
     ),
 
     /// Admin Features Screens Routing

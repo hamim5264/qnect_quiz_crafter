@@ -8,7 +8,19 @@ class CommonRoundedAppBar extends StatelessWidget
   final String title;
   final VoidCallback? onBack;
 
-  const CommonRoundedAppBar({super.key, required this.title, this.onBack});
+  final bool ellipsis;
+  final double? titleSize;
+  final int? maxLines;
+
+  const CommonRoundedAppBar({
+    super.key,
+    required this.title,
+    this.onBack,
+
+    this.ellipsis = false,
+    this.titleSize,
+    this.maxLines,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(110);
@@ -54,19 +66,30 @@ class CommonRoundedAppBar extends StatelessWidget
                     ),
                   ),
                 ),
+
                 Expanded(
-                  child: Center(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontFamily: AppTypography.family,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        maxLines: maxLines ?? (ellipsis ? 1 : null),
+                        overflow:
+                            ellipsis
+                                ? TextOverflow.ellipsis
+                                : TextOverflow.visible,
+                        style: TextStyle(
+                          fontFamily: AppTypography.family,
+                          fontSize: titleSize ?? 24,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
+
                 const SizedBox(width: 40),
               ],
             ),

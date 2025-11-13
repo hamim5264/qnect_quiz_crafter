@@ -28,7 +28,7 @@ class SuccessFailureDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 60),
+            Icon(icon, color: Colors.redAccent, size: 60),
             const SizedBox(height: 16),
             Text(
               title,
@@ -56,8 +56,10 @@ class SuccessFailureDialog extends StatelessWidget {
               onPressed: onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondaryDark,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
