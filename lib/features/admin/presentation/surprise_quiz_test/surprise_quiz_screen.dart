@@ -1,37 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/add/add_surprise_quiz_screen.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/widgets/surprise_quiz_card.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/widgets/surprise_quiz_filter_bar.dart';
+
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
-import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../common/widgets/action_success_dialog.dart';
 import '../../../../../common/widgets/common_confirm_dialog.dart';
+import '../../../../../common/widgets/app_skeleton.dart';
+import '../../../../../ui/design_system/tokens/colors.dart';
 
-class SurpriseQuizScreen extends StatefulWidget {
+import 'controller/add_surprise_quiz_controller.dart';
+import 'data/add_surprise_quiz_repository.dart';
+import 'widgets/surprise_quiz_card.dart';
+import 'widgets/surprise_quiz_filter_bar.dart';
+
+class SurpriseQuizScreen extends ConsumerStatefulWidget {
   const SurpriseQuizScreen({super.key});
 
   @override
-  State<SurpriseQuizScreen> createState() => _SurpriseQuizScreenState();
+  ConsumerState<SurpriseQuizScreen> createState() => _SurpriseQuizScreenState();
 }
 
-class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
-  String selectedFilter = "All";
+class _SurpriseQuizScreenState extends ConsumerState<SurpriseQuizScreen> {
+  String selectedFilter = "Unpublished";
 
-  final List<Map<String, dynamic>> quizzes = List.generate(
-    6,
-    (i) => {
-      "title": "Surprise Test ${i + 1}",
-      "icon": "QZ",
-      "published": i.isEven,
-      "publishedDate": "10 Nov 2025",
-    },
-  );
-
-  void showConfirmDialog({
+  void _showConfirmDialog({
     required String title,
     required String message,
     required VoidCallback onConfirm,
+    required IconData icon,
+    required Color confirmColor,
   }) {
     showDialog(
       context: context,
@@ -39,34 +37,15 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
           (_) => CommonConfirmDialog(
             title: title,
             message: message,
-            icon: CupertinoIcons.trash,
+            icon: icon,
             iconColor: Colors.white,
-            confirmColor: Colors.redAccent,
+            confirmColor: confirmColor,
             onConfirm: onConfirm,
           ),
     );
   }
 
-  void showConfirmDialogOnPublish({
-    required String title,
-    required String message,
-    required VoidCallback onConfirm,
-  }) {
-    showDialog(
-      context: context,
-      builder:
-          (_) => CommonConfirmDialog(
-            title: title,
-            message: message,
-            icon: CupertinoIcons.paperplane,
-            iconColor: Colors.white,
-            confirmColor: AppColors.chip2,
-            onConfirm: onConfirm,
-          ),
-    );
-  }
-
-  void showSuccessDialog(String title, String message) {
+  void _showSuccessDialog(String title, String message) {
     showDialog(
       context: context,
       builder:
@@ -78,8 +57,80 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
     );
   }
 
+  String _buildTimeRemaining(SurpriseQuizListItem quiz) {
+    if (!quiz.published) {
+      return "Not started";
+    }
+
+    final publishedAt = quiz.publishedAt?.toDate();
+    if (publishedAt == null) {
+      return "Not started";
+    }
+
+    final endTime = publishedAt.add(Duration(hours: quiz.visibilityHours));
+    final now = DateTime.now();
+
+    if (now.isAfter(endTime)) {
+      return "Expired";
+    }
+
+    final diff = endTime.difference(now);
+    final hours = diff.inHours;
+    final minutes = diff.inMinutes % 60;
+
+    if (hours > 0) {
+      return "${hours}h ${minutes}m left";
+    } else {
+      return "${minutes}m left";
+    }
+  }
+
+  Widget _buildLoadingGrid() {
+    return GridView.builder(
+      itemCount: 4,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
+        childAspectRatio: 0.88,
+      ),
+      itemBuilder: (_, __) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [
+              SizedBox(height: 6),
+              AppSkeleton(
+                width: 40,
+                height: 40,
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              SizedBox(height: 8),
+              AppSkeleton(width: double.infinity, height: 14),
+              SizedBox(height: 6),
+              AppSkeleton(width: double.infinity, height: 10),
+              SizedBox(height: 6),
+              AppSkeleton(width: double.infinity, height: 10),
+              Spacer(),
+              AppSkeleton(width: double.infinity, height: 32),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final showPublished = selectedFilter == "Published";
+
+    final quizzesAsync = ref.watch(surpriseQuizListProvider(showPublished));
+
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
       appBar: const CommonRoundedAppBar(title: 'Surprise Quizzes'),
@@ -90,56 +141,160 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
             children: [
               SurpriseQuizFilterBar(
                 selected: selectedFilter,
-                onSelect: (value) => setState(() => selectedFilter = value),
+                onSelect: (value) {
+                  setState(() => selectedFilter = value);
+                },
               ),
 
               const SizedBox(height: 12),
 
               Expanded(
-                child: GridView.builder(
-                  itemCount: quizzes.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 14,
-                    childAspectRatio: 0.88,
-                  ),
-                  itemBuilder: (context, index) {
-                    final quiz = quizzes[index];
-                    return SurpriseQuizCard(
-                      title: quiz["title"] as String,
-                      icon: quiz["icon"] as String,
-                      isPublished: quiz["published"] as bool,
-                      publishedDate: quiz["publishedDate"] as String,
-                      onPublish: () {
-                        showConfirmDialogOnPublish(
-                          title: "Publish Quiz",
-                          message:
-                              "Are you sure you want to publish this surprise quiz?",
-                          onConfirm: () {
-                            setState(() => quiz["published"] = true);
-                            showSuccessDialog(
-                              "Published Successfully",
-                              "This surprise quiz is now live for students.",
+                child: quizzesAsync.when(
+                  data: (quizzes) {
+                    if (quizzes.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 90,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                color: AppColors.white.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                CupertinoIcons.cube_box,
+                                color: Colors.white70,
+                                size: 42,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            const Text(
+                              "No surprise quiz found",
+                              style: TextStyle(
+                                fontFamily: "Barlow",
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            const Text(
+                              "Create a new quiz to get started.",
+                              style: TextStyle(
+                                fontFamily: "Barlow",
+                                fontSize: 13,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return GridView.builder(
+                      itemCount: quizzes.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 14,
+                            crossAxisSpacing: 14,
+                            childAspectRatio: 0.70,
+                          ),
+                      itemBuilder: (context, index) {
+                        final quiz = quizzes[index];
+
+                        final durationMinutes =
+                            (quiz.durationSeconds / 60).round();
+                        final quizTimeText = "$durationMinutes min";
+
+                        final timeRemaining = _buildTimeRemaining(quiz);
+
+                        return SurpriseQuizCard(
+                          title: quiz.title,
+                          subtitle: quiz.description,
+                          icon: "SQ",
+                          group: quiz.group,
+                          level: quiz.level,
+                          quizTime: quizTimeText,
+                          timeRemainingText: timeRemaining,
+                          isPublished: quiz.published,
+
+                          onPublish: () {
+                            if (quiz.published) return;
+
+                            _showConfirmDialog(
+                              title: "Publish Quiz",
+                              message:
+                                  "Are you sure you want to publish this surprise quiz for ${quiz.group} • ${quiz.level}?",
+                              icon: CupertinoIcons.paperplane,
+                              confirmColor: AppColors.chip2,
+
+                              onConfirm: () async {
+                                Navigator.pop(context);
+
+                                await ref
+                                    .read(
+                                      surpriseQuizControllerProvider.notifier,
+                                    )
+                                    .publishQuiz(quiz.id);
+
+                                if (!mounted) return;
+
+                                _showSuccessDialog(
+                                  "Published Successfully",
+                                  "This surprise quiz is now live for ${quiz.group} • ${quiz.level} students.",
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      onDelete: () {
-                        showConfirmDialog(
-                          title: "Delete Quiz",
-                          message:
-                              "Are you sure you want to delete this surprise quiz?",
-                          onConfirm: () {
-                            showSuccessDialog(
-                              "Deleted Successfully",
-                              "This quiz has been removed.",
+
+                          onDelete: () {
+                            _showConfirmDialog(
+                              title: "Delete Quiz",
+                              message:
+                                  "Are you sure you want to delete this surprise quiz?",
+                              icon: CupertinoIcons.trash,
+                              confirmColor: Colors.redAccent,
+
+                              onConfirm: () async {
+                                Navigator.pop(context);
+
+                                await ref
+                                    .read(
+                                      surpriseQuizControllerProvider.notifier,
+                                    )
+                                    .deleteQuiz(quiz.id);
+
+                                if (!mounted) return;
+
+                                _showSuccessDialog(
+                                  "Deleted Successfully",
+                                  "This quiz has been removed.",
+                                );
+                              },
                             );
                           },
                         );
                       },
                     );
                   },
+                  loading: () => _buildLoadingGrid(),
+                  error:
+                      (e, st) => Center(
+                        child: Text(
+                          'Error: $e',
+                          style: const TextStyle(
+                            color: Colors.redAccent,
+                            fontFamily: 'Barlow',
+                          ),
+                        ),
+                      ),
                 ),
               ),
             ],
@@ -152,7 +307,9 @@ class _SurpriseQuizScreenState extends State<SurpriseQuizScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddSurpriseQuizScreen()),
+            MaterialPageRoute(
+              builder: (context) => const AddSurpriseQuizScreen(),
+            ),
           );
         },
         child: const Icon(

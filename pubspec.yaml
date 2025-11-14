@@ -95,6 +95,7 @@ flutter:
     - assets/icons/
     - assets/trophy/
     - assets/sounds/swipe.mp3
+    - assets/animations/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

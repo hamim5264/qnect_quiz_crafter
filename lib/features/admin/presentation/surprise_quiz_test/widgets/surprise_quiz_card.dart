@@ -5,18 +5,26 @@ import '../../../../../ui/design_system/tokens/typography.dart';
 
 class SurpriseQuizCard extends StatelessWidget {
   final String title;
+  final String subtitle;
+  final String group;
+  final String level;
+  final String quizTime;
+  final String timeRemainingText;
   final String icon;
   final bool isPublished;
-  final String publishedDate;
   final VoidCallback onPublish;
   final VoidCallback onDelete;
 
   const SurpriseQuizCard({
     super.key,
     required this.title,
+    required this.subtitle,
+    required this.group,
+    required this.level,
+    required this.quizTime,
+    required this.timeRemainingText,
     required this.icon,
     required this.isPublished,
-    required this.publishedDate,
     required this.onPublish,
     required this.onDelete,
   });
@@ -24,73 +32,123 @@ class SurpriseQuizCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: const BoxConstraints(minHeight: 280),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.3),
+        color: AppColors.white.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CircleAvatar(
-            radius: 22,
+            radius: 20,
             backgroundColor: AppColors.primaryLight,
             child: Text(
               icon,
               style: const TextStyle(
                 fontFamily: AppTypography.family,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: AppTypography.family,
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
               ),
             ),
           ),
 
+          const SizedBox(height: 6),
+
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: AppTypography.family,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+          ),
+
+          Text(
+            subtitle.isEmpty ? "No Description" : subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontFamily: AppTypography.family,
+              fontSize: 11,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            "• $group • $level",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+              fontFamily: AppTypography.family,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            "Time: $quizTime",
+            style: const TextStyle(
+              color: AppColors.secondaryDark,
+              fontSize: 12,
+              fontFamily: AppTypography.family,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            "Visibility: $timeRemainingText",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: AppColors.secondaryDark,
+              fontSize: 12,
+              fontFamily: AppTypography.family,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const Spacer(),
+
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: isPublished ? null : onPublish,
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        isPublished ? Colors.grey.shade500 : AppColors.chip3,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
-                    ),
+                        isPublished ? Colors.grey : AppColors.chip3,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   child: Text(
-                    isPublished ? 'Unpublish' : 'Publish',
+                    isPublished ? "Unpublish" : "Publish",
                     style: const TextStyle(
-                      fontFamily: AppTypography.family,
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      fontFamily: AppTypography.family,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Container(
-                height: 42,
-                width: 42,
+                height: 40,
+                width: 40,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -100,23 +158,10 @@ class SurpriseQuizCard extends StatelessWidget {
                   icon: const Icon(
                     CupertinoIcons.delete,
                     color: Colors.redAccent,
-                    size: 20,
                   ),
                 ),
               ),
             ],
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              "📅 Published: $publishedDate",
-              style: const TextStyle(
-                fontFamily: AppTypography.family,
-                color: Colors.white70,
-                fontSize: 11,
-              ),
-            ),
           ),
         ],
       ),

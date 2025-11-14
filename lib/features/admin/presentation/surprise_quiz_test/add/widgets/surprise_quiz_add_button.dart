@@ -22,8 +22,8 @@ class SurpriseQuizAddButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor:
               isActive
-                  ? AppColors.secondaryDark
-                  : AppColors.secondaryDark.withValues(alpha: 0.5),
+                  ? AppColors.primaryLight
+                  : AppColors.primaryLight.withValues(alpha: 0.3),
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -34,7 +34,7 @@ class SurpriseQuizAddButton extends StatelessWidget {
           style: TextStyle(
             fontFamily: AppTypography.family,
             fontWeight: FontWeight.bold,
-            color: isActive ? Colors.black : Colors.white,
+            color: isActive ? Colors.white : Colors.white54,
             fontSize: 15,
           ),
         ),

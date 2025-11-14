@@ -40,6 +40,7 @@ import '../features/admin/presentation/notify_hub/edit_notice_screen.dart';
 import '../features/admin/presentation/notify_hub/notify_hub_screen.dart';
 import '../features/admin/presentation/quiz_details/quiz_details_screen.dart';
 import '../features/admin/presentation/quiz_questions_info/quiz_questions_info_screen.dart';
+import '../features/admin/presentation/surprise_quiz_test/add/surprise_quiz_import_screen.dart';
 import '../features/admin/presentation/teacher_request/teacher_request_screen.dart';
 import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
@@ -348,11 +349,18 @@ final router = GoRouter(
       path: '/admin-surprise-quiz',
       builder: (context, state) => const SurpriseQuizScreen(),
     ),
+
     GoRoute(
       name: 'addSurpriseNewQuiz',
       path: '/add-surprise-new-quiz',
       builder: (context, state) => const AddSurpriseQuizScreen(),
     ),
+    GoRoute(
+      name: 'importSurpriseQuiz',
+      path: '/admin/surprise/import',
+      builder: (context, state) => const SurpriseQuizImportScreen(),
+    ),
+
     GoRoute(
       path: '/leaderboard',
       name: 'leaderboard',

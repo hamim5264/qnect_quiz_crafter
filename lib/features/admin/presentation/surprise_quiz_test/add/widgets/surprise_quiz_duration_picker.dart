@@ -73,7 +73,7 @@ class SurpriseQuizTimePicker extends StatelessWidget {
                 color: Colors.white70,
               ),
             ),
-            const Icon(CupertinoIcons.time, color: Colors.white70),
+            const Icon(CupertinoIcons.clock_fill, color: Colors.white),
           ],
         ),
       ),

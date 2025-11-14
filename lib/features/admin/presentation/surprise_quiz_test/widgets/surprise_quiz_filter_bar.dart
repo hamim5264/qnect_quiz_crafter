@@ -14,7 +14,8 @@ class SurpriseQuizFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filters = ["All", "Today"];
+    final filters = ["Unpublished", "Published"];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children:

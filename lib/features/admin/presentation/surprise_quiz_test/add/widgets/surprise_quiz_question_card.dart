@@ -1,28 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
+import '../../data/add_surprise_quiz_model.dart';
 
 class SurpriseQuizQuestionCard extends StatefulWidget {
   final int totalQuestions;
-  final bool importedFromVault;
+
+  final List<SurpriseQuizQuestion>? importedQuestions;
+
   final VoidCallback onImportFromVault;
 
   const SurpriseQuizQuestionCard({
     super.key,
     required this.totalQuestions,
-    required this.importedFromVault,
     required this.onImportFromVault,
+    this.importedQuestions,
   });
 
   @override
   State<SurpriseQuizQuestionCard> createState() =>
-      _SurpriseQuizQuestionCardState();
+      SurpriseQuizQuestionCardState();
 }
 
-class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
+class SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
   late final PageController _pageController;
-  late final List<Map<String, dynamic>> _questions;
+  late List<Map<String, dynamic>> _questions;
   int _currentQuestion = 0;
 
   @override
@@ -30,6 +34,35 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
     super.initState();
     _pageController = PageController(initialPage: 0);
     _initQuestions();
+
+    if (widget.importedQuestions != null &&
+        widget.importedQuestions!.isNotEmpty) {
+      _loadImported(widget.importedQuestions!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SurpriseQuizQuestionCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.importedQuestions != null &&
+        widget.importedQuestions!.isNotEmpty &&
+        widget.importedQuestions != oldWidget.importedQuestions) {
+      _loadImported(widget.importedQuestions!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    for (final q in _questions) {
+      (q['question'] as TextEditingController).dispose();
+      (q['desc'] as TextEditingController).dispose();
+      for (final c in (q['options'] as List<TextEditingController>)) {
+        c.dispose();
+      }
+    }
+    super.dispose();
   }
 
   void _initQuestions() {
@@ -44,6 +77,63 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
     });
   }
 
+  void _loadImported(List<SurpriseQuizQuestion> imported) {
+    _initQuestions();
+
+    for (int i = 0; i < imported.length && i < widget.totalQuestions; i++) {
+      final src = imported[i];
+      final q = _questions[i];
+
+      (q["question"] as TextEditingController).text = src.question;
+      (q["desc"] as TextEditingController).text = src.explanation;
+      q["correct"] = src.correct;
+
+      final ctrls = q["options"] as List<TextEditingController>;
+      ctrls[0].text = src.options["A"] ?? "";
+      ctrls[1].text = src.options["B"] ?? "";
+      ctrls[2].text = src.options["C"] ?? "";
+      ctrls[3].text = src.options["D"] ?? "";
+
+      q["filled"] = true;
+    }
+
+    setState(() {});
+  }
+
+  List<SurpriseQuizQuestion> getFinalQuestions() {
+    final List<SurpriseQuizQuestion> out = [];
+
+    for (final q in _questions) {
+      out.add(
+        SurpriseQuizQuestion(
+          question: (q["question"] as TextEditingController).text.trim(),
+          options: {
+            "A":
+                (q["options"][0] as TextEditingController).text
+                    .trim()
+                    .toLowerCase(),
+            "B":
+                (q["options"][1] as TextEditingController).text
+                    .trim()
+                    .toLowerCase(),
+            "C":
+                (q["options"][2] as TextEditingController).text
+                    .trim()
+                    .toLowerCase(),
+            "D":
+                (q["options"][3] as TextEditingController).text
+                    .trim()
+                    .toLowerCase(),
+          },
+          correct: q["correct"] as String,
+          explanation: (q["desc"] as TextEditingController).text.trim(),
+        ),
+      );
+    }
+
+    return out;
+  }
+
   void _updateFilledStatus(int index) {
     final q = _questions[index];
     final allFilled =
@@ -54,24 +144,8 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
     q["filled"] = allFilled;
   }
 
-  void _importVaultQuestions() {
-    for (var q in _questions) {
-      q["question"].text = "Imported question from QC Vault";
-      q["options"] = List.generate(
-        4,
-        (i) => TextEditingController(text: "Imported option ${i + 1}"),
-      );
-      q["correct"] = "A";
-      q["desc"].text = "Imported description from vault.";
-      q["filled"] = true;
-    }
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (widget.importedFromVault) _importVaultQuestions();
-
     final total = widget.totalQuestions;
     final current = _currentQuestion + 1;
 
@@ -118,24 +192,24 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                               height: 30,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
+                                shape: BoxShape.circle,
                                 color:
                                     isActive
-                                        ? AppColors.primaryLight
+                                        ? AppColors.chip3
                                         : Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color:
                                       isFilled
-                                          ? Colors.black45
-                                          : AppColors.primaryLight,
+                                          ? AppColors.chip3
+                                          : AppColors.chip3,
                                   width: 1.5,
                                 ),
                               ),
                               child:
                                   isFilled
                                       ? const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
+                                        Icons.check_circle_sharp,
+                                        color: AppColors.chip2,
                                         size: 16,
                                       )
                                       : Text(
@@ -145,7 +219,7 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                                           color:
                                               isActive
                                                   ? Colors.white
-                                                  : Colors.black87,
+                                                  : Colors.black,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,
                                         ),
@@ -158,7 +232,8 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                   ],
                 ),
               ),
-              const Divider(),
+
+              Divider(color: AppColors.chip3.withValues(alpha: 0.3)),
 
               SizedBox(
                 height: 440,
@@ -183,7 +258,8 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _outlinedTextField(
-                              controller: q["question"],
+                              controller:
+                                  q["question"] as TextEditingController,
                               hint: "Write question ${index + 1}",
                               maxLines: null,
                               borderColor: Colors.black54,
@@ -196,7 +272,7 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
 
                             ...List.generate(optionCtrls.length, (i) {
                               final label = String.fromCharCode(65 + i);
-                              final isCorrect = q["correct"] == label;
+                              final isCorrect = q["correct"] as String == label;
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Row(
@@ -248,22 +324,22 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                                 horizontal: 14,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryLight,
+                                color: AppColors.chip2,
                                 border: Border.all(
-                                  color: AppColors.primaryLight,
+                                  color: AppColors.chip2,
                                   width: 1.2,
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                  value: q["correct"],
+                                  value: q["correct"] as String,
                                   icon: const Icon(
                                     CupertinoIcons.chevron_down,
                                     color: Colors.white,
                                     size: 18,
                                   ),
-                                  dropdownColor: AppColors.primaryLight,
+                                  dropdownColor: AppColors.chip2,
                                   isExpanded: true,
                                   style: const TextStyle(
                                     fontFamily: AppTypography.family,
@@ -274,28 +350,40 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                                       value: 'A',
                                       child: Text(
                                         'A',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: 'B',
                                       child: Text(
                                         'B',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: 'C',
                                       child: Text(
                                         'C',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                     DropdownMenuItem(
                                       value: 'D',
                                       child: Text(
                                         'D',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -309,7 +397,7 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
                             ),
 
                             _outlinedTextField(
-                              controller: q["desc"],
+                              controller: q["desc"] as TextEditingController,
                               hint: "Description of correct answer",
                               maxLines: 4,
                               borderColor: Colors.black45,
@@ -370,7 +458,7 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
         OutlinedButton.icon(
           onPressed: widget.onImportFromVault,
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: AppColors.secondaryDark, width: 1.4),
+            side: const BorderSide(color: AppColors.white, width: 1.4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -378,14 +466,14 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
           ),
           icon: const Icon(
             CupertinoIcons.arrow_down_to_line,
-            color: AppColors.secondaryDark,
+            color: AppColors.white,
             size: 18,
           ),
           label: const Text(
             "Import from QC Vault",
             style: TextStyle(
               fontFamily: AppTypography.family,
-              color: AppColors.secondaryDark,
+              color: AppColors.white,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -403,6 +491,7 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
     required Function(String) onChanged,
   }) {
     return TextField(
+      cursorColor: AppColors.chip2,
       controller: controller,
       maxLines: maxLines,
       onChanged: onChanged,
@@ -423,11 +512,11 @@ class _SurpriseQuizQuestionCardState extends State<SurpriseQuizQuestionCard> {
           vertical: 12,
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: borderColor, width: 1.2),
+          borderSide: BorderSide(color: AppColors.chip2, width: 1.2),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: borderColor, width: 1.2),
+          borderSide: BorderSide(color: AppColors.chip2, width: 1.2),
           borderRadius: BorderRadius.circular(10),
         ),
       ),
