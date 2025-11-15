@@ -5,7 +5,8 @@ import '../../../../../ui/design_system/tokens/typography.dart';
 
 class QuizCard extends StatelessWidget {
   final String title;
-  final String icon;
+  final String groupLabel;
+  final String levelLabel;
   final bool isPublished;
   final VoidCallback onPublish;
   final VoidCallback onDelete;
@@ -13,7 +14,8 @@ class QuizCard extends StatelessWidget {
   const QuizCard({
     super.key,
     required this.title,
-    required this.icon,
+    required this.groupLabel,
+    required this.levelLabel,
     required this.isPublished,
     required this.onPublish,
     required this.onDelete,
@@ -22,44 +24,58 @@ class QuizCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.cardSecondary,
+        color: AppColors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: AppColors.primaryLight,
-            child: Text(
-              icon,
-              style: const TextStyle(
-                fontFamily: AppTypography.family,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 16,
-              ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: AppColors.white,
+                  child: Image.asset(
+                    "assets/images/certificates/app_logo.png",
+                    width: 28,
+                    height: 28,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: AppTypography.family,
+                    color: AppColors.secondaryDark,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+                Text(
+                  "$groupLabel • $levelLabel",
+                  style: const TextStyle(
+                    fontFamily: AppTypography.family,
+                    color: Colors.black87,
+                    fontSize: 11.5,
+                  ),
+                ),
+              ],
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: AppTypography.family,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ),
+          const SizedBox(height: 10),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: ElevatedButton(
@@ -67,10 +83,7 @@ class QuizCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         isPublished ? Colors.grey.shade500 : AppColors.chip3,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -80,17 +93,18 @@ class QuizCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: AppTypography.family,
                       color: isPublished ? Colors.black45 : Colors.white,
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
+
               const SizedBox(width: 6),
 
               Container(
-                height: 40,
-                width: 40,
+                height: 38,
+                width: 38,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -100,7 +114,7 @@ class QuizCard extends StatelessWidget {
                   icon: const Icon(
                     CupertinoIcons.delete,
                     color: Colors.redAccent,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
               ),
