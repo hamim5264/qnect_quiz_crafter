@@ -97,16 +97,31 @@ class QuickActionsGrid extends StatelessWidget {
                     onTap: () {
                       final route = e['route'] as String?;
                       if (route != null && route.isNotEmpty) {
+                        if (route == '/quizgenie') {
+                          context.pushNamed(
+                            'quizGenie',
+                            pathParameters: {'role': 'admin'},
+                          );
+                          return;
+                        }
+                        if (route == '/admin-practice-quiz') {
+                          context.pushNamed(
+                            'adminPracticeQuiz',
+                            pathParameters: {'role': 'admin'},
+                          );
+                          return;
+                        }
                         if (route == '/leaderboard') {
                           context.push(
                             route,
                             extra: {'role': 'admin', 'userId': 'u1'},
                           );
-                        } else {
-                          context.push(route);
+                          return;
                         }
+                        context.push(route);
                       }
                     },
+
                     child: Container(
                       width: (MediaQuery.of(context).size.width - 48) / 2,
                       height: 72,

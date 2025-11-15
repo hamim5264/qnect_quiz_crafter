@@ -233,7 +233,6 @@ class _AddSurpriseQuizScreenState extends ConsumerState<AddSurpriseQuizScreen> {
                 "Visible for: $visibilityHours hours",
             onConfirm: () {
               Navigator.pop(context);
-              context.pop();
             },
           ),
     );

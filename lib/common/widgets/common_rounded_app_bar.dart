@@ -6,6 +6,8 @@ import '../../ui/design_system/tokens/typography.dart';
 class CommonRoundedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
+  final String? subtitle;
+
   final VoidCallback? onBack;
 
   final bool ellipsis;
@@ -15,6 +17,7 @@ class CommonRoundedAppBar extends StatelessWidget
   const CommonRoundedAppBar({
     super.key,
     required this.title,
+    this.subtitle,
     this.onBack,
 
     this.ellipsis = false,
@@ -66,7 +69,6 @@ class CommonRoundedAppBar extends StatelessWidget
                     ),
                   ),
                 ),
-
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -86,6 +88,20 @@ class CommonRoundedAppBar extends StatelessWidget
                           color: AppColors.textPrimary,
                         ),
                       ),
+
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: AppTypography.family,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

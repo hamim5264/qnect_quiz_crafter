@@ -27,6 +27,7 @@ import '../common/screens/leaderboard/leaderboard_screen.dart';
 import '../common/screens/messages/message_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
+import '../common/screens/quiz_genie/quiz_genie_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
 import '../features/admin/presentation/certificates/certificates_screen.dart';
 import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
@@ -341,9 +342,13 @@ final router = GoRouter(
     ),
     GoRoute(
       name: 'adminPracticeQuiz',
-      path: '/admin-practice-quiz',
-      builder: (context, state) => const PracticeQuizzesScreen(),
+      path: '/admin-practice-quiz/:role',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'admin';
+        return PracticeQuizzesScreen(role: role);
+      },
     ),
+
     GoRoute(
       name: 'adminSurpriseQuiz',
       path: '/admin-surprise-quiz',
@@ -370,6 +375,15 @@ final router = GoRouter(
           userRole: extra?['role'] ?? 'student',
           currentUserId: extra?['userId'] ?? '',
         );
+      },
+    ),
+
+    GoRoute(
+      name: 'quizGenie',
+      path: '/quizgenie/:role',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'teacher';
+        return QuizGenieScreen(creatorRole: role);
       },
     ),
   ],
