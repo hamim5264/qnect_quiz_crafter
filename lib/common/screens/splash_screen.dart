@@ -71,7 +71,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     } else if (role == 'student') {
       context.go('/user-home');
     } else {
-      context.go('/guest-home');
+      context.go('/guest_and_student-home');
     }
   }
 

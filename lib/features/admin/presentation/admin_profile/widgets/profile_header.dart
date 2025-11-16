@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
+import 'package:go_router/go_router.dart';
 
-class ProfileHeader extends StatelessWidget {
+import '../../../../auth/providers/auth_providers.dart';
+
+class ProfileHeader extends ConsumerWidget {
   final String name;
   final String email;
   final String imageUrl;
@@ -15,7 +19,7 @@ class ProfileHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(
@@ -76,7 +80,6 @@ class ProfileHeader extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 90),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Column(
@@ -104,7 +107,9 @@ class ProfileHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+
+                    const SizedBox(height: 10),
+
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
@@ -117,7 +122,10 @@ class ProfileHeader extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        await ref.read(authServiceProvider).signOut();
+                        if (context.mounted) context.go('/onboarding');
+                      },
                       icon: const Icon(Icons.logout_rounded, size: 16),
                       label: const Text(
                         'Logout',

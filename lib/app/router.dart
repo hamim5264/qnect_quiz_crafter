@@ -11,13 +11,13 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_r
 import 'package:qnect_quiz_crafter/features/admin/presentation/course_details/course_details_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/guest_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/practice_quizzes/practice_quizzes_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/add/add_surprise_quiz_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/surprise_quiz_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
+import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/guest_and_student_dashboard_screen.dart';
 
 import '../common/gates/startup_gate.dart';
 import '../common/screens/chat/chat_screen.dart';
@@ -169,9 +169,9 @@ final router = GoRouter(
       builder: (_, __) => const UserHomeScreen(),
     ),
     GoRoute(
-      path: '/guest-home',
+      path: '/guest_and_student-home',
       name: 'guestHome',
-      builder: (_, __) => const GuestHomeScreen(),
+      builder: (_, __) => GuestAndStudentDashboardScreen(),
     ),
 
     GoRoute(

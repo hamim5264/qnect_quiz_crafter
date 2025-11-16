@@ -83,7 +83,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           curve: Curves.easeOut,
                         );
                       } else {
-                        context.go('/guest-home');
+                        context.go('/guest_and_student-home');
                       }
                     },
                     style: FilledButton.styleFrom(
