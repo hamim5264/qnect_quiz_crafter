@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/provider/student_provider.dart';
 
 import '../../../../common/widgets/universal_dashboard_app_bar.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
@@ -12,22 +15,31 @@ import 'widgets/explore_paid_courses.dart';
 import 'widgets/concept_vault.dart';
 import 'widgets/support_feedback.dart';
 
-class GuestAndStudentDashboardScreen extends StatefulWidget {
-  const GuestAndStudentDashboardScreen({super.key});
+class GuestAndStudentDashboardScreen extends ConsumerStatefulWidget {
+  final bool isGuestUser;
+
+  const GuestAndStudentDashboardScreen({super.key, this.isGuestUser = true});
 
   @override
-  State<GuestAndStudentDashboardScreen> createState() =>
+  ConsumerState<GuestAndStudentDashboardScreen> createState() =>
       _GuestAndStudentDashboardScreenState();
 }
 
 class _GuestAndStudentDashboardScreenState
-    extends State<GuestAndStudentDashboardScreen> {
+    extends ConsumerState<GuestAndStudentDashboardScreen> {
   late final DashboardController controller;
 
   @override
   void initState() {
     super.initState();
     controller = DashboardController();
+
+    Future.microtask(() {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        ref.read(studentControllerProvider.notifier).loadStudent(user.uid);
+      }
+    });
   }
 
   @override
@@ -38,6 +50,12 @@ class _GuestAndStudentDashboardScreenState
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final isGuest = user == null;
+
+    final studentState = isGuest ? null : ref.watch(studentControllerProvider);
+    final student = studentState?.student;
+
     return Scaffold(
       backgroundColor: AppColors.secondaryDark.withValues(alpha: 0.95),
       body: SingleChildScrollView(
@@ -57,13 +75,22 @@ class _GuestAndStudentDashboardScreenState
                     opacity: visible ? 1 : 0,
                     duration: const Duration(milliseconds: 250),
                     child: UniversalDashboardAppBar(
+                      role: isGuest ? "guest" : "student",
                       greeting: _greetingText(),
-                      username: "User${_randomGuestId()}",
+                      username:
+                          isGuest
+                              ? "User${_randomGuestId()}"
+                              : (student?.fullName ?? "Loading..."),
+                      email:
+                          isGuest
+                              ? "guest_${_randomGuestId()}@mail.com"
+                              : (student?.email ?? ""),
+                      profileImage: isGuest ? null : student?.profileImage,
                       motto: "Learn. Practice. Triumph.",
-                      levelText: "Level 00",
-                      xpText: "120 XP",
-                      isGuest: true,
-                      onLoginTap: () => context.push('/login'),
+                      levelText: student?.level ?? "Level 00",
+                      xpText: student?.xp ?? "0 XP",
+                      isGuest: isGuest,
+                      onLoginTap: () => context.push('/sign-in'),
                     ),
                   ),
                 );
@@ -81,11 +108,7 @@ class _GuestAndStudentDashboardScreenState
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: PracticeCard(
-                onTap: () {
-                  context.push('/practice-quiz');
-                },
-              ),
+              child: PracticeCard(onTap: () => context.push('/practice-quiz')),
             ),
 
             const SizedBox(height: 16),
@@ -93,7 +116,7 @@ class _GuestAndStudentDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: QuickActionsSection(
-                locked: true,
+                locked: isGuest,
                 onLockedTap: () => _showLoginRequired(context),
                 items: [
                   QuickActionItem(
@@ -215,20 +238,10 @@ class _GuestAndStudentDashboardScreenState
                     price: 490,
                     discount: 20,
                   ),
-                  CourseItem(
-                    title: "Physics Mastery",
-                    image:
-                        "https://i.ibb.co.com/r5ZxKXX/placeholder-course.png",
-                    quizCount: 60,
-                    enrolled: 800,
-                    price: 350,
-                    discount: 15,
-                  ),
                 ],
                 onSeeAll: () => context.push('/explore-courses'),
-                onTapCourse: (course) {
-                  context.push('/course-details', extra: course);
-                },
+                onTapCourse:
+                    (course) => context.push('/course-details', extra: course),
               ),
             ),
 
@@ -237,46 +250,46 @@ class _GuestAndStudentDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ConceptVaultSection(
-                locked: true,
+                locked: isGuest,
                 onLockedTap: () => _showLoginRequired(context),
                 items: [
                   ConceptVaultItem(
                     title: "Lecture Stream",
                     subtitle: "Stream lectures",
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.video_call_rounded,
                       size: 22,
-                      color: AppColors.white,
+                      color: Colors.white,
                     ),
                     onTap: () {},
                   ),
                   ConceptVaultItem(
                     title: "PDF Vault",
                     subtitle: "Notes and resources",
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.picture_as_pdf,
                       size: 22,
-                      color: AppColors.white,
+                      color: Colors.white,
                     ),
                     onTap: () {},
                   ),
                   ConceptVaultItem(
                     title: "BookBazaar",
                     subtitle: "Find books and ebooks",
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.book_rounded,
                       size: 22,
-                      color: AppColors.white,
+                      color: Colors.white,
                     ),
                     onTap: () {},
                   ),
                   ConceptVaultItem(
                     title: "QuizRumble",
                     subtitle: "1v1 or team battles",
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.gas_meter,
                       size: 22,
-                      color: AppColors.white,
+                      color: Colors.white,
                     ),
                     onTap: () {},
                   ),
@@ -289,7 +302,7 @@ class _GuestAndStudentDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SupportFeedback(
-                onFAQ: () => context.push('/faq'),
+                onFAQ: () {},
                 onSupport: () => context.push('/support'),
                 onShare: () {},
               ),
@@ -314,37 +327,36 @@ class _GuestAndStudentDashboardScreenState
   void _showLoginRequired(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          backgroundColor: AppColors.primaryLight,
-          title: const Text(
-            "Login Required",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text(
-            "Please login or create an account to access this feature.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(color: Colors.redAccent),
-              ),
+      builder:
+          (_) => AlertDialog(
+            backgroundColor: AppColors.primaryLight,
+            title: const Text(
+              "Login Required",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextButton(
-              onPressed: () {
-                context.pop();
-                context.push('/login');
-              },
-              child: const Text(
-                "Login",
-                style: TextStyle(color: AppColors.white),
-              ),
+            content: const Text(
+              "Please login or create an account to access this feature.",
             ),
-          ],
-        );
-      },
+            actions: [
+              TextButton(
+                onPressed: () => context.pop(),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                  context.push('/sign-in');
+                },
+                child: const Text(
+                  "Login",
+                  style: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ],
+          ),
     );
   }
 }
