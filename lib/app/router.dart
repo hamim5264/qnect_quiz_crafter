@@ -15,9 +15,9 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/practice_quizzes/
 import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/add/add_surprise_quiz_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/surprise_quiz_screen.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/teacher_home_screen.dart';
 import 'package:qnect_quiz_crafter/features/auth/presentation/verification/verify_otp_screen.dart';
 import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/guest_and_student_dashboard_screen.dart';
+import 'package:qnect_quiz_crafter/features/teacher/presentation/teacher_dashboard/teacher_dashboard_screen.dart';
 
 import '../common/gates/startup_gate.dart';
 import '../common/screens/chat/chat_screen.dart';
@@ -45,13 +45,14 @@ import '../features/admin/presentation/surprise_quiz_test/add/surprise_quiz_impo
 import '../features/admin/presentation/teacher_request/teacher_request_screen.dart';
 import '../features/admin/presentation/teacher_sells_report/teacher_sells_report_screen.dart';
 import '../features/admin/presentation/user_details/user_details_screen.dart';
-import '../features/admin/presentation/user_home_screen.dart';
 import '../features/auth/presentation/onboarding/onboarding_screen.dart';
 
 import '../features/auth/presentation/set_password/set_password_screen.dart';
 import '../features/auth/presentation/sign_in/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up/sign_up_screen.dart';
 import '../features/auth/presentation/verify_email/verify_email_screen.dart';
+import '../features/guest_and_student/student_profile/student_profile_screen.dart';
+import '../features/teacher/presentation/guest_and_teacher_profile/guest_and_teacher_profile_screen.dart';
 
 final router = GoRouter(
   routes: [
@@ -122,6 +123,15 @@ final router = GoRouter(
       builder: (context, state) => const CommunityChatScreen(),
     ),
 
+    GoRoute(
+      path: '/edit-profile/:role',
+      name: 'editProfile',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'admin';
+        return EditProfileScreen(role: role);
+      },
+    ),
+
     /// Auth Screens Routing
     GoRoute(
       path: '/sign-in',
@@ -161,17 +171,7 @@ final router = GoRouter(
     GoRoute(
       path: '/teacher-home',
       name: 'teacherHome',
-      builder: (_, __) => const TeacherHomeScreen(),
-    ),
-    GoRoute(
-      path: '/user-home',
-      name: 'userHome',
-      builder: (_, __) => const UserHomeScreen(),
-    ),
-    GoRoute(
-      path: '/guest_and_student-home',
-      name: 'guestHome',
-      builder: (_, __) => GuestAndStudentDashboardScreen(),
+      builder: (_, __) => const TeacherDashboardScreen(),
     ),
 
     GoRoute(
@@ -230,14 +230,7 @@ final router = GoRouter(
       name: 'adminProfile',
       builder: (context, state) => const AdminProfileScreen(),
     ),
-    GoRoute(
-      path: '/edit-profile/:role',
-      name: 'editProfile',
-      builder: (context, state) {
-        final role = state.pathParameters['role'] ?? 'admin';
-        return EditProfileScreen(role: role);
-      },
-    ),
+
     GoRoute(
       path: '/certificates',
       name: 'certificates',
@@ -384,6 +377,41 @@ final router = GoRouter(
       builder: (context, state) {
         final role = state.pathParameters['role'] ?? 'teacher';
         return QuizGenieScreen(creatorRole: role);
+      },
+    ),
+
+    /// Teacher Dashboard
+    GoRoute(
+      path: '/guest_teacher-profile',
+      builder: (context, state) {
+        final data = state.extra as Map?;
+        return GuestAndTeacherProfileScreen(
+          isGuest: data?['isGuest'] ?? true,
+          username: data?['username'] ?? "GuestUser",
+          email: data?['email'] ?? "guest@mail.com",
+        );
+      },
+    ),
+
+    /// Student Dashboard
+    GoRoute(
+      path: '/student-profile',
+      builder: (context, state) {
+        final data = state.extra as Map?;
+        return StudentProfileScreen(
+          isGuest: data?['isGuest'] ?? true,
+          username: data?['username'] ?? "GuestUser",
+          email: data?['email'] ?? "guest@mail.com",
+          profileImage: data?['profileImage'],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/guest_and_student-home',
+      name: 'guestHome',
+      builder: (context, state) {
+        final isGuest = state.extra as bool? ?? true;
+        return GuestAndStudentDashboardScreen(isGuestUser: isGuest);
       },
     ),
   ],

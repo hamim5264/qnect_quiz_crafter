@@ -25,19 +25,16 @@ class _StartupGateState extends ConsumerState<StartupGate> {
     await Future.delayed(const Duration(milliseconds: 600));
 
     final hasNet = await NetworkHelper.hasInternet();
-
     if (!mounted) return;
 
     if (!hasNet) {
-      Future.microtask(() => context.go('/no-internet'));
-      return;
+      return context.go('/no-internet');
     }
 
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      Future.microtask(() => context.go('/onboarding'));
-      return;
+      return context.go('/onboarding');
     }
 
     if (user.email == "devenginesoftsolution@gmail.com") {
@@ -49,8 +46,7 @@ class _StartupGateState extends ConsumerState<StartupGate> {
 
       final adminRole = adminSnap.data()?['role'];
       if (adminRole == "admin") {
-        Future.microtask(() => context.go('/admin-home'));
-        return;
+        return context.go('/admin-home');
       }
     }
 
@@ -65,9 +61,9 @@ class _StartupGateState extends ConsumerState<StartupGate> {
     final role = snap.data()?['role'];
 
     if (role == 'teacher') {
-      Future.microtask(() => context.go('/teacher-home'));
+      return context.go('/teacher-home');
     } else {
-      Future.microtask(() => context.go('/user-home'));
+      return context.go('/guest_and_student-home');
     }
   }
 
