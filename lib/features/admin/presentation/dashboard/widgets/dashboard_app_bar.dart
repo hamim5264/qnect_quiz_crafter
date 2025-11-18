@@ -6,17 +6,40 @@ import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
 class DashboardAppBar extends StatelessWidget {
-  const DashboardAppBar({super.key});
+  final String? adminName;
+  final String? adminImageUrl;
+
+  const DashboardAppBar({
+    super.key,
+    required this.adminName,
+    required this.adminImageUrl,
+  });
+
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return "GOOD MORNING";
+    if (hour < 17) return "GOOD AFTERNOON";
+    return "GOOD EVENING";
+  }
 
   List<Map<String, dynamic>> _generateSalesData() {
     final now = DateTime.now();
     final startDate = now.subtract(const Duration(days: 9));
-
     return List.generate(10, (i) {
       final date = startDate.add(Duration(days: i));
       final sales = (10 + (i * 3) + (i.isEven ? 4 : 0)).toDouble();
       return {'date': date, 'sales': sales, 'isToday': date.day == now.day};
     });
+  }
+
+  Widget _buildProfileImage() {
+    if (adminImageUrl == null || adminImageUrl!.isEmpty) {
+      return Container(
+        color: Colors.white12,
+        child: const Icon(Icons.person, color: Colors.white70, size: 40),
+      );
+    }
+    return Image.network(adminImageUrl!, fit: BoxFit.cover);
   }
 
   @override
@@ -37,15 +60,11 @@ class DashboardAppBar extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          context.pushNamed('adminProfile');
-                        },
+                        onTap: () => context.pushNamed('adminProfile'),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -61,44 +80,21 @@ class DashboardAppBar extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  'https://i.pravatar.cc/150?img=12',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-
-                            Positioned(
-                              bottom: -4,
-                              right: -4,
-                              child: Container(
-                                height: 28,
-                                width: 28,
-                                decoration: BoxDecoration(
-                                  color: AppColors.chip3,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.edit_rounded,
-                                  color: AppColors.textPrimary,
-                                  size: 14,
-                                ),
+                                child: _buildProfileImage(),
                               ),
                             ),
                           ],
                         ),
                       ),
+
                       const SizedBox(width: 12),
+
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'GOOD AFTERNOON',
-                            style: TextStyle(
+                            _greeting(),
+                            style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -106,16 +102,16 @@ class DashboardAppBar extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Admin',
-                            style: TextStyle(
+                            adminName?.toUpperCase() ?? "ADMIN",
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               fontFamily: AppTypography.family,
                             ),
                           ),
-                          Text(
-                            'Guard the standard. Grow the platform.',
+                          const Text(
+                            "Guard the standard. Grow the platform.",
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 12,
@@ -126,36 +122,25 @@ class DashboardAppBar extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {
-                          context.pushNamed('notification');
-                        },
+                        onPressed: () => context.pushNamed('notification'),
                         icon: const Icon(
                           CupertinoIcons.bell_fill,
                           color: Colors.white,
                           size: 22,
                         ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
                       ),
-                      const SizedBox(height: 8),
                       IconButton(
-                        onPressed: () {
-                          context.pushNamed(
-                            'messages',
-                            extra: 'admin', // or 'teacher', 'student'
-                          );
-                        },
+                        onPressed:
+                            () => context.pushNamed('messages', extra: 'admin'),
                         icon: const Icon(
                           CupertinoIcons.ellipses_bubble,
                           color: Colors.white,
                           size: 22,
                         ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
                       ),
                     ],
                   ),
@@ -165,7 +150,7 @@ class DashboardAppBar extends StatelessWidget {
               const SizedBox(height: 4),
 
               const Padding(
-                padding: EdgeInsets.only(left: 6.0),
+                padding: EdgeInsets.only(left: 6),
                 child: Text(
                   'DAILY SALES CHART',
                   style: TextStyle(
@@ -176,6 +161,7 @@ class DashboardAppBar extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 4),
 
               SizedBox(
@@ -187,7 +173,7 @@ class DashboardAppBar extends StatelessWidget {
                       salesData.map((day) {
                         final double maxHeight = 60;
                         final barHeight = (day['sales'] / 40) * maxHeight;
-                        final isToday = day['isToday'] as bool;
+                        final isToday = day['isToday'];
 
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.end,
