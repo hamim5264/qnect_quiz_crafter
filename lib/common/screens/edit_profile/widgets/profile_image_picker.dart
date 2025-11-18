@@ -2,24 +2,45 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
+import '../../../../common/widgets/app_skeleton.dart';
 
 class ProfileImagePicker extends StatefulWidget {
-  const ProfileImagePicker({super.key});
+  final String? imageUrl;
+  final bool isLoading;
+  final Function(File?) onImageSelected;
+
+  const ProfileImagePicker({
+    super.key,
+    required this.imageUrl,
+    required this.isLoading,
+    required this.onImageSelected,
+  });
 
   @override
   State<ProfileImagePicker> createState() => _ProfileImagePickerState();
 }
 
 class _ProfileImagePickerState extends State<ProfileImagePicker> {
-  String? imagePath;
+  File? pickedImage;
 
   Future<void> pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) setState(() => imagePath = picked.path);
+    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (img != null) {
+      setState(() => pickedImage = File(img.path));
+      widget.onImageSelected(File(img.path));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isLoading) {
+      return const CircleAvatar(
+        radius: 48,
+        child: AppSkeleton(width: 96, height: 96),
+      );
+    }
+
     return GestureDetector(
       onTap: pickImage,
       child: Stack(
@@ -29,9 +50,14 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
             radius: 48,
             backgroundColor: AppColors.primaryLight.withValues(alpha: 0.2),
             backgroundImage:
-                imagePath != null ? FileImage(File(imagePath!)) : null,
+                pickedImage != null
+                    ? FileImage(pickedImage!)
+                    : (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+                    ? NetworkImage(widget.imageUrl!)
+                    : null,
             child:
-                imagePath == null
+                (pickedImage == null &&
+                        (widget.imageUrl == null || widget.imageUrl!.isEmpty))
                     ? const Icon(
                       Icons.person_rounded,
                       color: Colors.white,
@@ -39,6 +65,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                     )
                     : null,
           ),
+
           Positioned(
             bottom: 4,
             right: 4,

@@ -1,63 +1,150 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qnect_quiz_crafter/common/screens/edit_profile/widgets/profile_date_picker.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
 import '../../../../ui/design_system/tokens/typography.dart';
-import '../../../widgets/action_feedback_dialog.dart';
+import '../../../../common/widgets/app_loader.dart';
+import '../../../widgets/action_error_dialog.dart';
+import '../../../widgets/action_success_dialog.dart';
+import 'form_field_skeleton.dart';
 
 class ProfileFormSection extends StatelessWidget {
   final String role;
 
-  const ProfileFormSection({super.key, required this.role});
+  final String? firstName;
+  final String? lastName;
+  final String? phone;
+  final DateTime dob;
+  final ValueChanged<DateTime> onDobChanged;
+  final String? resumeLink;
+  final String? address;
+
+  final bool isLoading;
+  final bool isSaving;
+
+  final Future<void> Function() onSave;
+
+  final TextEditingController firstNameCtrl;
+  final TextEditingController lastNameCtrl;
+  final TextEditingController phoneCtrl;
+  final TextEditingController dobCtrl;
+  final TextEditingController resumeCtrl;
+  final TextEditingController addressCtrl;
+
+  const ProfileFormSection({
+    super.key,
+    required this.role,
+    required this.firstName,
+    required this.lastName,
+    required this.phone,
+    required this.dob,
+    required this.onDobChanged,
+    required this.resumeLink,
+    required this.address,
+    required this.firstNameCtrl,
+    required this.lastNameCtrl,
+    required this.phoneCtrl,
+    required this.dobCtrl,
+    required this.resumeCtrl,
+    required this.addressCtrl,
+    required this.isLoading,
+    required this.isSaving,
+    required this.onSave,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isTeacher = role == "teacher";
     final isAdmin = role == "admin";
-
-    final firstNameController = TextEditingController(text: "Hasna");
-    final lastNameController = TextEditingController(text: "Hena");
-    final phoneController = TextEditingController(text: "+88 017** - ******");
-    final dobController = TextEditingController(text: "25/05/1987");
-    final resumeController = TextEditingController(
-      text: "https://dribbble.com/",
-    );
-    final addressController = TextEditingController(
-      text: "Uttara Sector-2, Dhaka, Bangladesh",
-    );
+    final disableResumeForStudent = role == "student";
 
     return Column(
       children: [
-        _buildInput(firstNameController, "First Name"),
-        _buildInput(lastNameController, "Last Name"),
-        _buildInput(phoneController, "Phone Number"),
-        _buildInput(dobController, "Date of Birth"),
-        _buildInput(
-          resumeController,
-          isTeacher ? "Resume Link" : "Resume Link (N/A)",
-          enabled: isTeacher,
-          hint:
-              isTeacher
-                  ? "https://example.com/resume"
-                  : "None / You don’t have resume link",
+        isLoading
+            ? const FormFieldSkeleton()
+            : _buildInput(firstNameCtrl, "First Name"),
+        isLoading
+            ? const FormFieldSkeleton()
+            : _buildInput(lastNameCtrl, "Last Name"),
+        isLoading
+            ? const FormFieldSkeleton()
+            : _buildInput(
+              phoneCtrl,
+              "Phone Number",
+              enabled: !isAdmin,
+              hint: isAdmin ? "Not required for Admin" : null,
+            ),
+
+        isLoading
+            ? const FormFieldSkeleton()
+            : ProfileDatePicker(
+              selectedDate: dob,
+              onDateSelected: (newDate) {
+                onDobChanged(newDate);
+                dobCtrl.text =
+                    "${newDate.year}-${newDate.month.toString().padLeft(2, '0')}-${newDate.day.toString().padLeft(2, '0')}";
+              },
+            ),
+
+        if (!isAdmin)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child:
+                isLoading
+                    ? const FormFieldSkeleton()
+                    : _buildInput(
+                      resumeCtrl,
+                      "Resume Link",
+                      hint: "https://yourportfolio.com",
+                    ),
+          ),
+
+        Padding(
+          padding: EdgeInsets.only(top: isAdmin ? 10 : 0),
+          child:
+              isLoading
+                  ? const FormFieldSkeleton()
+                  : _buildInput(
+                    addressCtrl,
+                    "Address",
+                    enabled: !isAdmin,
+                    hint: isAdmin ? "Not required for Admin" : null,
+                  ),
         ),
-        _buildInput(addressController, "Address"),
-        const SizedBox(height: 16),
+
+        const SizedBox(height: 18),
+
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder:
-                    (context) => ActionFeedbackDialog(
-                      icon: CupertinoIcons.hand_thumbsup,
-                      title: 'Updated',
-                      subtitle: 'Your profile has been updated successfully.',
-                      buttonText: 'Done',
-                      onPressed: () => Navigator.pop(context),
-                    ),
-              );
-            },
+            onPressed:
+                isSaving
+                    ? null
+                    : () async {
+                      try {
+                        await onSave();
+
+                        if (!context.mounted) return;
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder:
+                              (_) => ActionSuccessDialog(
+                                title: "Profile Updated",
+                                message:
+                                    "Your profile details were successfully saved.",
+                                onConfirm: () => Navigator.of(context).pop(),
+                              ),
+                        );
+                      } catch (e) {
+                        if (!context.mounted) return;
+
+                        showDialog(
+                          context: context,
+                          builder:
+                              (_) => ActionErrorDialog(message: e.toString()),
+                        );
+                      }
+                    },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.secondaryDark,
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -65,15 +152,18 @@ class ProfileFormSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              "Update",
-              style: TextStyle(
-                fontFamily: AppTypography.family,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
+            child:
+                isSaving
+                    ? const AppLoader(size: 28, color: Colors.white)
+                    : const Text(
+                      "Update",
+                      style: TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
           ),
         ),
       ],
@@ -89,25 +179,18 @@ class ProfileFormSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: TextFormField(
-        cursorColor: AppColors.primaryLight,
-        textInputAction: TextInputAction.next,
         controller: controller,
         enabled: enabled,
+        cursorColor: AppColors.primaryLight,
         decoration: InputDecoration(
-          hintText: hint ?? "",
           labelText: label,
+          hintText: hint,
           labelStyle: const TextStyle(
-            fontFamily: AppTypography.family,
             color: Colors.white70,
-            fontSize: 13.5,
+            fontFamily: AppTypography.family,
           ),
-          hintStyle: const TextStyle(color: Colors.white38, fontSize: 13),
           filled: true,
           fillColor: Colors.white.withValues(alpha: 0.08),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 10,
-          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.white24),

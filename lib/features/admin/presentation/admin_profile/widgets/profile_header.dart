@@ -7,12 +7,14 @@ import 'package:go_router/go_router.dart';
 import '../../../../auth/providers/auth_providers.dart';
 
 class ProfileHeader extends ConsumerWidget {
-  final String name;
-  final String email;
-  final String imageUrl;
+  final bool isLoading;
+  final String? name;
+  final String? email;
+  final String? imageUrl;
 
   const ProfileHeader({
     super.key,
+    required this.isLoading,
     required this.name,
     required this.email,
     required this.imageUrl,
@@ -67,8 +69,19 @@ class ProfileHeader extends ConsumerWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  imageUrl,
+                child: (imageUrl == null || imageUrl!.isEmpty)
+                    ? Container(
+                  width: 90,
+                  height: 90,
+                  color: Colors.white12,
+                  child: const Icon(
+                    Icons.person,
+                    color: Colors.white70,
+                    size: 48,
+                  ),
+                )
+                    : Image.network(
+                  imageUrl!,
                   width: 90,
                   height: 90,
                   fit: BoxFit.cover,
@@ -82,30 +95,27 @@ class ProfileHeader extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          name.toUpperCase(),
-                          style: TextStyle(
-                            fontFamily: AppTypography.family,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.white,
-                            fontSize: 16,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          email,
-                          style: const TextStyle(
-                            fontFamily: AppTypography.family,
-                            color: Colors.white70,
-                            fontSize: 13,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    Text(
+                      (name ?? "Admin").toUpperCase(),
+                      style: const TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      email ?? "admin@mail.com",
+                      style: const TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontSize: 13,
+                        color: Colors.white70,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
 
                     const SizedBox(height: 10),
