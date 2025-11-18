@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qnect_quiz_crafter/features/auth/presentation/sign_in/widgets/free_trial.dart';
 import '../../../../common/widgets/app_loader.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
 import 'controller/sign_in_controller.dart';
@@ -30,9 +31,8 @@ class SignInScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 8),
                 const SignInHeader(assetPath: _hero),
-                const SizedBox(height: 28),
+                const SizedBox(height: 20),
                 const EmailField(),
                 const SizedBox(height: 14),
                 const PasswordField(),
@@ -53,11 +53,12 @@ class SignInScreen extends ConsumerWidget {
                   ),
                 ),
 
-                const SizedBox(height: 22),
+                const SizedBox(height: 10),
 
                 const BottomRow(),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
+                const FreeTrial(),
               ],
             ),
           ),
