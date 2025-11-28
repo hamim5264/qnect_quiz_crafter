@@ -54,7 +54,6 @@ class ProfileFormSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAdmin = role == "admin";
-    final disableResumeForStudent = role == "student";
 
     return Column(
       children: [
@@ -84,7 +83,7 @@ class ProfileFormSection extends StatelessWidget {
               },
             ),
 
-        if (!isAdmin)
+        if (role == "teacher")
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child:
@@ -93,12 +92,19 @@ class ProfileFormSection extends StatelessWidget {
                     : _buildInput(
                       resumeCtrl,
                       "Resume Link",
-                      hint: "https://yourportfolio.com",
+                      hint: "Link to your CV / Portfolio",
                     ),
           ),
 
         Padding(
-          padding: EdgeInsets.only(top: isAdmin ? 10 : 0),
+          padding: EdgeInsets.only(
+            top:
+                role == "student"
+                    ? 10
+                    : role == "admin"
+                    ? 10
+                    : 0,
+          ),
           child:
               isLoading
                   ? const FormFieldSkeleton()

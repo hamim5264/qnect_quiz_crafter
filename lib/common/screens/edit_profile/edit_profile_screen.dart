@@ -5,6 +5,7 @@ import '../../../common/widgets/common_curved_background.dart';
 import '../../../features/admin/presentation/dashboard/controller/admin_controller.dart';
 import '../../../features/guest_and_student/presentation/dashboard/provider/student_provider.dart';
 import '../../../features/auth/providers/auth_providers.dart';
+import '../../../features/teacher/data/providers/teacher_providers.dart';
 import '../../../ui/design_system/tokens/colors.dart';
 
 import 'widgets/profile_header_section.dart';
@@ -42,6 +43,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         await ref.read(adminControllerProvider.notifier).loadAdmin(uid);
       } else if (widget.role == "student") {
         await ref.read(studentControllerProvider.notifier).loadStudent(uid);
+      } else if (widget.role == "teacher") {
+        await ref.read(teacherControllerProvider.notifier).loadTeacher(uid);
       }
 
       _fillControllers();
@@ -60,7 +63,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         dobCtrl.text = "";
         resumeCtrl.text = "";
         addressCtrl.text = "";
-
         profileImageUrl = state.admin!.profileImage;
       }
     } else if (widget.role == "student") {
@@ -70,7 +72,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         firstNameCtrl.text = state.student!.firstName;
         lastNameCtrl.text = state.student!.lastName;
         phoneCtrl.text = state.student!.phone ?? "";
-        resumeCtrl.text = "";
         addressCtrl.text = state.student!.address ?? "";
         profileImageUrl = state.student!.profileImage;
 
@@ -79,9 +80,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           try {
             dobValue = DateTime.parse(dobString);
             dobCtrl.text = dobString;
-          } catch (_) {
-            dobValue = DateTime.now();
-          }
+          } catch (_) {}
+        }
+
+        resumeCtrl.text = "";
+      }
+    } else if (widget.role == "teacher") {
+      final state = ref.read(teacherControllerProvider);
+
+      if (state.teacher != null) {
+        firstNameCtrl.text = state.teacher!.firstName;
+        lastNameCtrl.text = state.teacher!.lastName;
+        phoneCtrl.text = state.teacher!.phone ?? "";
+        addressCtrl.text = state.teacher!.address ?? "";
+        resumeCtrl.text = state.teacher!.resumeLink ?? "";
+        profileImageUrl = state.teacher!.profileImage;
+
+        final dobString = state.teacher!.dob ?? "";
+        if (dobString.isNotEmpty) {
+          try {
+            dobValue = DateTime.parse(dobString);
+            dobCtrl.text = dobString;
+          } catch (_) {}
         }
       }
     }
@@ -93,19 +113,24 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     final adminState =
         widget.role == "admin" ? ref.watch(adminControllerProvider) : null;
-
     final studentState =
         widget.role == "student" ? ref.watch(studentControllerProvider) : null;
+    final teacherState =
+        widget.role == "teacher" ? ref.watch(teacherControllerProvider) : null;
 
     final isLoading =
         widget.role == "admin"
             ? adminState?.loading ?? false
-            : studentState?.loading ?? false;
+            : widget.role == "student"
+            ? studentState?.loading ?? false
+            : teacherState?.loading ?? false;
 
     final isSaving =
         widget.role == "admin"
             ? adminState?.buttonLoading ?? false
-            : studentState?.buttonLoading ?? false;
+            : widget.role == "student"
+            ? studentState?.buttonLoading ?? false
+            : teacherState?.buttonLoading ?? false;
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
@@ -161,11 +186,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             ? adminState?.admin?.email
                             : widget.role == "student"
                             ? studentState?.student?.email
-                            : null,
+                            : teacherState?.teacher?.email,
                     profileImage: profileImageUrl,
                     isLoading: isLoading,
                     onImageSelected: (file) {
                       if (file == null) return;
+
                       if (widget.role == "admin") {
                         ref
                             .read(adminControllerProvider.notifier)
@@ -174,6 +200,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ref
                             .read(studentControllerProvider.notifier)
                             .updateImage(uid, file);
+                      } else if (widget.role == "teacher") {
+                        ref
+                            .read(teacherControllerProvider.notifier)
+                            .updateTeacherImage(uid, file);
                       }
                     },
                   ),
@@ -188,7 +218,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     phone: phoneCtrl.text,
                     resumeLink: resumeCtrl.text,
                     address: addressCtrl.text,
-
                     dob: dobValue,
 
                     onDobChanged: (newDate) {
@@ -228,6 +257,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               phone: phoneCtrl.text.trim(),
                               dob: dobValue.toIso8601String(),
                               address: addressCtrl.text.trim(),
+                            );
+                      }
+
+                      if (widget.role == "teacher") {
+                        await ref
+                            .read(teacherControllerProvider.notifier)
+                            .updateTeacherProfile(
+                              uid: uid,
+                              firstName: firstNameCtrl.text.trim(),
+                              lastName: lastNameCtrl.text.trim(),
+                              phone: phoneCtrl.text.trim(),
+                              dob: dobValue.toIso8601String(),
+                              address: addressCtrl.text.trim(),
+                              resumeLink: resumeCtrl.text.trim(),
                             );
                       }
                     },
