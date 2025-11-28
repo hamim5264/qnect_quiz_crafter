@@ -1,34 +1,60 @@
 import 'package:flutter/material.dart';
-import '../../../../../ui/design_system/tokens/typography.dart';
-import '../../../../../ui/design_system/tokens/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/manage_users/widgets/stat_card_skeleton.dart';
 
-class ManageUserStatCards extends StatelessWidget {
+import '../../../../../ui/design_system/tokens/colors.dart';
+import '../../../../../ui/design_system/tokens/typography.dart';
+import '../../dashboard/providers/admin_stats_provider.dart';
+
+class ManageUserStatCards extends ConsumerWidget {
   const ManageUserStatCards({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const _StatCard(
-          label: 'Teacher',
-          value: '75',
-          color: AppColors.chip3,
-          textColor: AppColors.white,
-        ),
-        const _StatCard(
-          label: 'Student',
-          value: '362',
-          color: Colors.white,
-          textColor: AppColors.textPrimary,
-        ),
-        _StatCard(
-          label: 'Blocked',
-          value: '29',
-          color: Colors.red,
-          textColor: Colors.white,
-        ),
-      ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(adminStatsProvider);
+
+    return statsAsync.when(
+      loading:
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              StatCardSkeleton(),
+              StatCardSkeleton(),
+              StatCardSkeleton(),
+            ],
+          ),
+
+      error:
+          (e, _) => Text(
+            "Error loading stats",
+            style: const TextStyle(color: Colors.red),
+          ),
+
+      data: (stats) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _StatCard(
+              label: 'Teacher',
+              value: stats.teachers.toString(),
+              color: AppColors.chip3,
+              textColor: AppColors.white,
+            ),
+            _StatCard(
+              label: 'Student',
+              value: stats.students.toString(),
+              color: Colors.white,
+              textColor: AppColors.textPrimary,
+            ),
+            _StatCard(
+              label: 'Blocked',
+              value: stats.blocked.toString(),
+              color: Colors.red,
+              textColor: Colors.white,
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,34 +1,49 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/manage_users/widgets/shimmer_loader.dart';
+
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
+import '../growth/admin_growth_controller.dart';
 
-class ManageUserGrowthCard extends StatefulWidget {
-  const ManageUserGrowthCard({super.key});
+class ManageUserGrowthCard extends ConsumerStatefulWidget {
+  final bool isLoading;
+  final int currentMonthUsers;
+  final int previousMonthUsers;
+
+  const ManageUserGrowthCard({
+    super.key,
+    required this.isLoading,
+    required this.currentMonthUsers,
+    required this.previousMonthUsers,
+  });
 
   @override
-  State<ManageUserGrowthCard> createState() => _ManageUserGrowthCardState();
+  ConsumerState<ManageUserGrowthCard> createState() =>
+      _ManageUserGrowthCardState();
 }
 
-class _ManageUserGrowthCardState extends State<ManageUserGrowthCard> {
-  late String selectedMonth;
+class _ManageUserGrowthCardState extends ConsumerState<ManageUserGrowthCard> {
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
-    selectedMonth = DateFormat('MMMM-yyyy').format(DateTime.now());
+    selectedDate = DateTime(DateTime.now().year, DateTime.now().month);
   }
 
   Future<void> _selectMonth(BuildContext context) async {
     final now = DateTime.now();
-    final months = List.generate(12, (i) {
-      final date = DateTime(now.year, i + 1);
-      return DateFormat('MMMM-yyyy').format(date);
-    });
 
-    String? picked = await showDialog<String>(
+    final List<DateTime> months = List.generate(
+      12,
+      (i) => DateTime(now.year, i + 1),
+    );
+
+    DateTime? picked = await showDialog<DateTime>(
       context: context,
       builder:
           (context) => AlertDialog(
@@ -39,26 +54,27 @@ class _ManageUserGrowthCardState extends State<ManageUserGrowthCard> {
             title: const Text(
               "Select Month",
               style: TextStyle(
+                color: Colors.white,
                 fontFamily: AppTypography.family,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
               ),
             ),
             content: SizedBox(
               width: double.maxFinite,
+              height: 350,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: months.length,
-                itemBuilder: (context, index) {
+                itemBuilder: (_, i) {
                   return ListTile(
                     title: Text(
-                      months[index],
+                      DateFormat('MMMM yyyy').format(months[i]),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontFamily: AppTypography.family,
                       ),
                     ),
-                    onTap: () => Navigator.pop(context, months[index]),
+                    onTap: () => Navigator.pop(context, months[i]),
                   );
                 },
               ),
@@ -66,13 +82,32 @@ class _ManageUserGrowthCardState extends State<ManageUserGrowthCard> {
           ),
     );
 
-    if (picked != null && picked.isNotEmpty) {
-      setState(() => selectedMonth = picked);
+    if (picked != null) {
+      setState(() => selectedDate = picked);
+
+      await ref
+          .read(adminGrowthControllerProvider.notifier)
+          .loadGrowthForMonth(DateTime(picked.year, picked.month));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0),
+        child: ShimmerBox(
+          width: MediaQuery.of(context).size.width,
+          height: 110,
+        ),
+      );
+    }
+
+    final growthPercentage = AdminGrowthController.calculateGrowth(
+      widget.previousMonthUsers,
+      widget.currentMonthUsers,
+    );
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
@@ -103,14 +138,13 @@ class _ManageUserGrowthCardState extends State<ManageUserGrowthCard> {
 
               Expanded(
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
-                      '9.12%',
-                      style: TextStyle(
+                    Text(
+                      "${growthPercentage.toStringAsFixed(2)}%",
+                      style: const TextStyle(
                         fontFamily: AppTypography.family,
                         fontWeight: FontWeight.w900,
-                        fontSize: 40,
+                        fontSize: 24,
                         color: AppColors.secondaryDark,
                       ),
                     ),
@@ -121,21 +155,21 @@ class _ManageUserGrowthCardState extends State<ManageUserGrowthCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Monthly Growth',
+                          "Monthly Growth",
                           style: TextStyle(
-                            fontFamily: AppTypography.family,
+                            color: Colors.white,
                             fontSize: 14,
-                            color: AppColors.white,
+                            fontFamily: AppTypography.family,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
+
                         Text(
-                          selectedMonth,
+                          DateFormat("MMMM yyyy").format(selectedDate),
                           style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7),
                             fontFamily: AppTypography.family,
-                            fontSize: 13,
-                            color: AppColors.white.withValues(alpha: 0.7),
                           ),
                         ),
                       ],

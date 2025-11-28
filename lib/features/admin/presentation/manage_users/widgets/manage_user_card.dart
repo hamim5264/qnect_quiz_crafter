@@ -7,7 +7,7 @@ import '../../../../../ui/design_system/tokens/typography.dart';
 class ManageUserCard extends StatelessWidget {
   final String name;
   final String email;
-  final String image;
+  final String? image;
   final String role;
 
   const ManageUserCard({
@@ -37,7 +37,19 @@ class ManageUserCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(radius: 28, backgroundImage: AssetImage(image)),
+          CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.grey.shade300,
+            backgroundImage:
+                (image != null && image!.isNotEmpty)
+                    ? NetworkImage(image!)
+                    : null,
+            child:
+                (image == null || image!.isEmpty)
+                    ? const Icon(Icons.person, size: 28, color: Colors.black54)
+                    : null,
+          ),
+
           const SizedBox(width: 14),
 
           Expanded(
@@ -62,20 +74,11 @@ class ManageUserCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.push(
-                        '/chat',
-                        extra: {
-                          'name': name,
-                          'avatar': image,
-                          'isActive': true,
-                          'messages': _loadUserMessages(name),
-                        },
-                      );
-                    },
+                    onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryLight,
                       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -121,26 +124,5 @@ class ManageUserCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  List<Map<String, dynamic>> _loadUserMessages(String userName) {
-    // you can later replace this with Firestore query
-    if (userName == 'Hamim') {
-      return [
-        {
-          'text': 'Hello! Can you check my quiz?',
-          'time': '08:30 PM',
-          'isMe': false,
-          'seen': true,
-        },
-        {
-          'text': 'Sure, I’ll review it shortly!',
-          'time': '08:32 PM',
-          'isMe': true,
-          'seen': true,
-        },
-      ];
-    }
-    return [];
   }
 }
