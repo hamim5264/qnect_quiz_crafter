@@ -32,19 +32,19 @@ class StudentModel {
 
   factory StudentModel.fromMap(Map<String, dynamic> data) {
     return StudentModel(
-      uid: data['uid'] ?? "",
-      firstName: data['firstName'] ?? "",
-      lastName: data['lastName'] ?? "",
-      email: data['email'] ?? "",
-      profileImage: data['profileImage'],
+      uid: data['uid']?.toString() ?? "",
+      firstName: data['firstName']?.toString() ?? "",
+      lastName: data['lastName']?.toString() ?? "",
+      email: data['email']?.toString() ?? "",
+      profileImage: data['profileImage']?.toString(),
 
-      phone: data['phone'] ?? "",
-      dob: data['dob'] ?? "",
-      address: data['address'] ?? "",
-      group: data['group'] ?? "",
+      phone: data['phone']?.toString(),
+      dob: data['dob']?.toString(),
+      address: data['address']?.toString(),
+      group: data['group']?.toString(),
 
-      level: data['level'] ?? "Level 00",
-      xp: data['xp'] ?? "0 XP",
+      level: data['level']?.toString() ?? "Level 00",
+      xp: data['xp']?.toString() ?? "0 XP",
     );
   }
 
