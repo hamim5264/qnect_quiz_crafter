@@ -34,20 +34,7 @@ class _StartupGateState extends ConsumerState<StartupGate> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return context.go('/onboarding');
-    }
-
-    if (user.email == "devenginesoftsolution@gmail.com") {
-      final adminSnap =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-
-      final adminRole = adminSnap.data()?['role'];
-      if (adminRole == "admin") {
-        return context.go('/admin-home');
-      }
+      return context.go('/sign-in');
     }
 
     final snap =
@@ -58,13 +45,42 @@ class _StartupGateState extends ConsumerState<StartupGate> {
 
     if (!mounted) return;
 
-    final role = snap.data()?['role'];
+    if (!snap.exists) {
+      FirebaseAuth.instance.signOut();
+      return context.go('/sign-in');
+    }
 
-    if (role == 'teacher') {
-      return context.go('/teacher-home');
-    } else {
+    final data = snap.data()!;
+    final role = data['role'];
+    final status = data['accountStatus'] ?? "approved";
+
+    if (user.email == "devenginesoftsolution@gmail.com" && role == "admin") {
+      return context.go('/admin-home');
+    }
+
+    if (role == "teacher") {
+      if (status == "pending") {
+        return context.go('/teacher-status', extra: user.email);
+      }
+
+      if (status == "rejected") {
+        return context.go('/rejected', extra: user.email);
+      }
+
+      if (status == "blocked") {
+        return context.go('/blocked');
+      }
+
+      if (status == "approved") {
+        return context.go('/teacher-home');
+      }
+    }
+
+    if (role == "student") {
       return context.go('/guest_and_student-home');
     }
+
+    return context.go('/sign-in');
   }
 
   @override

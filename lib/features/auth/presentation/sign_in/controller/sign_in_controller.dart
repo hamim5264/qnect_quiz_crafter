@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qnect_quiz_crafter/common/widgets/app_toast.dart';
+
 import '../../../providers/auth_providers.dart';
 import 'sign_in_state.dart';
+import '../../../../../common/widgets/app_toast.dart';
 
 final signInControllerProvider =
     NotifierProvider<SignInController, SignInState>(SignInController.new);
@@ -30,16 +32,90 @@ class SignInController extends Notifier<SignInState> {
     }
 
     state = state.copyWith(loading: true);
+
     final auth = ref.read(authServiceProvider);
 
     try {
-      await auth.signInWithEmail(state.email.trim(), state.password);
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection("teacher_status_lookup")
+              .doc(state.email.trim())
+              .get();
+
+      if (snapshot.exists) {
+        final lookup = snapshot.data()!;
+        final status = lookup["accountStatus"];
+
+        if (status == "pending") {
+          if (context.mounted) {
+            context.go('/teacher-status', extra: state.email.trim());
+          }
+          state = state.copyWith(loading: false);
+          return;
+        }
+
+        if (status == "rejected") {
+          if (context.mounted) {
+            context.go('/rejected', extra: state.email.trim());
+          }
+          state = state.copyWith(loading: false);
+          return;
+        }
+
+        if (status == "blocked") {
+          if (context.mounted) {
+            context.go('/blocked');
+          }
+          state = state.copyWith(loading: false);
+          return;
+        }
+      }
+
+      final cred = await auth.signInWithEmail(
+        state.email.trim(),
+        state.password,
+      );
+
+      final uid = cred.user!.uid;
+
+      final userDoc =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
+
+      if (!userDoc.exists) {
+        AppToast.showError(context, "User data not found");
+        return;
+      }
+
+      final data = userDoc.data()!;
+      final role = data["role"];
+      final status = data["accountStatus"] ?? "approved";
+
+      if (role == "teacher") {
+        if (status == "pending") {
+          if (context.mounted) {
+            context.go('/teacher-status', extra: state.email.trim());
+          }
+          return;
+        }
+
+        if (status == "rejected") {
+          if (context.mounted) {
+            context.go('/rejected', extra: state.email.trim());
+          }
+          return;
+        }
+
+        if (status == "blocked") {
+          if (context.mounted) {
+            context.go('/blocked');
+          }
+          return;
+        }
+      }
 
       AppToast.showSuccess(context, "Welcome back!");
 
-      if (context.mounted) {
-        context.go('/');
-      }
+      if (context.mounted) context.go('/');
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':

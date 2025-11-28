@@ -38,41 +38,64 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final user = auth.currentUser;
 
     if (user == null) {
-      context.go('/onboarding');
+      if (mounted) context.go('/onboarding');
       return;
     }
 
-    if (user.email == "devenginesoftsolution@gmail.com") {
-      final doc =
-          await ref
-              .read(firestoreProvider)
-              .collection('users')
-              .doc(user.uid)
-              .get();
+    final firestore = ref.read(firestoreProvider);
 
-      final role = doc.data()?['role'];
-      if (role == "admin") {
-        context.go('/admin-home');
+    if (user.email == "devenginesoftsolution@gmail.com") {
+      final adminDoc = await firestore.collection("users").doc(user.uid).get();
+      if (adminDoc.data()?['role'] == "admin") {
+        if (mounted) context.go('/admin-home');
         return;
       }
     }
 
-    final doc =
-        await ref
-            .read(firestoreProvider)
-            .collection('users')
-            .doc(user.uid)
-            .get();
+    final snap = await firestore.collection("users").doc(user.uid).get();
+    final data = snap.data();
 
-    final role = doc.data()?['role'];
-
-    if (role == 'teacher') {
-      context.go('/teacher-home');
-    } else if (role == 'student') {
-      context.go('/guest_and_student-home');
-    } else {
-      context.go('/guest_and_student-home');
+    if (data == null) {
+      await auth.signOut();
+      if (mounted) context.go('/sign-in');
+      return;
     }
+
+    final role = data['role'];
+    final status = data['accountStatus'] ?? "approved";
+
+    if (role == "teacher") {
+      if (status == "pending") {
+        if (mounted) {
+          context.go('/teacher-status', extra: data['email']);
+        }
+        return;
+      }
+
+      if (status == "rejected") {
+        if (mounted) {
+          context.go('/rejected', extra: data['email']);
+        }
+        return;
+      }
+
+      if (status == "blocked") {
+        if (mounted) context.go('/blocked');
+        return;
+      }
+
+      if (status == "approved") {
+        if (mounted) context.go('/teacher-home');
+        return;
+      }
+    }
+
+    if (role == "student") {
+      if (mounted) context.go('/guest_and_student-home');
+      return;
+    }
+
+    if (mounted) context.go('/sign-in');
   }
 
   @override

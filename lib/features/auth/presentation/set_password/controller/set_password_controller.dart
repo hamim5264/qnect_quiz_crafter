@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../common/widgets/app_toast.dart';
 import '../../../providers/temp_auth_providers.dart';
@@ -101,13 +102,18 @@ class SetPasswordController extends Notifier<SetPasswordState> {
       final tempEmail = ref.read(tempEmailProvider);
       const tempPass = "temp@123456";
 
+      if (tempEmail == null) {
+        AppToast.showError(context, "Session expired. Please login again.");
+        context.go('/sign-in');
+        return;
+      }
+
       final cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: tempEmail!,
+        email: tempEmail,
         password: tempPass,
       );
 
       final user = cred.user;
-
       if (user == null) {
         AppToast.showError(context, "Session expired. Please login again.");
         context.go('/sign-in');
@@ -116,7 +122,22 @@ class SetPasswordController extends Notifier<SetPasswordState> {
 
       await user.updatePassword(state.password);
 
-      AppToast.showSuccess(context, "Password set successfully!");
+      final snap =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+      String role = snap.data()?['role'] ?? "student";
+
+      if (role == "teacher") {
+        AppToast.showSuccess(
+          context,
+          "Account created successfully! You can now login and check your status.",
+        );
+      } else {
+        AppToast.showSuccess(context, "Account created successfully!");
+      }
 
       ref.read(tempEmailProvider.notifier).state = null;
 

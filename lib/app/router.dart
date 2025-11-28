@@ -52,7 +52,10 @@ import '../features/auth/presentation/sign_in/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up/sign_up_screen.dart';
 import '../features/auth/presentation/verify_email/verify_email_screen.dart';
 import '../features/guest_and_student/student_profile/student_profile_screen.dart';
-import '../features/teacher/presentation/guest_and_teacher_profile/guest_and_teacher_profile_screen.dart';
+import '../features/teacher/presentation/teacher_profile/teacher_profile_screen.dart';
+import '../features/teacher/presentation/teacher_status/blocked_teacher_screen.dart';
+import '../features/teacher/presentation/teacher_status/rejected_teacher_screen.dart';
+import '../features/teacher/presentation/teacher_status/teacher_status_screen.dart';
 
 final router = GoRouter(
   routes: [
@@ -127,7 +130,7 @@ final router = GoRouter(
       path: '/edit-profile/:role',
       name: 'editProfile',
       builder: (context, state) {
-        final role = state.pathParameters['role'] ?? 'admin';
+        final role = state.pathParameters['role'] ?? 'teacher';
         return EditProfileScreen(role: role);
       },
     ),
@@ -167,11 +170,6 @@ final router = GoRouter(
         final email = state.extra as String;
         return VerifyOtpScreen(email: email);
       },
-    ),
-    GoRoute(
-      path: '/teacher-home',
-      name: 'teacherHome',
-      builder: (_, __) => const TeacherDashboardScreen(),
     ),
 
     GoRoute(
@@ -382,14 +380,27 @@ final router = GoRouter(
 
     /// Teacher Dashboard
     GoRoute(
-      path: '/guest_teacher-profile',
+      path: '/teacher-status',
       builder: (context, state) {
-        final data = state.extra as Map?;
-        return GuestAndTeacherProfileScreen(
-          isGuest: data?['isGuest'] ?? true,
-          username: data?['username'] ?? "GuestUser",
-          email: data?['email'] ?? "guest@mail.com",
-        );
+        final email = state.extra as String;
+        return TeacherStatusScreen(email: email);
+      },
+    ),
+
+    GoRoute(
+      path: '/rejected',
+      builder: (context, state) {
+        final email = state.extra as String;
+        return RejectedTeacherScreen(email: email);
+      },
+    ),
+
+    GoRoute(
+      path: '/blocked',
+      name: 'blocked',
+      builder: (context, state) {
+        final email = state.extra as String?;
+        return BlockedTeacherScreen(email: email);
       },
     ),
 
@@ -412,6 +423,25 @@ final router = GoRouter(
       builder: (context, state) {
         final isGuest = state.extra as bool? ?? true;
         return GuestAndStudentDashboardScreen(isGuestUser: isGuest);
+      },
+    ),
+
+    GoRoute(
+      path: '/teacher-home',
+      name: 'teacherHome',
+      builder: (context, state) => const TeacherDashboardScreen(),
+    ),
+    GoRoute(
+      path: '/teacher-profile',
+      name: 'teacherProfile',
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>?;
+
+        return TeacherProfileScreen(
+          username: data?['username'] ?? "Teacher",
+          email: data?['email'] ?? "email@example.com",
+          profileImage: data?['profileImage'],
+        );
       },
     ),
   ],

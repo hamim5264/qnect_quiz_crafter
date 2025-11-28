@@ -82,8 +82,10 @@ class SignUpController extends Notifier<SignUpState> {
         return;
       }
 
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        "uid": user.uid,
+      final uid = user.uid;
+
+      final Map<String, dynamic> userData = {
+        "uid": uid,
         "role": state.role.name,
         "firstName": state.firstName.trim(),
         "lastName": state.lastName.trim(),
@@ -91,15 +93,62 @@ class SignUpController extends Notifier<SignUpState> {
         "dob": state.dob?.toIso8601String(),
         "phone": state.phone.trim(),
         "address": state.address.trim(),
-        if (state.role == SignUpRole.student) ...{
+        "createdAt": DateTime.now().toIso8601String(),
+      };
+
+      if (state.role == SignUpRole.student) {
+        userData.addAll({
           "level": state.level,
           "group": state.group,
-        } else
-          "resumeLink": state.resumeLink.trim(),
-        "createdAt": DateTime.now().toIso8601String(),
-      });
+          "accountStatus": "approved",
+          "attemptCount": 0,
+        });
+      }
 
-      AppToast.showSuccess(context, "Account created! Verify OTP email");
+      if (state.role == SignUpRole.teacher) {
+        userData.addAll({
+          "resumeLink": state.resumeLink.trim(),
+          "accountStatus": "pending",
+          "attemptCount": 1,
+          "feedback": [],
+        });
+      }
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .set(userData);
+
+      if (state.role == SignUpRole.teacher) {
+        await FirebaseFirestore.instance
+            .collection("teacher_status_lookup")
+            .doc(state.email.trim())
+            .set({
+              "email": state.email.trim(),
+              "uid": uid,
+              "accountStatus": "pending",
+              "attemptCount": 1,
+              "firstName": state.firstName.trim(),
+              "lastName": state.lastName.trim(),
+              "createdAt": DateTime.now().toIso8601String(),
+            });
+      }
+
+      await FirebaseFirestore.instance
+          .collection("notifications")
+          .doc("admin-panel")
+          .collection("items")
+          .add({
+            "type":
+                state.role == SignUpRole.teacher
+                    ? "teacher_request"
+                    : "new_user",
+            "name": "${state.firstName.trim()} ${state.lastName.trim()}",
+            "email": state.email.trim(),
+            "role": state.role.name,
+            "timestamp": DateTime.now().toIso8601String(),
+            "status": "unread",
+          });
 
       if (context.mounted) {
         context.go('/verify-otp', extra: state.email.trim());
