@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -45,8 +44,13 @@ class UniversalDashboardAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String finalName = isGuest ? _guestName() : username;
-    final String finalXp = isGuest ? "XP 0" : xpText;
+    final bool isTeacher = role == "teacher";
+
+    final bool effectiveIsGuest = isTeacher ? false : isGuest;
+
+    final String finalName = effectiveIsGuest ? _guestName() : username;
+
+    final String finalXp = effectiveIsGuest ? "XP 0" : xpText;
 
     return Container(
       width: double.infinity,
@@ -66,21 +70,20 @@ class UniversalDashboardAppBar extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (role == "teacher") {
+                  if (isTeacher) {
                     context.push(
-                      '/guest_teacher-profile',
+                      '/teacher-profile',
                       extra: {
-                        'isGuest': isGuest,
-                        'username': finalName,
+                        'username': username,
                         'email': email,
                         'profileImage': profileImage,
                       },
                     );
-                  } else if (role == "student" || role == "guest") {
+                  } else {
                     context.push(
                       '/student-profile',
                       extra: {
-                        'isGuest': isGuest,
+                        'isGuest': effectiveIsGuest,
                         'username': finalName,
                         'email': email,
                         'profileImage': profileImage,
@@ -100,11 +103,11 @@ class UniversalDashboardAppBar extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: _buildProfileImage(),
+                        child: _buildProfileImage(isTeacher, effectiveIsGuest),
                       ),
                     ),
 
-                    if (!isGuest)
+                    if (!effectiveIsGuest)
                       Positioned(
                         bottom: -4,
                         right: -4,
@@ -152,7 +155,9 @@ class UniversalDashboardAppBar extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      isGuest ? "Welcome to QuizCrafter!" : motto,
+                      effectiveIsGuest && !isTeacher
+                          ? "Welcome to QuizCrafter!"
+                          : motto,
                       style: TextStyle(
                         fontSize: 12,
                         fontFamily: AppTypography.family,
@@ -162,7 +167,7 @@ class UniversalDashboardAppBar extends StatelessWidget {
 
                     const SizedBox(height: 6),
 
-                    if (!isGuest)
+                    if (!effectiveIsGuest)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -189,12 +194,12 @@ class UniversalDashboardAppBar extends StatelessWidget {
               Column(
                 children: [
                   _glassButton(
-                    disabled: isGuest,
+                    disabled: effectiveIsGuest,
                     icon: CupertinoIcons.bell,
                     onTap: () {},
                   ),
                   _glassButton(
-                    disabled: isGuest,
+                    disabled: effectiveIsGuest,
                     icon: CupertinoIcons.bubble_right,
                     onTap: () {},
                   ),
@@ -205,11 +210,11 @@ class UniversalDashboardAppBar extends StatelessWidget {
 
           const SizedBox(height: 18),
 
-          _buildXPBar(finalXp),
+          _buildXPBar(finalXp, effectiveIsGuest),
 
           const SizedBox(height: 10),
 
-          if (isGuest)
+          if (effectiveIsGuest && !isTeacher)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -238,6 +243,18 @@ class UniversalDashboardAppBar extends StatelessWidget {
     );
   }
 
+  Widget _buildProfileImage(bool isTeacher, bool effectiveIsGuest) {
+    if (effectiveIsGuest && !isTeacher ||
+        profileImage == null ||
+        profileImage!.isEmpty) {
+      return Container(
+        color: Colors.white12,
+        child: const Icon(Icons.person, color: Colors.white70, size: 40),
+      );
+    }
+    return Image.network(profileImage!, fit: BoxFit.cover);
+  }
+
   Widget _glassButton({
     required bool disabled,
     required IconData icon,
@@ -262,22 +279,13 @@ class UniversalDashboardAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileImage() {
-    if (isGuest || profileImage == null || profileImage!.isEmpty) {
-      return Container(
-        color: Colors.white12,
-        child: const Icon(Icons.person, color: Colors.white70, size: 40),
-      );
-    }
-    return Image.network(profileImage!, fit: BoxFit.cover);
-  }
-
-  Widget _buildXPBar(String xpString) {
+  Widget _buildXPBar(String xpString, bool effectiveIsGuest) {
     final int currentXP =
         int.tryParse(xpString.replaceAll("XP", "").trim()) ?? 0;
 
     const int maxXP = 100;
-    final double progress = isGuest ? 0 : (currentXP / maxXP).clamp(0.0, 1.0);
+    final double progress =
+        (!effectiveIsGuest) ? (currentXP / maxXP).clamp(0.0, 1.0) : 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

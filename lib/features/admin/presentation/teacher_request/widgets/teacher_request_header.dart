@@ -31,9 +31,9 @@ class TeacherRequestHeader extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: Colors.transparent,
               radius: 28,
-              backgroundImage: AssetImage(avatar),
+              backgroundColor: AppColors.primaryDark.withValues(alpha: 0.4),
+              child: const Icon(Icons.person, color: Colors.white, size: 26),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -48,6 +48,7 @@ class TeacherRequestHeader extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     email,
@@ -56,6 +57,7 @@ class TeacherRequestHeader extends StatelessWidget {
                       color: Colors.white70,
                       fontSize: 13,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   Container(

@@ -23,6 +23,13 @@ class TeacherRequestInfoCard extends StatefulWidget {
 
 class _TeacherRequestInfoCardState extends State<TeacherRequestInfoCard> {
   Future<void> _openResumeLink() async {
+    if (!widget.resume.startsWith('http')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid or missing resume link.')),
+      );
+      return;
+    }
+
     final uri = Uri.parse(widget.resume);
     try {
       final launched = await launchUrl(
@@ -63,6 +70,21 @@ class _TeacherRequestInfoCardState extends State<TeacherRequestInfoCard> {
       return '${url.substring(0, 6)}...${url.substring(url.length - 10)}';
     }
     return url;
+  }
+
+  String _statusLabel(String raw) {
+    switch (raw.toLowerCase()) {
+      case 'pending':
+        return 'Pending';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
+      case 'blocked':
+        return 'Blocked';
+      default:
+        return raw;
+    }
   }
 
   Widget _buildRow(
@@ -182,7 +204,7 @@ class _TeacherRequestInfoCardState extends State<TeacherRequestInfoCard> {
           _buildRow('Phone', widget.phone),
           _buildRow('Address', widget.address),
           _buildRow('Resume Link', widget.resume, isLink: true),
-          _buildRow('Status', widget.status),
+          _buildRow('Status', _statusLabel(widget.status)),
         ],
       ),
     );
