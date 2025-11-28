@@ -13,7 +13,15 @@ class NeedHelpScreen extends StatelessWidget {
       backgroundColor: AppColors.primaryDark,
       appBar: CommonRoundedAppBar(
         title: 'Need Help',
-        onBack: () => context.pop(),
+        onBack: () {
+          final router = GoRouter.of(context);
+
+          if (router.canPop()) {
+            router.pop();
+          } else {
+            Navigator.of(context).maybePop();
+          }
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -81,7 +89,7 @@ class NeedHelpScreen extends StatelessWidget {
                 divider(),
 
                 sectionTitle("Contact"),
-                bullet("Need help? Contact support with Order ID/Txn ID"),
+                bullet("devenginesoftsolution@gmail.com"),
               ],
             ),
           ),
