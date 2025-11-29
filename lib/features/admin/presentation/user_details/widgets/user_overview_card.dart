@@ -9,12 +9,21 @@ class UserOverviewCard extends StatelessWidget {
   final String role;
   final bool isExpanded;
   final VoidCallback onChanged;
+  final String email;
+
+  final String displayName;
+  final String? profileImage;
+  final List<String> bulletItems;
 
   const UserOverviewCard({
     super.key,
     required this.role,
     required this.isExpanded,
     required this.onChanged,
+    required this.displayName,
+    required this.profileImage,
+    required this.bulletItems,
+    required this.email,
   });
 
   @override
@@ -35,7 +44,11 @@ class UserOverviewCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              UserDetailsHeader(role: role),
+              UserDetailsHeader(
+                displayName: displayName,
+                email: email,
+                profileImage: profileImage,
+              ),
 
               const SizedBox(height: 12),
 
@@ -46,20 +59,9 @@ class UserOverviewCard extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 6,
                 childAspectRatio: 3.8,
-                children:
-                    isTeacher
-                        ? const [
-                          _BulletItem("23 Courses Created"),
-                          _BulletItem("124 Quizzes Created"),
-                          _BulletItem("55 Liked"),
-                          _BulletItem("3.12% Monthly Growth"),
-                        ]
-                        : const [
-                          _BulletItem("18 Courses Enrolled"),
-                          _BulletItem("76 Quizzes Given"),
-                          _BulletItem("Science Group"),
-                          _BulletItem("Level: HSC"),
-                        ],
+                children: bulletItems
+                    .map((t) => _BulletItem(t))
+                    .toList(growable: false),
               ),
 
               const SizedBox(height: 14),
@@ -74,7 +76,6 @@ class UserOverviewCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
 
-                  // 🔹 Now this one will navigate if it's teacher
                   _ChipButton(
                     label: isTeacher ? "Sells Report" : "Leaderboard #1",
                     color: Colors.white,

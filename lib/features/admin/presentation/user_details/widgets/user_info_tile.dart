@@ -73,7 +73,7 @@ class UserInfoTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(16),
                   bottomRight: Radius.circular(16),
                 ),
@@ -109,7 +109,6 @@ class UserInfoTile extends StatelessWidget {
                         ),
                         dropdownColor: AppColors.primaryLight,
                         menuWidth: 120,
-
                         borderRadius: BorderRadius.circular(8),
                         style: const TextStyle(
                           fontFamily: AppTypography.family,
