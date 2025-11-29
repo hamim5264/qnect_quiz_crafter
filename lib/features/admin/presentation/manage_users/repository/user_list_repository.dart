@@ -12,7 +12,7 @@ class UserListRepository {
             .where("role", isEqualTo: "teacher")
             .get();
 
-    return snap.docs.map((d) => d.data()).toList();
+    return snap.docs.map((d) => {"id": d.id, ...d.data()}).toList();
   }
 
   Future<List<Map<String, dynamic>>> getStudents() async {
@@ -22,7 +22,7 @@ class UserListRepository {
             .where("role", isEqualTo: "student")
             .get();
 
-    return snap.docs.map((d) => d.data()).toList();
+    return snap.docs.map((d) => {"id": d.id, ...d.data()}).toList();
   }
 
   Future<List<Map<String, dynamic>>> getBlockedUsers() async {
@@ -32,6 +32,6 @@ class UserListRepository {
             .where("accountStatus", isEqualTo: "blocked")
             .get();
 
-    return snap.docs.map((d) => d.data()).toList();
+    return snap.docs.map((d) => {"id": d.id, ...d.data()}).toList();
   }
 }

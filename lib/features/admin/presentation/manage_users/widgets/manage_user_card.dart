@@ -106,7 +106,7 @@ class ManageUserCard extends StatelessWidget {
 
           GestureDetector(
             onTap: () {
-              context.push('/user-details/$role');
+              context.push('/user-details/$role', extra: email);
             },
             child: Container(
               padding: const EdgeInsets.all(8),

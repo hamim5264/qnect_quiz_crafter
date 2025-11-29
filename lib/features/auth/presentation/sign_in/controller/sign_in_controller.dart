@@ -82,13 +82,23 @@ class SignInController extends Notifier<SignInState> {
           await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
       if (!userDoc.exists) {
-        AppToast.showError(context, "User data not found");
+        AppToast.showError(
+          context,
+          "Your account has been removed. Please contact support.",
+        );
         return;
       }
 
       final data = userDoc.data()!;
       final role = data["role"];
-      final status = data["accountStatus"] ?? "approved";
+      final status = (data["accountStatus"] ?? "approved") as String;
+
+      if (status == "blocked") {
+        if (context.mounted) {
+          context.go('/blocked');
+        }
+        return;
+      }
 
       if (role == "teacher") {
         if (status == "pending") {
@@ -101,13 +111,6 @@ class SignInController extends Notifier<SignInState> {
         if (status == "rejected") {
           if (context.mounted) {
             context.go('/rejected', extra: state.email.trim());
-          }
-          return;
-        }
-
-        if (status == "blocked") {
-          if (context.mounted) {
-            context.go('/blocked');
           }
           return;
         }

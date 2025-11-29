@@ -211,13 +211,18 @@ final router = GoRouter(
       name: 'manage-users',
       builder: (_, __) => const ManageUsersScreen(),
     ),
+
     GoRoute(
       path: '/user-details/:role',
+      name: 'user-details',
       builder: (context, state) {
-        final role = state.pathParameters['role'] ?? 'Teacher';
-        return UserDetailsScreen(role: role);
+        final role = state.pathParameters['role'];
+        final email = state.extra as String;
+
+        return UserDetailsScreen(role: role!, email: email);
       },
     ),
+
     GoRoute(
       path: '/teacher-sells-report',
       name: 'teacherSellsReport',
