@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../ui/design_system/tokens/colors.dart';
 import '../../ui/design_system/tokens/typography.dart';
+import '../screens/chat/providers/chat_unread_provider.dart';
 
-class UniversalDashboardAppBar extends StatelessWidget {
+class UniversalDashboardAppBar extends ConsumerWidget {
   final String role;
   final String greeting;
   final String username;
@@ -43,7 +45,7 @@ class UniversalDashboardAppBar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isTeacher = role == "teacher";
 
     final bool effectiveIsGuest = isTeacher ? false : isGuest;
@@ -198,10 +200,30 @@ class UniversalDashboardAppBar extends StatelessWidget {
                     icon: CupertinoIcons.bell,
                     onTap: () {},
                   ),
-                  _glassButton(
-                    disabled: effectiveIsGuest,
-                    icon: CupertinoIcons.bubble_right,
-                    onTap: () {},
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _glassButton(
+                        disabled: effectiveIsGuest,
+                        icon: CupertinoIcons.bubble_right,
+                        onTap: () {
+                          if (!effectiveIsGuest) {
+                            context.pushNamed(
+                              'messages',
+                              pathParameters: {"role": role}, // student/teacher/guest
+                            );
+                          }
+                        },
+                      ),
+
+                      // ---------- BADGE (no UI change, overlay only) ----------
+                      if (!effectiveIsGuest)
+                        Positioned(
+                          right: 0,
+                          top: -2,
+                          child: _UnreadBadge(ref),
+                        ),
+                    ],
                   ),
                 ],
               ),
@@ -242,6 +264,33 @@ class UniversalDashboardAppBar extends StatelessWidget {
       ),
     );
   }
+
+  Widget _UnreadBadge(WidgetRef ref) {
+    final unread = ref.watch(unreadMessageCountProvider).maybeWhen(
+      data: (count) => count,
+      orElse: () => 0,
+    );
+
+    if (unread == 0) return const SizedBox();
+
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: const BoxDecoration(
+        color: Colors.redAccent,
+        shape: BoxShape.circle,
+      ),
+      child: Text(
+        unread > 9 ? "9+" : unread.toString(),
+        style: const TextStyle(
+          fontSize: 10,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontFamily: AppTypography.family,
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildProfileImage(bool isTeacher, bool effectiveIsGuest) {
     if (effectiveIsGuest && !isTeacher ||

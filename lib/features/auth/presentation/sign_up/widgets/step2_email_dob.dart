@@ -78,7 +78,7 @@ class Step2EmailDob extends ConsumerWidget {
                           foregroundColor: AppColors.secondaryDark,
                         ),
                       ),
-                      dialogTheme: const DialogTheme(
+                      dialogTheme: const DialogThemeData(
                         backgroundColor: AppColors.primaryDark,
                       ),
                     ),

@@ -49,11 +49,13 @@ class AppTheme {
         ),
       ),
       iconTheme: const IconThemeData(color: Colors.white),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.primaryLight,
         elevation: 0,
-        margin: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

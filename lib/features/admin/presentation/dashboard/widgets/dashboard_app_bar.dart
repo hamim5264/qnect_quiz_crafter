@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../../common/screens/chat/providers/chat_unread_provider.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -133,14 +135,58 @@ class DashboardAppBar extends StatelessWidget {
                           size: 22,
                         ),
                       ),
-                      IconButton(
-                        onPressed:
-                            () => context.pushNamed('messages', extra: 'admin'),
-                        icon: const Icon(
-                          CupertinoIcons.ellipses_bubble,
-                          color: Colors.white,
-                          size: 22,
-                        ),
+                      // IconButton(
+                      //   onPressed:
+                      //       () => context.pushNamed('messages', extra: 'admin'),
+                      //   icon: const Icon(
+                      //     CupertinoIcons.ellipses_bubble,
+                      //     color: Colors.white,
+                      //     size: 22,
+                      //   ),
+                      // ),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final unread = ref.watch(unreadMessageCountProvider).value ?? 0;
+
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              IconButton(
+                                onPressed: () => context.pushNamed(
+                            'messages',
+                            pathParameters: {'role': 'admin'},
+                          ),
+                          icon: const Icon(
+                                  CupertinoIcons.ellipses_bubble,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
+
+                              if (unread > 0)
+                                Positioned(
+                                  right: 2,
+                                  top: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.redAccent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      unread.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontFamily: AppTypography.family,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
