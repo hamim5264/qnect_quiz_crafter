@@ -135,28 +135,22 @@ class DashboardAppBar extends StatelessWidget {
                           size: 22,
                         ),
                       ),
-                      // IconButton(
-                      //   onPressed:
-                      //       () => context.pushNamed('messages', extra: 'admin'),
-                      //   icon: const Icon(
-                      //     CupertinoIcons.ellipses_bubble,
-                      //     color: Colors.white,
-                      //     size: 22,
-                      //   ),
-                      // ),
+
                       Consumer(
                         builder: (context, ref, _) {
-                          final unread = ref.watch(unreadMessageCountProvider).value ?? 0;
+                          final unread =
+                              ref.watch(unreadMessageCountProvider).value ?? 0;
 
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
                               IconButton(
-                                onPressed: () => context.pushNamed(
-                            'messages',
-                            pathParameters: {'role': 'admin'},
-                          ),
-                          icon: const Icon(
+                                onPressed:
+                                    () => context.pushNamed(
+                                      'messages',
+                                      pathParameters: {'role': 'admin'},
+                                    ),
+                                icon: const Icon(
                                   CupertinoIcons.ellipses_bubble,
                                   color: Colors.white,
                                   size: 22,

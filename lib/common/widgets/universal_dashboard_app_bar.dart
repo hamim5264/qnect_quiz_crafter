@@ -210,19 +210,14 @@ class UniversalDashboardAppBar extends ConsumerWidget {
                           if (!effectiveIsGuest) {
                             context.pushNamed(
                               'messages',
-                              pathParameters: {"role": role}, // student/teacher/guest
+                              pathParameters: {"role": role},
                             );
                           }
                         },
                       ),
 
-                      // ---------- BADGE (no UI change, overlay only) ----------
                       if (!effectiveIsGuest)
-                        Positioned(
-                          right: 0,
-                          top: -2,
-                          child: _UnreadBadge(ref),
-                        ),
+                        Positioned(right: 0, top: -2, child: _UnreadBadge(ref)),
                     ],
                   ),
                 ],
@@ -266,10 +261,9 @@ class UniversalDashboardAppBar extends ConsumerWidget {
   }
 
   Widget _UnreadBadge(WidgetRef ref) {
-    final unread = ref.watch(unreadMessageCountProvider).maybeWhen(
-      data: (count) => count,
-      orElse: () => 0,
-    );
+    final unread = ref
+        .watch(unreadMessageCountProvider)
+        .maybeWhen(data: (count) => count, orElse: () => 0);
 
     if (unread == 0) return const SizedBox();
 
@@ -290,7 +284,6 @@ class UniversalDashboardAppBar extends ConsumerWidget {
       ),
     );
   }
-
 
   Widget _buildProfileImage(bool isTeacher, bool effectiveIsGuest) {
     if (effectiveIsGuest && !isTeacher ||

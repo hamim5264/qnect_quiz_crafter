@@ -1,8 +1,6 @@
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Simple AES encryption helper.
-/// Stores cipher as "ivBase64|cipherBase64" in Firestore.
 class ChatCryptoHelper {
   static Key _buildKey() {
     final raw = dotenv.env['CHAT_SECRET_KEY'] ?? 'change_this_chat_key';

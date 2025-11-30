@@ -10,20 +10,19 @@ final unreadMessageCountProvider = StreamProvider<int>((ref) {
       .where('participants', arrayContains: uid)
       .snapshots()
       .map((snapshot) {
-    int count = 0;
+        int count = 0;
 
-    for (final doc in snapshot.docs) {
-      final data = doc.data();
+        for (final doc in snapshot.docs) {
+          final data = doc.data();
 
-      final lastSender = data['lastMessageSenderId'];
-      final seenBy = List<String>.from(data['lastMessageSeenBy'] ?? []);
+          final lastSender = data['lastMessageSenderId'];
+          final seenBy = List<String>.from(data['lastMessageSeenBy'] ?? []);
 
-      final isUnread = lastSender != uid && !seenBy.contains(uid);
+          final isUnread = lastSender != uid && !seenBy.contains(uid);
 
-      if (isUnread) count++;
-    }
+          if (isUnread) count++;
+        }
 
-    return count;
-  });
+        return count;
+      });
 });
-

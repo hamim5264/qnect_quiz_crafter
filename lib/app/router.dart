@@ -97,14 +97,6 @@ final router = GoRouter(
       name: 'notification',
       builder: (_, __) => const NotificationScreen(),
     ),
-    // GoRoute(
-    //   path: '/messages',
-    //   name: 'messages',
-    //   builder: (context, state) {
-    //     final role = state.extra as String? ?? 'admin';
-    //     return MessageScreen(role: role);
-    //   },
-    // ),
 
     GoRoute(
       path: '/messages/:role',
@@ -116,32 +108,17 @@ final router = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   path: '/chat',
-    //   name: 'chat',
-    //   builder: (context, state) {
-    //     final extra = state.extra as Map<String, dynamic>? ?? {};
-    //     return ChatScreen(
-    //       name: extra['name'] as String? ?? 'Unknown',
-    //       avatar:
-    //           extra['avatar'] as String? ??
-    //           'assets/images/admin/sample_teacher3.png',
-    //       isActive: extra['isActive'] as bool? ?? false,
-    //     );
-    //   },
-    // ),
-
     GoRoute(
       name: 'chat',
       path: '/chat',
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>? ?? {};
 
-        final String chatId   = (extra['chatId'] ?? '').toString();
-        final String peerId   = (extra['peerId'] ?? '').toString();
-        final String name     = (extra['name'] ?? 'Unknown User').toString();
-        final String? avatar  = extra['avatar'] as String?;
-        final bool isActive   = extra['isActive'] == true;
+        final String chatId = (extra['chatId'] ?? '').toString();
+        final String peerId = (extra['peerId'] ?? '').toString();
+        final String name = (extra['name'] ?? 'Unknown User').toString();
+        final String? avatar = extra['avatar'] as String?;
+        final bool isActive = extra['isActive'] == true;
         final String peerRole = (extra['peerRole'] ?? 'student').toString();
 
         return ChatScreen(
