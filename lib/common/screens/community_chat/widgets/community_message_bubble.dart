@@ -100,17 +100,25 @@ class CommunityMessageBubble extends StatelessWidget {
                 mainAxisAlignment:
                     isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                 children: [
-                  ...seenAvatars
-                      .take(4)
-                      .map(
-                        (a) => Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: CircleAvatar(
-                            radius: 8,
-                            backgroundImage: AssetImage(a),
-                          ),
-                        ),
+                  ...seenAvatars.map(
+                    (a) => Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: CircleAvatar(
+                        radius: 8,
+                        backgroundColor: Colors.white24,
+                        backgroundImage:
+                            (a.isNotEmpty) ? NetworkImage(a) : null,
+                        child:
+                            (a.isEmpty)
+                                ? const Icon(
+                                  Icons.person,
+                                  color: Colors.white70,
+                                  size: 10,
+                                )
+                                : null,
                       ),
+                    ),
+                  ),
                   if (seenCount > 4)
                     Text(
                       ' +${seenCount - 4} others',

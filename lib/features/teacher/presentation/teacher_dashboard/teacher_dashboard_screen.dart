@@ -163,7 +163,9 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/community-chat');
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Leaderboard",

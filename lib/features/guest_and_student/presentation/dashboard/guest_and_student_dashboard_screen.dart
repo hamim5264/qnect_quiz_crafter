@@ -177,7 +177,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/community-chat');
+                    },
                   ),
                   QuickActionItem(
                     title: "Leaderboard",
