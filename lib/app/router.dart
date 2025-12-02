@@ -27,6 +27,7 @@ import '../common/screens/leaderboard/leaderboard_screen.dart';
 import '../common/screens/messages/message_screen.dart';
 import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
+import '../common/screens/qc_vault/data/qc_vault_models.dart';
 import '../common/screens/quiz_genie/quiz_genie_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
 import '../features/admin/presentation/certificates/certificates_screen.dart';
@@ -52,6 +53,13 @@ import '../features/auth/presentation/sign_in/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up/sign_up_screen.dart';
 import '../features/auth/presentation/verify_email/verify_email_screen.dart';
 import '../features/guest_and_student/student_profile/student_profile_screen.dart';
+import '../features/teacher/course_management/models/teacher_course_model.dart';
+import '../features/teacher/course_management/presentation/add_course/add_course_screen.dart';
+import '../features/teacher/course_management/presentation/add_quiz/add_quiz_screen.dart';
+import '../features/teacher/course_management/presentation/add_quiz/qc_vault/teacher_qc_vault_import_screen.dart';
+import '../features/teacher/course_management/presentation/add_quiz/qc_vault/teacher_qc_vault_question_select_screen.dart';
+import '../features/teacher/course_management/presentation/course_details/teacher_course_details_screen.dart';
+import '../features/teacher/course_management/presentation/my_courses/teacher_my_courses_screen.dart';
 import '../features/teacher/presentation/teacher_profile/teacher_profile_screen.dart';
 import '../features/teacher/presentation/teacher_status/blocked_teacher_screen.dart';
 import '../features/teacher/presentation/teacher_status/rejected_teacher_screen.dart';
@@ -461,5 +469,52 @@ final router = GoRouter(
         );
       },
     ),
+
+    GoRoute(
+      path: '/teacher/my-courses',
+      name: 'teacherMyCourses',
+      builder: (context, state) => const TeacherMyCoursesScreen(),
+    ),
+
+    GoRoute(
+      path: '/teacher/add-course',
+      name: 'teacherAddCourse',
+      builder: (context, state) => const TeacherAddCourseScreen(),
+    ),
+
+    GoRoute(
+      path: '/teacher/course-details',
+      name: 'teacherCourseDetails',
+      builder: (context, state) {
+        final course = state.extra as TeacherCourseModel;
+        return TeacherCourseDetailsScreen(course: course);
+      },
+    ),
+
+    GoRoute(
+      path: '/teacher/add-quiz',
+      name: 'teacherAddQuiz',
+      builder: (context, state) {
+        final course = state.extra as TeacherCourseModel;
+        return TeacherAddQuizScreen(course: course);
+      },
+    ),
+
+    GoRoute(
+      path: '/teacher/qc-vault/import',
+      name: 'teacherQcVaultImport',
+      builder: (context, state) => const TeacherQCVaultImportScreen(),
+    ),
+
+    GoRoute(
+      path: '/teacher/qc-vault/questions',
+      name: 'teacherQcVaultQuestions',
+      builder: (context, state) {
+        final course = state.extra as QCVaultCourse;
+        return TeacherQCVaultQuestionSelectScreen(course: course);
+      },
+    ),
+
+
   ],
 );

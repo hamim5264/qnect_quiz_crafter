@@ -133,7 +133,9 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('teacherMyCourses');
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "App Paid Courses",
