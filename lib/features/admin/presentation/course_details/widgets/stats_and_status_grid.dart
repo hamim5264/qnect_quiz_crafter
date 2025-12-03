@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,10 @@ class StatsAndStatusGrid extends StatefulWidget {
   final String? initialRejection;
   final VoidCallback onDeleteCourse;
   final VoidCallback onEditCourse;
+  final String teacherId;
+  final String courseId;   // <-- ADD THIS
+
+
   final void Function(String status, {String? reason}) onStatusChanged;
 
   const StatsAndStatusGrid({
@@ -34,6 +39,11 @@ class StatsAndStatusGrid extends StatefulWidget {
     required this.onDeleteCourse,
     required this.onEditCourse,
     required this.onStatusChanged,
+    required this.teacherId,
+    required this.courseId,
+
+
+
   });
 
   @override
@@ -127,7 +137,7 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
                     ),
                   ),
                   Text(
-                    widget.durationText,
+                    widget.durationText,        // <-- Now it shows “20 D 5 H”
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: AppTypography.family,
@@ -144,6 +154,37 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
       ],
     );
   }
+
+  String _calculateDuration(dynamic start, dynamic end) {
+    // Convert Firestore Timestamp → DateTime
+    DateTime startDate;
+    DateTime endDate;
+
+    if (start is Timestamp) {
+      startDate = start.toDate();
+    } else if (start is String) {
+      startDate = DateTime.tryParse(start) ?? DateTime.now();
+    } else {
+      startDate = DateTime.now();
+    }
+
+    if (end is Timestamp) {
+      endDate = end.toDate();
+    } else if (end is String) {
+      endDate = DateTime.tryParse(end) ??
+          DateTime.now().add(const Duration(days: 30));
+    } else {
+      endDate = DateTime.now().add(const Duration(days: 30));
+    }
+
+    final diff = endDate.difference(startDate);
+
+    final days = diff.inDays;
+    final hours = diff.inHours % 24;
+
+    return "$days D $hours H";
+  }
+
 
   Widget _buildSmallCard({required Widget child, double fixedHeight = 90}) {
     return Container(
@@ -168,62 +209,119 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: AppColors.white,
-            backgroundImage:
-                widget.teacherImage != null
-                    ? NetworkImage(widget.teacherImage!)
-                    : null,
-            child:
-                widget.teacherImage == null
-                    ? const Icon(Icons.person, color: Colors.black)
-                    : null,
-          ),
-          const SizedBox(height: 6),
+          // CircleAvatar(
+          //   radius: 28,
+          //   backgroundColor: AppColors.white,
+          //   backgroundImage:
+          //       widget.teacherImage != null
+          //           ? NetworkImage(widget.teacherImage!)
+          //           : null,
+          //   child:
+          //       widget.teacherImage == null
+          //           ? const Icon(Icons.person, color: Colors.black)
+          //           : null,
+          // ),
+          // const SizedBox(height: 6),
 
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: [
+          //     // 🔥 TEACHER IMAGE
+          //     CircleAvatar(
+          //       radius: 28,
+          //       backgroundColor: AppColors.white,
+          //       backgroundImage: widget.teacherImage != null && widget.teacherImage!.isNotEmpty
+          //           ? NetworkImage(widget.teacherImage!)
+          //           : null,
+          //       child: (widget.teacherImage == null || widget.teacherImage!.isEmpty)
+          //           ? const Icon(Icons.person, color: Colors.black, size: 28)
+          //           : null,
+          //     ),
+          //
+          //     const SizedBox(height: 6),
+          //
+          //     // 🔥 TEACHER NAME
+          //     Text(
+          //       widget.teacherName,
+          //       overflow: TextOverflow.ellipsis,
+          //       textAlign: TextAlign.center,
+          //       style: const TextStyle(
+          //         fontFamily: AppTypography.family,
+          //         fontWeight: FontWeight.bold,
+          //         color: AppColors.white,
+          //       ),
+          //     ),
+          //
+          //     const SizedBox(height: 2),
+          //
+          //     // 🔥 VIEW PROFILE BUTTON
+          //     GestureDetector(
+          //       onTap: () {
+          //         /// YOU MUST PASS TEACHER ID
+          //         context.push(
+          //           '/user-details/${widget.teacherId}',   // <--- USE REAL TEACHER ID
+          //         );
+          //       },
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           const Text(
+          //             'View Profile',
+          //             style: TextStyle(
+          //               fontFamily: AppTypography.family,
+          //               color: AppColors.secondaryDark,
+          //             ),
+          //           ),
+          //           const SizedBox(width: 4),
+          //           const Icon(
+          //             CupertinoIcons.arrow_up_right_square_fill,
+          //             size: 16,
+          //             color: AppColors.secondaryDark,
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // 🔥 TEACHER IMAGE
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: AppColors.white,
+                backgroundImage: widget.teacherImage != null &&
+                    widget.teacherImage!.isNotEmpty
+                    ? NetworkImage(widget.teacherImage!)
+                    : null,
+                child: (widget.teacherImage == null ||
+                    widget.teacherImage!.isEmpty)
+                    ? const Icon(Icons.person, color: Colors.black, size: 32)
+                    : null,
+              ),
+
+              const SizedBox(height: 4),
+              Text("Course Created by",),
+
+              // 🔥 TEACHER NAME
               Text(
                 widget.teacherName,
-                overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontFamily: AppTypography.family,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.white,
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
               ),
-              const SizedBox(height: 2),
-              GestureDetector(
-                onTap: () {
-                  context.push('/user-details/Teacher');
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'View Profile',
-                      style: TextStyle(
-                        fontFamily: AppTypography.family,
-                        color: AppColors.secondaryDark,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      CupertinoIcons.arrow_up_right_square_fill,
-                      size: 16,
-                      color: AppColors.secondaryDark,
-                    ),
-                  ],
-                ),
-              ),
+
+              const SizedBox(height: 10),
+
+              const Divider(color: Colors.black26),
             ],
           ),
 
-          const SizedBox(height: 10),
-          const Divider(color: Colors.black26),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +402,10 @@ class _StatsAndStatusGridState extends State<StatsAndStatusGrid>
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    context.push('/admin-edit-course');
+                    context.pushNamed(
+                      'adminEditCourse',
+                      pathParameters: {'courseId': widget.courseId},
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.secondaryDark,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
 
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
@@ -111,23 +112,20 @@ class TeacherAddCourseScreen extends ConsumerWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondaryDark,
+                  backgroundColor: AppColors.primaryLight,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: state.isSubmitting
-                    ? const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.black,
-                )
+                    ? AppLoader(size: 28,)
                     : const Text(
                   "Create Course",
                   style: TextStyle(
                     fontFamily: AppTypography.family,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 16,
                   ),
                 ),

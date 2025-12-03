@@ -27,8 +27,8 @@ class TeacherCourseDetailsScreen extends ConsumerWidget {
   // ---------------------------------------------------------------------------
   // DELETE CONFIRMATION DIALOG
   // ---------------------------------------------------------------------------
-  void _confirmDelete(BuildContext context, WidgetRef ref) {
-    showDialog(
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -78,6 +78,7 @@ class TeacherCourseDetailsScreen extends ConsumerWidget {
       },
     );
   }
+
 
   double _calculateQuizProgress(DateTime startDate, DateTime endDate) {
     final now = DateTime.now();
@@ -169,17 +170,15 @@ class TeacherCourseDetailsScreen extends ConsumerWidget {
                         fontFamily: 'MaterialIcons',
                       ),
 
-                      onEdit: () {
-                        context.pushNamed(
-                          "teacherEditQuiz",
-                          extra: {"course": course, "quiz": q},
-                        );
-                      },
+                      attempts: q["attemptCount"] ?? 0,
+                      totalStudents: course.enrolledCount,   // ⭐ use existing field
 
                       onDelete: () async {
                         await repo.deleteQuiz(course.id, q["id"]);
                       },
                     );
+
+
 
 
                   }).toList(),

@@ -328,34 +328,93 @@ final router = GoRouter(
       path: '/admin-all-course',
       builder: (context, state) => const AllCourseScreen(),
     ),
+    // GoRoute(
+    //   name: 'adminCourseDetails',
+    //   path: '/admin-course-details',
+    //   builder: (context, state) {
+    //     final courseData = state.extra as Map<String, dynamic>?;
+    //     return CourseDetailsScreen(courseData: courseData ?? {});
+    //   },
+    // ),
     GoRoute(
       name: 'adminCourseDetails',
       path: '/admin-course-details',
       builder: (context, state) {
-        final courseData = state.extra as Map<String, dynamic>?;
-        return CourseDetailsScreen(courseData: courseData ?? {});
+        final courseId = state.extra as String;
+        return CourseDetailsScreen(courseId: courseId);
       },
     ),
+
+
+    // GoRoute(
+    //   name: 'adminEditCourse',
+    //   path: '/admin-edit-course',
+    //   builder: (context, state) => const EditCourseScreen(),
+    // ),
     GoRoute(
+      path: '/admin-edit-course/:courseId',
       name: 'adminEditCourse',
-      path: '/admin-edit-course',
-      builder: (context, state) => const EditCourseScreen(),
+      builder: (context, state) {
+        final courseId = state.pathParameters['courseId']!;
+        return EditCourseScreen(courseId: courseId);
+      },
     ),
+
+    // GoRoute(
+    //   path: '/edit-quiz',
+    //   name: 'editQuiz',
+    //   builder: (context, state) => const EditQuizScreen(),
+    // ),
+
     GoRoute(
-      path: '/edit-quiz',
-      name: 'editQuiz',
-      builder: (context, state) => const EditQuizScreen(),
+      name: 'adminEditQuiz',
+      path: '/admin-edit-quiz/:courseId/:quizId',
+      builder: (context, state) {
+        final courseId = state.pathParameters['courseId']!;
+        final quizId = state.pathParameters['quizId']!;
+        return EditQuizScreen(
+          courseId: courseId,
+          quizId: quizId,
+        );
+      },
     ),
+
+    // GoRoute(
+    //   name: 'adminQuizDetails',
+    //   path: '/admin-quiz-details',
+    //   builder: (context, state) => const QuizDetailsScreen(),
+    // ),
     GoRoute(
-      name: 'adminQuizDetails',
-      path: '/admin-quiz-details',
-      builder: (context, state) => const QuizDetailsScreen(),
+      name: "adminQuizDetails",
+      path: "/admin-quiz-details",
+      builder: (context, state) {
+        final quiz = state.extra as Map<String, dynamic>;
+        return QuizDetailsScreen(quiz: quiz);
+      },
     ),
+
+    // GoRoute(
+    //   name: 'adminQuizQuestionsInfo',
+    //   path: '/admin-quiz-questions-info',
+    //   builder: (context, state) => const QuizQuestionsInfoScreen(),
+    // ),
     GoRoute(
       name: 'adminQuizQuestionsInfo',
-      path: '/admin-quiz-questions-info',
-      builder: (context, state) => const QuizQuestionsInfoScreen(),
+      path: '/admin/quiz/questions',
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+
+        return QuizQuestionsInfoScreen(
+          quizTitle: data["title"] ?? "",
+          quizDuration: data["time"] as Duration,     // HERE FIX
+          questions: List<Map<String, dynamic>>.from(data["questions"]),
+        );
+      },
     ),
+
+
+
+
     GoRoute(
       name: 'adminPracticeQuiz',
       path: '/admin-practice-quiz/:role',

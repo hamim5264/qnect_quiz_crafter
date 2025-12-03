@@ -45,18 +45,38 @@ class _TeacherAddQuizScreenState
 
   late DateTime _startDate;
   late DateTime _endDate;
+  late DateTime allowedStart;
+  late DateTime allowedEnd;
+
 
   // question list returned from card widget
   List<Map<String, dynamic>> _questions = [];
 
   bool _isSaving = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _startDate = widget.course.startDate;
+  //   _endDate = widget.course.endDate;
+  // }
   @override
   void initState() {
     super.initState();
+
     _startDate = widget.course.startDate;
     _endDate = widget.course.endDate;
+
+    // NEW RULE: quiz start must be 10 days after course start
+    allowedStart = widget.course.startDate.add(const Duration(days: 10));
+    allowedEnd = widget.course.endDate;
+
+    // Ensure current pickers default inside allowed range
+    if (_startDate.isBefore(allowedStart)) {
+      _startDate = allowedStart;
+    }
   }
+
 
   @override
   void dispose() {
@@ -65,14 +85,48 @@ class _TeacherAddQuizScreenState
     super.dispose();
   }
 
+  // Future<void> _pickDate({required bool isStart}) async {
+  //   final initial = isStart ? _startDate : _endDate;
+  //
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initial,
+  //     firstDate: widget.course.startDate,
+  //     lastDate: widget.course.endDate,
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: Theme.of(context).copyWith(
+  //           colorScheme: const ColorScheme.dark(
+  //             primary: AppColors.secondaryDark,
+  //             surface: AppColors.primaryLight,
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (picked == null) return;
+  //
+  //   setState(() {
+  //     if (isStart) {
+  //       _startDate = picked;
+  //       if (_endDate.isBefore(_startDate)) {
+  //         _endDate = _startDate;
+  //       }
+  //     } else {
+  //       _endDate = picked;
+  //     }
+  //   });
+  // }
   Future<void> _pickDate({required bool isStart}) async {
     final initial = isStart ? _startDate : _endDate;
 
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: widget.course.startDate,
-      lastDate: widget.course.endDate,
+      firstDate: isStart ? allowedStart : allowedStart,
+      lastDate: allowedEnd,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -91,6 +145,7 @@ class _TeacherAddQuizScreenState
     setState(() {
       if (isStart) {
         _startDate = picked;
+
         if (_endDate.isBefore(_startDate)) {
           _endDate = _startDate;
         }
@@ -99,6 +154,7 @@ class _TeacherAddQuizScreenState
       }
     });
   }
+
 
   String _formatShort(DateTime d) =>
       "${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year.toString().substring(2)}";
@@ -248,8 +304,17 @@ class _TeacherAddQuizScreenState
                     const Icon(Icons.warning_rounded,
                         color: Colors.white, size: 20),
                     const SizedBox(width: 6),
+                    // Text(
+                    //   "Pick date between $dateRangeText",
+                    //   style: const TextStyle(
+                    //     fontFamily: AppTypography.family,
+                    //     color: Colors.white,
+                    //     fontSize: 13,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     Text(
-                      "Pick date between $dateRangeText",
+                      "Pick date between ${_formatShort(allowedStart)} - ${_formatShort(allowedEnd)}",
                       style: const TextStyle(
                         fontFamily: AppTypography.family,
                         color: Colors.white,
@@ -276,7 +341,7 @@ class _TeacherAddQuizScreenState
                 child: ElevatedButton(
                   onPressed: _isSaving ? null : _saveQuiz,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondaryDark,
+                    backgroundColor: AppColors.primaryLight,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -287,14 +352,14 @@ class _TeacherAddQuizScreenState
                     height: 20,
                     width: 20,
                     child: AppLoader(
-                      size: 24,
+                      size: 28,
                     ),
                   )
                       : const Text(
                     "Save",
                     style: TextStyle(
                       fontFamily: AppTypography.family,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),

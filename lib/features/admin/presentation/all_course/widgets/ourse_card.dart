@@ -9,6 +9,9 @@ class CourseCard extends StatelessWidget {
   final int price;
   final int discount;
   final String status;
+  final String iconPath;   // NEW
+  final VoidCallback onView;   // ⭐ NEW
+
 
   const CourseCard({
     super.key,
@@ -17,6 +20,8 @@ class CourseCard extends StatelessWidget {
     required this.price,
     required this.discount,
     required this.status,
+    required this.iconPath,    // NEW
+    required this.onView,       // ⭐ NE
   });
 
   Color get statusColor {
@@ -62,11 +67,12 @@ class CourseCard extends StatelessWidget {
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.menu_book_rounded,
-                            color: AppColors.chip3,
-                            size: 28,
+                        child: Center(
+                          child: Image.asset(
+                            iconPath,
+                            height: 28,
+                            width: 28,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -146,43 +152,7 @@ class CourseCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        context.pushNamed(
-                          'adminCourseDetails',
-                          extra: {
-                            'title': 'Basic English',
-                            'description': 'Language, Grammar, Literature...',
-                            'price': 899,
-                            'discount': 0,
-                            'total': 899,
-                            'quizCount': 25,
-                            'enrolled': 0,
-                            'sold': 0,
-                            'teacherName': 'Mst. Hasna Hena',
-                            'teacherImage': null,
-                            'duration': '60 Days 12 Min',
-                            'createdAt': 'Aug 25 2025, 08:30 PM',
-                            'quizzes': [
-                              {
-                                'icon': Icons.abc_rounded,
-                                'title': 'Basic Grammar',
-                                'desc':
-                                    'Parts of speech, sentence structure...',
-                                'points': 50,
-                                'timeLeft': '50 h 10 m',
-                              },
-                              {
-                                'icon': Icons.inventory_2_rounded,
-                                'title': 'Advanced Grammar',
-                                'desc':
-                                    'Complex sentence structures, clauses...',
-                                'points': 50,
-                                'timeLeft': '10 h 12 m',
-                              },
-                            ],
-                          },
-                        );
-                      },
+                      onPressed: onView,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryLight,
                         minimumSize: const Size.fromHeight(30),

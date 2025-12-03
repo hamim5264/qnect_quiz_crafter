@@ -41,6 +41,7 @@ class TeacherCourseFormController
         price: state.price,
         group: state.group,
         level: state.level,
+        enrolledCount: 0,
         remark: null, // remark optional, we are not using it now
         iconPath: state.iconPath,
         startDate: state.startDate,
