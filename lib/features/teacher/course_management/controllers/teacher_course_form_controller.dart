@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/application/teacher_course_form_controller.dart
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../models/teacher_course_model.dart';
@@ -12,20 +10,28 @@ class TeacherCourseFormController
   final String teacherId;
 
   TeacherCourseFormController(this.repo, this.teacherId)
-      : super(TeacherCourseFormState());
+    : super(TeacherCourseFormState());
 
   void updateTitle(String v) => state = state.copyWith(title: v);
+
   void updateDescription(String v) => state = state.copyWith(description: v);
+
   void updatePrice(String v) =>
       state = state.copyWith(price: double.tryParse(v) ?? 0);
+
   void updateGroup(String v) => state = state.copyWith(group: v);
+
   void updateLevel(String v) => state = state.copyWith(level: v);
+
   void updateIcon(String v) => state = state.copyWith(iconPath: v);
+
   void updateStartDate(DateTime d) => state = state.copyWith(startDate: d);
+
   void updateEndDate(DateTime d) => state = state.copyWith(endDate: d);
+
   void updateDiscount(int v) => state = state.copyWith(discountPercent: v);
-  void updateApplyDiscount(bool v) =>
-      state = state.copyWith(applyDiscount: v);
+
+  void updateApplyDiscount(bool v) => state = state.copyWith(applyDiscount: v);
 
   Future<void> submit() async {
     state = state.copyWith(isSubmitting: true, errorMessage: null);
@@ -42,7 +48,7 @@ class TeacherCourseFormController
         group: state.group,
         level: state.level,
         enrolledCount: 0,
-        remark: null, // remark optional, we are not using it now
+        remark: null,
         iconPath: state.iconPath,
         startDate: state.startDate,
         endDate: state.endDate,
@@ -62,10 +68,7 @@ class TeacherCourseFormController
         courseId: courseId,
       );
     } catch (e) {
-      state = state.copyWith(
-        isSubmitting: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isSubmitting: false, errorMessage: e.toString());
     }
   }
 }

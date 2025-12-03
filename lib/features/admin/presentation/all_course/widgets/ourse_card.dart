@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -9,9 +8,8 @@ class CourseCard extends StatelessWidget {
   final int price;
   final int discount;
   final String status;
-  final String iconPath;   // NEW
-  final VoidCallback onView;   // ⭐ NEW
-
+  final String iconPath;
+  final VoidCallback onView;
 
   const CourseCard({
     super.key,
@@ -20,8 +18,8 @@ class CourseCard extends StatelessWidget {
     required this.price,
     required this.discount,
     required this.status,
-    required this.iconPath,    // NEW
-    required this.onView,       // ⭐ NE
+    required this.iconPath,
+    required this.onView,
   });
 
   Color get statusColor {

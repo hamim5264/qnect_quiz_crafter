@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/presentation/add_quiz/widgets/quiz_title_fields.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
@@ -18,10 +16,7 @@ class QuizTitleFields extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _outlinedField(
-          controller: titleCtrl,
-          hint: "Quiz Name",
-        ),
+        _outlinedField(controller: titleCtrl, hint: "Quiz Name"),
         _outlinedField(
           controller: descCtrl,
           hint: "Quiz Description",
@@ -54,10 +49,7 @@ class QuizTitleFields extends StatelessWidget {
           filled: false,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.white54,
-              width: 1.4,
-            ),
+            borderSide: const BorderSide(color: Colors.white54, width: 1.4),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

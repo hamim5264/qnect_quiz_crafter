@@ -25,15 +25,12 @@ class TeacherAddCourseScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
 
-      appBar: const CommonRoundedAppBar(
-        title: "Add New Course",
-      ),
+      appBar: const CommonRoundedAppBar(title: "Add New Course"),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // TITLE
             AddCourseField(
               hint: "Course Title",
               onChanged: controller.updateTitle,
@@ -45,14 +42,12 @@ class TeacherAddCourseScreen extends ConsumerWidget {
               onChanged: controller.updateDescription,
             ),
 
-            // PRICE FIELD
             AddCourseField(
               hint: "Price (BDT)",
               keyboardType: TextInputType.number,
               onChanged: controller.updatePrice,
             ),
 
-            // GROUP
             AddCourseDropdown(
               hint: "Group",
               value: state.group,
@@ -60,7 +55,6 @@ class TeacherAddCourseScreen extends ConsumerWidget {
               onChanged: controller.updateGroup,
             ),
 
-            // LEVEL
             AddCourseDropdown(
               hint: "Level",
               value: state.level,
@@ -68,20 +62,17 @@ class TeacherAddCourseScreen extends ConsumerWidget {
               onChanged: controller.updateLevel,
             ),
 
-            // ICON PICKER
             AddCourseIconPicker(
               selectedIcon: state.iconPath,
               onSelect: controller.updateIcon,
             ),
 
-            // START DATE
             AddCourseDatePicker(
               hint: "Start Date",
               date: state.startDate,
               onSelect: controller.updateStartDate,
             ),
 
-            // END DATE
             AddCourseDatePicker(
               hint: "End Date",
               date: state.endDate,
@@ -90,7 +81,6 @@ class TeacherAddCourseScreen extends ConsumerWidget {
 
             const SizedBox(height: 12),
 
-            // PRICE SUMMARY
             AddCoursePriceCard(
               originalPrice: state.price,
               applyDiscount: state.applyDiscount,
@@ -99,18 +89,18 @@ class TeacherAddCourseScreen extends ConsumerWidget {
 
             const SizedBox(height: 22),
 
-            // SUBMIT BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: state.isSubmitting
-                    ? null
-                    : () async {
-                  await controller.submit();
-                  if (context.mounted) {
-                    context.pop(); // go back to My Courses
-                  }
-                },
+                onPressed:
+                    state.isSubmitting
+                        ? null
+                        : () async {
+                          await controller.submit();
+                          if (context.mounted) {
+                            context.pop();
+                          }
+                        },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryLight,
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -118,17 +108,18 @@ class TeacherAddCourseScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: state.isSubmitting
-                    ? AppLoader(size: 28,)
-                    : const Text(
-                  "Create Course",
-                  style: TextStyle(
-                    fontFamily: AppTypography.family,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
+                child:
+                    state.isSubmitting
+                        ? AppLoader(size: 28)
+                        : const Text(
+                          "Create Course",
+                          style: TextStyle(
+                            fontFamily: AppTypography.family,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
               ),
             ),
 

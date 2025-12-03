@@ -9,12 +9,12 @@ class ShimmerCourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.white.withOpacity(0.15),
-      highlightColor: Colors.white.withOpacity(0.3),
+      baseColor: Colors.white.withValues(alpha: 0.15),
+      highlightColor: Colors.white.withValues(alpha: 0.3),
       child: Container(
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: AppColors.primaryLight.withOpacity(0.2),
+          color: AppColors.primaryLight.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
         ),
       ),

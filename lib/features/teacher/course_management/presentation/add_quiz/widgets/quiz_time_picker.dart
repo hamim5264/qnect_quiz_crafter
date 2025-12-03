@@ -13,9 +13,6 @@ class QuizTimePicker extends StatelessWidget {
     required this.onChanged,
   });
 
-  // -------------------------------------------------------------
-  // SHOW BOTTOM SHEET PICKER
-  // -------------------------------------------------------------
   Future<void> _showPicker(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -52,9 +49,6 @@ class QuizTimePicker extends StatelessWidget {
     );
   }
 
-  // -------------------------------------------------------------
-  // UI
-  // -------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     final display =

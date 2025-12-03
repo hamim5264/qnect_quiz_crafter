@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../models/teacher_course_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,7 +15,6 @@ class CourseDetailsActions extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // EDIT only when rejected
         if (course.status == CourseStatus.rejected)
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.green),
@@ -29,7 +27,7 @@ class CourseDetailsActions extends ConsumerWidget {
           icon: const Icon(Icons.delete, color: Colors.red),
           onPressed: () async {
             await ref.read(deleteCourseProvider(course.id).future);
-            context.pop(); // go back after delete
+            context.pop();
           },
         ),
       ],

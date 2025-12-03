@@ -1,11 +1,9 @@
-// lib/features/teacher/course_management/presentation/add_quiz/widgets/quiz_icon_picker.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
 
 class QuizIconPicker extends StatefulWidget {
-  final IconData? selectedIcon; // nullable so default works
+  final IconData? selectedIcon;
   final ValueChanged<IconData> onIconSelected;
 
   const QuizIconPicker({
@@ -21,7 +19,6 @@ class QuizIconPicker extends StatefulWidget {
 class _QuizIconPickerState extends State<QuizIconPicker> {
   bool opened = false;
 
-  // Final recommended material education icons
   final List<IconData> icons = const [
     Icons.menu_book_rounded,
     Icons.lightbulb_outline,
@@ -40,7 +37,6 @@ class _QuizIconPickerState extends State<QuizIconPicker> {
 
     return Column(
       children: [
-        // ------------------ SELECTED TILE ------------------
         GestureDetector(
           onTap: () => setState(() => opened = !opened),
           child: Container(
@@ -78,7 +74,6 @@ class _QuizIconPickerState extends State<QuizIconPicker> {
           ),
         ),
 
-        // ------------------ ICON GRID ------------------
         if (opened)
           Container(
             padding: const EdgeInsets.all(12),
@@ -106,9 +101,10 @@ class _QuizIconPickerState extends State<QuizIconPicker> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.secondaryDark
-                          : Colors.white.withValues(alpha: 0.15),
+                      color:
+                          isSelected
+                              ? AppColors.secondaryDark
+                              : Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? Colors.black : Colors.white30,

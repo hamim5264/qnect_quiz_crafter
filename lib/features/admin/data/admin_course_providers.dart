@@ -9,7 +9,10 @@ final adminCourseProvider = StreamProvider.family((ref, String courseId) {
       .map((doc) => doc.data());
 });
 
-final adminCourseQuizzesProvider = StreamProvider.family((ref, String courseId) {
+final adminCourseQuizzesProvider = StreamProvider.family((
+  ref,
+  String courseId,
+) {
   return FirebaseFirestore.instance
       .collection('courses')
       .doc(courseId)

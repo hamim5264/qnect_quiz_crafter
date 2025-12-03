@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/presentation/add_quiz/widgets/quiz_question_card.dart
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,19 +5,9 @@ import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
 
 class QuizQuestionCard extends StatefulWidget {
-  /// Called every time questions list changes.
-  /// Each item: {
-  ///   "question": String,
-  ///   "options": {"A":..., "B":..., "C":..., "D":...},
-  ///   "correct": "A"/"B"/"C"/"D",
-  ///   "description": String,
-  /// }
   final ValueChanged<List<Map<String, dynamic>>> onQuestionsChanged;
 
-  const QuizQuestionCard({
-    super.key,
-    required this.onQuestionsChanged,
-  });
+  const QuizQuestionCard({super.key, required this.onQuestionsChanged});
 
   @override
   State<QuizQuestionCard> createState() => _QuizQuestionCardState();
@@ -70,26 +58,31 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
   }
 
   void _notifyParent() {
-    final list = _questions
-        .where((q) =>
-    q.question.text.trim().isNotEmpty &&
-        q.a.text.trim().isNotEmpty &&
-        q.b.text.trim().isNotEmpty &&
-        q.c.text.trim().isNotEmpty &&
-        q.d.text.trim().isNotEmpty &&
-        q.desc.text.trim().isNotEmpty)
-        .map((q) => {
-      "question": q.question.text.trim(),
-      "options": {
-        "A": q.a.text.trim(),
-        "B": q.b.text.trim(),
-        "C": q.c.text.trim(),
-        "D": q.d.text.trim(),
-      },
-      "correct": q.correct,
-      "description": q.desc.text.trim(),
-    })
-        .toList();
+    final list =
+        _questions
+            .where(
+              (q) =>
+                  q.question.text.trim().isNotEmpty &&
+                  q.a.text.trim().isNotEmpty &&
+                  q.b.text.trim().isNotEmpty &&
+                  q.c.text.trim().isNotEmpty &&
+                  q.d.text.trim().isNotEmpty &&
+                  q.desc.text.trim().isNotEmpty,
+            )
+            .map(
+              (q) => {
+                "question": q.question.text.trim(),
+                "options": {
+                  "A": q.a.text.trim(),
+                  "B": q.b.text.trim(),
+                  "C": q.c.text.trim(),
+                  "D": q.d.text.trim(),
+                },
+                "correct": q.correct,
+                "description": q.desc.text.trim(),
+              },
+            )
+            .toList();
 
     widget.onQuestionsChanged(list);
   }
@@ -148,7 +141,6 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
       ),
       child: Column(
         children: [
-          // Header
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -186,15 +178,12 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
 
           const SizedBox(height: 14),
 
-          // Import from QC Vault (inside card)
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Import from QC Vault (TODO)"),
-                  ),
+                  const SnackBar(content: Text("Import from QC Vault (TODO)")),
                 );
               },
               icon: const Icon(
@@ -213,8 +202,10 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondaryDark,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -224,19 +215,18 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
 
           const SizedBox(height: 10),
 
-          // Back / Next row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Back
               Expanded(
                 child: OutlinedButton(
                   onPressed: _currentIndex == 0 ? null : _goBack,
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: _currentIndex == 0
-                          ? Colors.grey.shade400
-                          : AppColors.chip3,
+                      color:
+                          _currentIndex == 0
+                              ? Colors.grey.shade400
+                              : AppColors.chip3,
                       width: 1.5,
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -250,9 +240,10 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                       fontFamily: AppTypography.family,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: _currentIndex == 0
-                          ? Colors.grey.shade500
-                          : AppColors.chip3,
+                      color:
+                          _currentIndex == 0
+                              ? Colors.grey.shade500
+                              : AppColors.chip3,
                     ),
                   ),
                 ),
@@ -260,7 +251,6 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
 
               const SizedBox(width: 12),
 
-              // Next
               Expanded(
                 child: ElevatedButton(
                   onPressed: _goNext,
@@ -311,11 +301,9 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
             _optionField(label: "D)", controller: q.d),
             const SizedBox(height: 6),
 
-            // Correct answer dropdown
             Container(
               width: double.infinity,
-              padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppColors.chip2, width: 1.5),
@@ -416,15 +404,20 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.black45, width: 1.2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 1.4),
+          borderSide: const BorderSide(
+            color: AppColors.primaryLight,
+            width: 1.4,
+          ),
         ),
       ),
       onChanged: (_) => _notifyParent(),

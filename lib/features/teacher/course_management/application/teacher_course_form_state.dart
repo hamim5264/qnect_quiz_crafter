@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import '../../../course_management/data/models/course_model.dart';
 
 class TeacherCourseFormState extends Equatable {
-  final String? courseId; // null = new
+  final String? courseId;
   final String title;
   final String description;
   final int price;
@@ -15,7 +15,7 @@ class TeacherCourseFormState extends Equatable {
   final int discountPercent;
   final bool applyDiscount;
   final bool isSubmitting;
-  final CourseStatus status; // important when editing
+  final CourseStatus status;
   final String? errorMessage;
 
   TeacherCourseFormState({
@@ -34,8 +34,8 @@ class TeacherCourseFormState extends Equatable {
     this.isSubmitting = false,
     this.status = CourseStatus.draft,
     this.errorMessage,
-  })  : startDate = startDate ?? DateTime.now(),
-        endDate = endDate ?? DateTime.now().add(const Duration(days: 60));
+  }) : startDate = startDate ?? DateTime.now(),
+       endDate = endDate ?? DateTime.now().add(const Duration(days: 60));
 
   int get totalPrice {
     if (!applyDiscount) return price;

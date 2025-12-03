@@ -6,12 +6,13 @@ import '../../../course_management/data/providers/course_providers.dart';
 import 'teacher_quiz_form_state.dart';
 
 final teacherQuizFormControllerProvider =
-NotifierProvider<TeacherQuizFormController, TeacherQuizFormState>(
-  TeacherQuizFormController.new,
-);
+    NotifierProvider<TeacherQuizFormController, TeacherQuizFormState>(
+      TeacherQuizFormController.new,
+    );
 
 class TeacherQuizFormController extends Notifier<TeacherQuizFormState> {
   QuizRepository get _quizRepo => ref.read(quizRepositoryProvider);
+
   CourseRepository get _courseRepo => ref.read(courseRepositoryProvider);
 
   @override
@@ -32,14 +33,19 @@ class TeacherQuizFormController extends Notifier<TeacherQuizFormState> {
 
   void updateTitle(String v) =>
       state = state.copyWith(title: v, errorMessage: null);
+
   void updateDescription(String v) =>
       state = state.copyWith(description: v, errorMessage: null);
+
   void updateDuration(Duration d) =>
       state = state.copyWith(duration: d, errorMessage: null);
+
   void updateIcon(String key) =>
       state = state.copyWith(iconKey: key, errorMessage: null);
+
   void updateStartDate(DateTime d) =>
       state = state.copyWith(startDate: d, errorMessage: null);
+
   void updateEndDate(DateTime d) =>
       state = state.copyWith(endDate: d, errorMessage: null);
 
@@ -51,7 +57,6 @@ class TeacherQuizFormController extends Notifier<TeacherQuizFormState> {
   }) async {
     if (!state.canSubmit) return null;
 
-    // validate inside course date range
     if (state.startDate.isBefore(courseStart) ||
         state.endDate.isAfter(courseEnd)) {
       state = state.copyWith(
@@ -95,10 +100,7 @@ class TeacherQuizFormController extends Notifier<TeacherQuizFormState> {
       state = state.copyWith(isSubmitting: false);
       return state.quizId;
     } catch (e) {
-      state = state.copyWith(
-        isSubmitting: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isSubmitting: false, errorMessage: e.toString());
       return null;
     }
   }

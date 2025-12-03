@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/controllers/teacher_course_form_state.dart
-
 import 'package:equatable/equatable.dart';
 import '../models/teacher_course_model.dart';
 
@@ -36,8 +34,8 @@ class TeacherCourseFormState extends Equatable {
     this.submitted = false,
     this.status = CourseStatus.draft,
     this.errorMessage,
-  })  : startDate = startDate ?? DateTime.now(),
-        endDate = endDate ?? DateTime.now().add(const Duration(days: 60));
+  }) : startDate = startDate ?? DateTime.now(),
+       endDate = endDate ?? DateTime.now().add(const Duration(days: 60));
 
   TeacherCourseFormState copyWith({
     String? courseId,

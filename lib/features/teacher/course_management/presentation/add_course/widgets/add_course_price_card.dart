@@ -1,9 +1,6 @@
-// lib/features/teacher/course_management/presentation/add_course/widgets/add_course_price_card.dart
-
 import 'package:flutter/material.dart';
 
 import '../../../../../../ui/design_system/tokens/typography.dart';
-
 
 class AddCoursePriceCard extends StatelessWidget {
   final double originalPrice;
@@ -19,9 +16,10 @@ class AddCoursePriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final discounted = applyDiscount
-        ? (originalPrice - (originalPrice * discountPercent / 100))
-        : originalPrice;
+    final discounted =
+        applyDiscount
+            ? (originalPrice - (originalPrice * discountPercent / 100))
+            : originalPrice;
 
     return Container(
       padding: const EdgeInsets.all(14),

@@ -1,9 +1,6 @@
-// lib/features/teacher/course_management/presentation/add_course/widgets/add_course_date_picker.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
-
 
 class AddCourseDatePicker extends StatelessWidget {
   final String hint;
@@ -23,15 +20,16 @@ class AddCourseDatePicker extends StatelessWidget {
       initialDate: date,
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.dark(
-            primary: AppColors.secondaryDark,
-            surface: AppColors.primaryLight,
+      builder:
+          (context, child) => Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: AppColors.secondaryDark,
+                surface: AppColors.primaryLight,
+              ),
+            ),
+            child: child!,
           ),
-        ),
-        child: child!,
-      ),
     );
 
     if (picked != null) onSelect(picked);

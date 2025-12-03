@@ -17,9 +17,7 @@ class QuizRepository {
         .where('courseId', isEqualTo: courseId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map(
-          (snap) => snap.docs.map((d) => QuizModel.fromDoc(d)).toList(),
-    );
+        .map((snap) => snap.docs.map((d) => QuizModel.fromDoc(d)).toList());
   }
 
   Future<String> createQuiz(QuizModel quiz) async {
@@ -31,14 +29,13 @@ class QuizRepository {
   }
 
   Future<void> updateQuiz(QuizModel quiz) async {
-    await _quizzes.doc(quiz.id).update(
-      quiz.copyWith(updatedAt: DateTime.now()).toJson(),
-    );
+    await _quizzes
+        .doc(quiz.id)
+        .update(quiz.copyWith(updatedAt: DateTime.now()).toJson());
   }
 
   Future<void> deleteQuiz(String quizId) async {
     await _quizzes.doc(quizId).delete();
-    // Optionally delete questions subcollection
   }
 
   Future<void> setQuestions({
@@ -48,19 +45,16 @@ class QuizRepository {
     final batch = _db.batch();
     final col = _questions(quizId);
 
-    // clear old
     final existing = await col.get();
     for (final d in existing.docs) {
       batch.delete(d.reference);
     }
 
-    // add new
     for (final q in questions) {
       final ref = col.doc();
       batch.set(ref, q.copyWith(id: ref.id).toJson());
     }
 
-    // update quiz totalQuestions
     batch.update(_quizzes.doc(quizId), {
       'totalQuestions': questions.length,
       'updatedAt': FieldValue.serverTimestamp(),

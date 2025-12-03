@@ -13,9 +13,7 @@ class CourseRepository {
         .where('teacherId', isEqualTo: teacherId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map(
-          (snap) => snap.docs.map((d) => CourseModel.fromDoc(d)).toList(),
-    );
+        .map((snap) => snap.docs.map((d) => CourseModel.fromDoc(d)).toList());
   }
 
   Future<CourseModel> getCourseById(String id) async {
@@ -28,28 +26,27 @@ class CourseRepository {
     final docRef = await _courses.add(
       course
           .copyWith(
-        status: CourseStatus.draft,
-        quizzesCount: 0,
-        enrolledCount: 0,
-        soldCount: 0,
-        totalDurationSeconds: 0,
-        createdAt: now,
-        updatedAt: now,
-      )
+            status: CourseStatus.draft,
+            quizzesCount: 0,
+            enrolledCount: 0,
+            soldCount: 0,
+            totalDurationSeconds: 0,
+            createdAt: now,
+            updatedAt: now,
+          )
           .toJson(),
     );
     return docRef.id;
   }
 
   Future<void> updateCourse(CourseModel course) async {
-    await _courses.doc(course.id).update(
-      course.copyWith(updatedAt: DateTime.now()).toJson(),
-    );
+    await _courses
+        .doc(course.id)
+        .update(course.copyWith(updatedAt: DateTime.now()).toJson());
   }
 
   Future<void> deleteCourse(String id) async {
     await _courses.doc(id).delete();
-    // Optionally: also delete quizzes & questions subcollections later
   }
 
   Future<void> updateCourseStatus({

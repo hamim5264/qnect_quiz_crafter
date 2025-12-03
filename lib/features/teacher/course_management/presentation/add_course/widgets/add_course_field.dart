@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/presentation/add_course/widgets/add_course_field.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';

@@ -23,8 +23,8 @@ class TeacherQuizFormState extends Equatable {
     DateTime? endDate,
     this.isSubmitting = false,
     this.errorMessage,
-  })  : startDate = startDate ?? DateTime.now(),
-        endDate = endDate ?? DateTime.now().add(const Duration(days: 1));
+  }) : startDate = startDate ?? DateTime.now(),
+       endDate = endDate ?? DateTime.now().add(const Duration(days: 1));
 
   bool get isEdit => quizId != null;
 

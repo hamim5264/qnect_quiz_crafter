@@ -6,9 +6,9 @@ class QuizModel {
   final String teacherId;
   final String title;
   final String description;
-  final int points; // reward
+  final int points;
   final int durationSeconds;
-  final String iconKey; // Lucide icon key or some mapping
+  final String iconKey;
   final DateTime startDate;
   final DateTime endDate;
   final int totalQuestions;

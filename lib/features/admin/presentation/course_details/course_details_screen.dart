@@ -520,12 +520,51 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   },
 
 
+                  // onEdit: () {
+                  //   context.pushNamed(
+                  //     'adminEditQuiz',
+                  //     pathParameters: {
+                  //       'courseId': widget.courseId,
+                  //       'quizId': q['id'],
+                  //     },
+                  //   );
+                  // },
                   onEdit: () {
+                    // 1️⃣ Raw Firestore questions
+                    final List rawQuestions = q["questions"] ?? [];
+
+                    // 2️⃣ Convert options Map → List for the edit screen
+                    final List<Map<String, dynamic>> parsedQuestions =
+                    rawQuestions.map<Map<String, dynamic>>((item) {
+                      final opts = item["options"] as Map<String, dynamic>? ?? {};
+
+                      return {
+                        "question": item["question"] ?? "",
+                        "correct": item["correct"] ?? "A",
+                        "description": item["description"] ?? "",     // 🔥 FIX ADDED
+                        "options": [
+                          (opts["A"] ?? "").toString(),
+                          (opts["B"] ?? "").toString(),
+                          (opts["C"] ?? "").toString(),
+                          (opts["D"] ?? "").toString(),
+                        ],
+                      };
+                    }).toList();
+
+                    // 3️⃣ Navigate with REQUIRED pathParameters + extra payload
                     context.pushNamed(
                       'adminEditQuiz',
                       pathParameters: {
-                        'courseId': widget.courseId,
-                        'quizId': q['id'],
+                        'courseId': widget.courseId,   // 🔥 REQUIRED by /:courseId/:quizId
+                        'quizId': q['id'],             // 🔥 REQUIRED
+                      },
+                      extra: {
+                        "quizId": q['id'],
+                        "courseId": widget.courseId,
+                        "questions": parsedQuestions,
+                        "title": q["title"] ?? "",
+                        "description": q["description"] ?? "",
+                        "time": q["time"] ?? 0,
                       },
                     );
                   },

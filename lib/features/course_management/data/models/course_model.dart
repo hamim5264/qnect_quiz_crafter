@@ -7,22 +7,21 @@ class CourseModel {
   final String teacherId;
   final String title;
   final String description;
-  final int price; // BDT
-  final String group; // Science / Arts / Commerce / All
-  final String level; // HSC / SSC / Admission
-  final String remark; // optional extra tag, can be empty
-  final String iconPath; // e.g. assets/icons/c1.png
+  final int price;
+  final String group;
+  final String level;
+  final String remark;
+  final String iconPath;
   final DateTime startDate;
   final DateTime endDate;
 
   final int discountPercent;
   final bool discountActive;
-  final int totalPrice; // computed & stored for fast UI
+  final int totalPrice;
 
   final CourseStatus status;
   final String? rejectionReason;
 
-  // Stats
   final int quizzesCount;
   final int enrolledCount;
   final int soldCount;
@@ -170,8 +169,7 @@ class CourseModel {
       quizzesCount: quizzesCount ?? this.quizzesCount,
       enrolledCount: enrolledCount ?? this.enrolledCount,
       soldCount: soldCount ?? this.soldCount,
-      totalDurationSeconds:
-      totalDurationSeconds ?? this.totalDurationSeconds,
+      totalDurationSeconds: totalDurationSeconds ?? this.totalDurationSeconds,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

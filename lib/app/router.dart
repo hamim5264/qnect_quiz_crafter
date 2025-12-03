@@ -328,14 +328,7 @@ final router = GoRouter(
       path: '/admin-all-course',
       builder: (context, state) => const AllCourseScreen(),
     ),
-    // GoRoute(
-    //   name: 'adminCourseDetails',
-    //   path: '/admin-course-details',
-    //   builder: (context, state) {
-    //     final courseData = state.extra as Map<String, dynamic>?;
-    //     return CourseDetailsScreen(courseData: courseData ?? {});
-    //   },
-    // ),
+
     GoRoute(
       name: 'adminCourseDetails',
       path: '/admin-course-details',
@@ -345,12 +338,6 @@ final router = GoRouter(
       },
     ),
 
-
-    // GoRoute(
-    //   name: 'adminEditCourse',
-    //   path: '/admin-edit-course',
-    //   builder: (context, state) => const EditCourseScreen(),
-    // ),
     GoRoute(
       path: '/admin-edit-course/:courseId',
       name: 'adminEditCourse',
@@ -360,30 +347,16 @@ final router = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   path: '/edit-quiz',
-    //   name: 'editQuiz',
-    //   builder: (context, state) => const EditQuizScreen(),
-    // ),
-
     GoRoute(
       name: 'adminEditQuiz',
       path: '/admin-edit-quiz/:courseId/:quizId',
       builder: (context, state) {
         final courseId = state.pathParameters['courseId']!;
         final quizId = state.pathParameters['quizId']!;
-        return EditQuizScreen(
-          courseId: courseId,
-          quizId: quizId,
-        );
+        return EditQuizScreen(courseId: courseId, quizId: quizId);
       },
     ),
 
-    // GoRoute(
-    //   name: 'adminQuizDetails',
-    //   path: '/admin-quiz-details',
-    //   builder: (context, state) => const QuizDetailsScreen(),
-    // ),
     GoRoute(
       name: "adminQuizDetails",
       path: "/admin-quiz-details",
@@ -393,11 +366,6 @@ final router = GoRouter(
       },
     ),
 
-    // GoRoute(
-    //   name: 'adminQuizQuestionsInfo',
-    //   path: '/admin-quiz-questions-info',
-    //   builder: (context, state) => const QuizQuestionsInfoScreen(),
-    // ),
     GoRoute(
       name: 'adminQuizQuestionsInfo',
       path: '/admin/quiz/questions',
@@ -406,14 +374,11 @@ final router = GoRouter(
 
         return QuizQuestionsInfoScreen(
           quizTitle: data["title"] ?? "",
-          quizDuration: data["time"] as Duration,     // HERE FIX
+          quizDuration: data["time"] as Duration, // HERE FIX
           questions: List<Map<String, dynamic>>.from(data["questions"]),
         );
       },
     ),
-
-
-
 
     GoRoute(
       name: 'adminPracticeQuiz',
@@ -573,7 +538,5 @@ final router = GoRouter(
         return TeacherQCVaultQuestionSelectScreen(course: course);
       },
     ),
-
-
   ],
 );

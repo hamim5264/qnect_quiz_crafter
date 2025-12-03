@@ -7,8 +7,6 @@ import 'package:qnect_quiz_crafter/common/widgets/common_rounded_app_bar.dart';
 import 'package:qnect_quiz_crafter/ui/design_system/tokens/colors.dart';
 import 'package:qnect_quiz_crafter/ui/design_system/tokens/typography.dart';
 
-// Admin QC Vault shared models/providers
-
 import '../../../../../../common/screens/qc_vault/controller/qc_vault_controller.dart';
 import '../../../../../../common/screens/qc_vault/data/qc_vault_models.dart';
 
@@ -30,10 +28,7 @@ class _TeacherQCVaultImportScreenState
 
   @override
   Widget build(BuildContext context) {
-    final filter = QCVaultFilter(
-      group: _selectedGroup,
-      level: _selectedLevel,
-    );
+    final filter = QCVaultFilter(group: _selectedGroup, level: _selectedLevel);
 
     final coursesAsync = ref.watch(qcVaultCoursesProvider(filter));
 
@@ -45,7 +40,6 @@ class _TeacherQCVaultImportScreenState
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // GROUP + LEVEL FILTERS
               Row(
                 children: [
                   Expanded(
@@ -76,22 +70,20 @@ class _TeacherQCVaultImportScreenState
 
               const SizedBox(height: 16),
 
-              // COURSES LIST
               Expanded(
                 child: coursesAsync.when(
-                  loading: () => const Center(
-                    child: AppLoader(size: 32,),
-                  ),
-                  error: (e, _) => Center(
-                    child: Text(
-                      'Failed to load QC Vault courses\n$e',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: AppTypography.family,
-                        color: Colors.white70,
+                  loading: () => const Center(child: AppLoader(size: 32)),
+                  error:
+                      (e, _) => Center(
+                        child: Text(
+                          'Failed to load QC Vault courses\n$e',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: AppTypography.family,
+                            color: Colors.white70,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                   data: (courses) {
                     if (courses.isEmpty) {
                       return const Center(
@@ -113,16 +105,16 @@ class _TeacherQCVaultImportScreenState
                         final course = courses[index];
                         return _QCVaultCourseCard(
                           course: course,
-                            onTap: () async {
-                              final selected = await context.pushNamed(
-                                'teacherQcVaultQuestions',
-                                extra: course,
-                              );
+                          onTap: () async {
+                            final selected = await context.pushNamed(
+                              'teacherQcVaultQuestions',
+                              extra: course,
+                            );
 
-                              if (selected != null) {
-                                context.pop(selected); // return directly to Add Quiz screen
-                              }
+                            if (selected != null) {
+                              context.pop(selected);
                             }
+                          },
                         );
                       },
                     );
@@ -180,14 +172,12 @@ class _TeacherQCVaultImportScreenState
                       color: Colors.white,
                       fontSize: 14,
                     ),
-                    items: items
-                        .map(
-                          (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e),
-                      ),
-                    )
-                        .toList(),
+                    items:
+                        items
+                            .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            )
+                            .toList(),
                     onChanged: onChanged,
                   ),
                 ),
@@ -204,10 +194,7 @@ class _QCVaultCourseCard extends StatelessWidget {
   final QCVaultCourse course;
   final VoidCallback onTap;
 
-  const _QCVaultCourseCard({
-    required this.course,
-    required this.onTap,
-  });
+  const _QCVaultCourseCard({required this.course, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -230,9 +217,7 @@ class _QCVaultCourseCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                course.title.isNotEmpty
-                    ? course.title[0].toUpperCase()
-                    : '?',
+                course.title.isNotEmpty ? course.title[0].toUpperCase() : '?',
                 style: const TextStyle(
                   fontFamily: AppTypography.family,
                   fontWeight: FontWeight.w700,
@@ -268,10 +253,9 @@ class _QCVaultCourseCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.chip3.withOpacity(0.12),
+                color: AppColors.chip3.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

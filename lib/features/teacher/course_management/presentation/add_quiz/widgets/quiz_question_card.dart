@@ -194,6 +194,24 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
               onPressed: () async {
                 final imported = await context.pushNamed('teacherQcVaultImport');
 
+                // if (imported != null && imported is List<Map<String, dynamic>>) {
+                //   setState(() {
+                //     for (final q in imported) {
+                //       _questions.add(
+                //         _QuestionControllers()
+                //           ..question.text = q["question"] ?? ""
+                //           ..a.text = q["options"]?["A"] ?? ""
+                //           ..b.text = q["options"]?["B"] ?? ""
+                //           ..c.text = q["options"]?["C"] ?? ""
+                //           ..d.text = q["options"]?["D"] ?? ""
+                //           ..desc.text = q["explanation"] ?? ""
+                //           ..correct = q["correctOption"] ?? "A",
+                //       );
+                //     }
+                //   });
+                //
+                //   _notifyParent();
+                // }
                 if (imported != null && imported is List<Map<String, dynamic>>) {
                   setState(() {
                     for (final q in imported) {
@@ -204,10 +222,27 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                           ..b.text = q["options"]?["B"] ?? ""
                           ..c.text = q["options"]?["C"] ?? ""
                           ..d.text = q["options"]?["D"] ?? ""
-                          ..desc.text = q["explanation"] ?? ""
+                          ..desc.text = q["explanation"] ?? ""   // KEEP THIS SAME!!!
                           ..correct = q["correctOption"] ?? "A",
                       );
                     }
+
+                    // 🔥 Remove first empty page
+                    if (_questions.length > 1) {
+                      final first = _questions.first;
+                      if (first.question.text.isEmpty &&
+                          first.a.text.isEmpty &&
+                          first.b.text.isEmpty &&
+                          first.c.text.isEmpty &&
+                          first.d.text.isEmpty &&
+                          first.desc.text.isEmpty) {
+                        _questions.removeAt(0);
+                      }
+                    }
+
+                    // 🔥 Jump to first question after import
+                    _currentIndex = 0;
+                    _pageController.jumpToPage(0);
                   });
 
                   _notifyParent();

@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/presentation/add_course/widgets/add_course_dropdown.dart
-
 import 'package:flutter/material.dart';
 
 import '../../../../../../ui/design_system/tokens/colors.dart';
@@ -31,7 +29,10 @@ class AddCourseDropdown extends StatelessWidget {
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white70),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Colors.white70,
+          ),
           dropdownColor: AppColors.primaryLight,
           isExpanded: true,
           style: const TextStyle(
@@ -39,18 +40,21 @@ class AddCourseDropdown extends StatelessWidget {
             fontSize: 16,
             color: Colors.white,
           ),
-          items: items
-              .map((item) => DropdownMenuItem<String>(
-            value: item,
-            child: Text(
-              item,
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: AppTypography.family,
-              ),
-            ),
-          ))
-              .toList(),
+          items:
+              items
+                  .map(
+                    (item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: AppTypography.family,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
           onChanged: (v) => onChanged(v!),
           hint: Text(
             hint,

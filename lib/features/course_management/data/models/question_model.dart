@@ -7,9 +7,9 @@ class QuestionModel {
   final String optionB;
   final String optionC;
   final String optionD;
-  final String correctOption; // 'A' | 'B' | 'C' | 'D'
+  final String correctOption;
   final String explanation;
-  final String? qcVaultId; // if imported
+  final String? qcVaultId;
 
   QuestionModel({
     required this.id,
@@ -37,7 +37,6 @@ class QuestionModel {
       'correctOption': correctOption,
       'explanation': explanation,
       'qcVaultId': qcVaultId,
-      // we usually don't store `id` inside doc, Firestore doc id is enough
     };
   }
 
@@ -57,7 +56,6 @@ class QuestionModel {
     );
   }
 
-  // ✅ added this
   QuestionModel copyWith({
     String? id,
     String? quizId,

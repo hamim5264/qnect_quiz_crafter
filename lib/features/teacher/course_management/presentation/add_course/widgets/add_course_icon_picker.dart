@@ -1,5 +1,3 @@
-// lib/features/teacher/course_management/presentation/add_course/widgets/add_course_icon_picker.dart
-
 import 'package:flutter/material.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
@@ -21,16 +19,12 @@ class AddCourseIconPicker extends StatefulWidget {
 class _AddCourseIconPickerState extends State<AddCourseIconPicker> {
   bool showGrid = false;
 
-  // Your 37 icons same as EditCourse
   final int iconCount = 37;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // ────────────────────────────────
-        // TOP PICKER TILE + HINT
-        // ────────────────────────────────
         GestureDetector(
           onTap: () => setState(() => showGrid = !showGrid),
           child: Container(
@@ -42,7 +36,6 @@ class _AddCourseIconPickerState extends State<AddCourseIconPicker> {
             ),
             child: Row(
               children: [
-                // ICON PREVIEW
                 if (widget.selectedIcon.isNotEmpty &&
                     widget.selectedIcon != "Select Course Icon")
                   Image.asset(widget.selectedIcon, height: 22, width: 22),
@@ -50,17 +43,17 @@ class _AddCourseIconPickerState extends State<AddCourseIconPicker> {
                 if (widget.selectedIcon != "Select Course Icon")
                   const SizedBox(width: 10),
 
-                // HINT OR SELECTED ICON NAME
                 Text(
                   widget.selectedIcon.isEmpty ||
-                      widget.selectedIcon == "Select Course Icon"
+                          widget.selectedIcon == "Select Course Icon"
                       ? "Select Course Icon"
                       : widget.selectedIcon.split('/').last,
                   style: TextStyle(
                     fontFamily: AppTypography.family,
-                    color: widget.selectedIcon.isEmpty
-                        ? Colors.white70 // hint color
-                        : Colors.white,
+                    color:
+                        widget.selectedIcon.isEmpty
+                            ? Colors.white70
+                            : Colors.white,
                     fontSize: 15,
                   ),
                 ),
@@ -78,9 +71,6 @@ class _AddCourseIconPickerState extends State<AddCourseIconPicker> {
           ),
         ),
 
-        // ────────────────────────────────
-        // ICON GRID POPUP
-        // ────────────────────────────────
         if (showGrid)
           AnimatedContainer(
             duration: const Duration(milliseconds: 250),
@@ -112,22 +102,21 @@ class _AddCourseIconPickerState extends State<AddCourseIconPicker> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primaryLight
-                            : Colors.white24,
+                        color:
+                            isSelected
+                                ? AppColors.primaryLight
+                                : Colors.white24,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(12),
-                      color: isSelected
-                          ? AppColors.primaryLight.withValues(alpha: 0.15)
-                          : Colors.transparent,
+                      color:
+                          isSelected
+                              ? AppColors.primaryLight.withValues(alpha: 0.15)
+                              : Colors.transparent,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Image.asset(
-                        iconPath,
-                        fit: BoxFit.contain,
-                      ),
+                      child: Image.asset(iconPath, fit: BoxFit.contain),
                     ),
                   ),
                 );

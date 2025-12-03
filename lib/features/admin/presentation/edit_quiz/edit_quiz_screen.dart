@@ -219,7 +219,7 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
             ? (q["options"] as Map).values.map((e) => e.toString()).toList()
             : q["options"],
         "correct": q["correct"],
-        "explanation": q["explanation"],
+        "description": q["description"],
       };
     }).toList();
 
@@ -301,7 +301,7 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
               ),
 
               const SizedBox(height: 16),
-              const QuizImportButton(),
+              // const QuizImportButton(),
               const SizedBox(height: 16),
 
               QuizUpdateButton(

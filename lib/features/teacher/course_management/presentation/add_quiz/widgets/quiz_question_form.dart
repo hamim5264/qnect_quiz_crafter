@@ -32,9 +32,6 @@ class QuizQuestionForm extends StatelessWidget {
         _field("C) Option", cCtrl),
         _field("D) Option", dCtrl),
 
-        // -------------------------
-        // Correct Answer Dropdown
-        // -------------------------
         Container(
           width: double.infinity,
           margin: const EdgeInsets.only(bottom: 12),
@@ -52,18 +49,21 @@ class QuizQuestionForm extends StatelessWidget {
                 fontFamily: AppTypography.family,
                 color: Colors.white,
               ),
-              items: ["A", "B", "C", "D"]
-                  .map((e) => DropdownMenuItem(
-                value: e,
-                child: Text(
-                  e,
-                  style: const TextStyle(
-                    fontFamily: AppTypography.family,
-                    color: Colors.white,
-                  ),
-                ),
-              ))
-                  .toList(),
+              items:
+                  ["A", "B", "C", "D"]
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e,
+                            style: const TextStyle(
+                              fontFamily: AppTypography.family,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
               onChanged: (val) {
                 if (val != null) onCorrectSelected(val);
               },
@@ -76,11 +76,11 @@ class QuizQuestionForm extends StatelessWidget {
     );
   }
 
-  // -------------------------
-  // OUTLINE INPUT FIELD
-  // -------------------------
-  Widget _field(String hint, TextEditingController controller,
-      {int maxLines = 1}) {
+  Widget _field(
+    String hint,
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
@@ -94,18 +94,21 @@ class QuizQuestionForm extends StatelessWidget {
           fontFamily: AppTypography.family,
           color: Colors.white60,
         ),
-        filled: false, // ✨ NO FILLED COLOR
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        filled: false,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
 
-        // OUTLINE BORDER
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.white54, width: 1.2),
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(
-              color: AppColors.secondaryDark, width: 1.5), // ✨ Neon border
+            color: AppColors.secondaryDark,
+            width: 1.5,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
