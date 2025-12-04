@@ -52,6 +52,10 @@ import '../features/auth/presentation/set_password/set_password_screen.dart';
 import '../features/auth/presentation/sign_in/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up/sign_up_screen.dart';
 import '../features/auth/presentation/verify_email/verify_email_screen.dart';
+import '../features/guest_and_student/paid_courses/presentation/screens/student_buy_course_screen.dart';
+import '../features/guest_and_student/paid_courses/presentation/screens/student_course_details_screen.dart';
+import '../features/guest_and_student/paid_courses/presentation/screens/student_my_courses_screen.dart';
+import '../features/guest_and_student/paid_courses/presentation/screens/student_paid_courses_screen.dart';
 import '../features/guest_and_student/student_profile/student_profile_screen.dart';
 import '../features/teacher/course_management/models/teacher_course_model.dart';
 import '../features/teacher/course_management/presentation/add_course/add_course_screen.dart';
@@ -538,5 +542,35 @@ final router = GoRouter(
         return TeacherQCVaultQuestionSelectScreen(course: course);
       },
     ),
+    GoRoute(
+      path: '/student-paid-courses',
+      name: 'studentPaidCourses',
+      builder: (context, state) => const StudentPaidCoursesScreen(),
+    ),
+
+    GoRoute(
+      path: '/student-buy-course',
+      name: 'studentBuyCourse',
+      builder: (context, state) {
+        final course = state.extra as Map<String, dynamic>; // incoming course data
+        return StudentBuyCourseScreen(course: course);
+      },
+    ),
+    // inside routes list:
+    GoRoute(
+      path: '/student/my-courses',
+      name: 'studentMyCourses',
+      builder: (context, state) => const StudentMyCoursesScreen(),
+    ),
+
+    GoRoute(
+      path: '/student/my-courses/:courseId',
+      name: 'studentCourseDetails',
+      builder: (context, state) {
+        final courseId = state.pathParameters['courseId']!;
+        return StudentCourseDetailsScreen(courseId: courseId);
+      },
+    ),
+
   ],
 );

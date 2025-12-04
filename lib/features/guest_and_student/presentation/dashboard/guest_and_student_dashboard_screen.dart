@@ -147,7 +147,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('studentMyCourses');
+                    },
                   ),
                   QuickActionItem(
                     title: "App Paid Courses",
@@ -157,7 +159,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed("studentPaidCourses");
+                    },
                   ),
                   QuickActionItem(
                     title: "Purchase History",
