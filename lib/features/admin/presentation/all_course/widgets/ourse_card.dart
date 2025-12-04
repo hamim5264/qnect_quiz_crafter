@@ -37,6 +37,9 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int discountedPrice = price - ((price * discount) ~/ 100);
+    final bool hasDiscount = discount > 0;
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -79,24 +82,35 @@ class CourseCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '৳ $price/-',
+                            "৳ $discountedPrice",
                             style: const TextStyle(
                               fontFamily: AppTypography.family,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.secondaryDark,
+                              color: Colors.white,
+                              fontSize: 15,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                          Text(
-                            '-$discount TK Off',
-                            style: const TextStyle(
-                              fontFamily: AppTypography.family,
-                              color: Colors.white70,
-                              fontSize: 12,
-                              decoration: TextDecoration.lineThrough,
+
+                          if (hasDiscount) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              "৳ $price",
+                              style: const TextStyle(
+                                fontFamily: AppTypography.family,
+                                color: Colors.redAccent,
+                                fontSize: 12,
+                                decoration: TextDecoration.lineThrough,
+                              ),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                            Text(
+                              "-$discount% Off",
+                              style: const TextStyle(
+                                fontFamily: AppTypography.family,
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],

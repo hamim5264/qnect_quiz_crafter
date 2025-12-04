@@ -129,4 +129,9 @@ class TeacherCourseModel {
         return CourseStatus.draft;
     }
   }
+  double get discountedPrice {
+    if (!applyDiscount) return price;
+    return price - (price * (discountPercent / 100));
+  }
+
 }

@@ -1,214 +1,3 @@
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import '../../../../common/widgets/common_rounded_app_bar.dart';
-// import '../../../../common/widgets/common_confirm_dialog.dart';
-// import '../../../../common/widgets/action_success_dialog.dart';
-// import '../../../../ui/design_system/tokens/colors.dart';
-// import '../../../../ui/design_system/tokens/typography.dart';
-// import 'widgets/header_course_card.dart';
-// import 'widgets/stats_and_status_grid.dart';
-// import 'widgets/quiz_item_card.dart';
-//
-// class CourseDetailsScreen extends StatefulWidget {
-//   final Map<String, dynamic> courseData;
-//
-//   const CourseDetailsScreen({super.key, required this.courseData});
-//
-//   @override
-//   State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
-// }
-//
-// class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
-//   bool hasChanges = false;
-//   String courseStatus = 'Pending';
-//   String? rejectionReason;
-//
-//   late List<Map<String, dynamic>> quizzes;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     quizzes = List<Map<String, dynamic>>.from(
-//       widget.courseData['quizzes'] ?? [],
-//     );
-//   }
-//
-//   void _onStatusChanged(String value, {String? reason}) {
-//     setState(() {
-//       courseStatus = value;
-//       rejectionReason = reason;
-//       hasChanges = true;
-//     });
-//   }
-//
-//   void _onEditQuiz(int index) {
-//     setState(() => hasChanges = true);
-//   }
-//
-//   void _onDeleteQuiz(int index) {
-//     showDialog(
-//       context: context,
-//       builder:
-//           (_) => CommonConfirmDialog(
-//             title: "Delete Quiz",
-//             message: "Are you sure you want to delete this quiz?",
-//             icon: CupertinoIcons.trash,
-//             iconColor: Colors.red,
-//             confirmColor: Colors.red,
-//             onConfirm: () {
-//               setState(() {
-//                 quizzes.removeAt(index);
-//                 hasChanges = true;
-//               });
-//               showDialog(
-//                 context: context,
-//                 builder:
-//                     (_) => ActionSuccessDialog(
-//                       title: 'Success',
-//                       message: 'The quiz has been deleted successfully.',
-//                       onConfirm: () => Navigator.pop(context),
-//                     ),
-//               );
-//             },
-//           ),
-//     );
-//   }
-//
-//   void _onDeleteCourse() {
-//     showDialog(
-//       context: context,
-//       builder:
-//           (_) => CommonConfirmDialog(
-//             title: "Delete Course",
-//             message: "Are you sure you want to delete this course?",
-//             icon: CupertinoIcons.trash,
-//             iconColor: Colors.red,
-//             confirmColor: Colors.red,
-//             onConfirm: () {
-//               showDialog(
-//                 context: context,
-//                 builder:
-//                     (_) => ActionSuccessDialog(
-//                       title: 'Success',
-//                       message: 'The course has been deleted successfully.',
-//                       onConfirm: () => Navigator.pop(context),
-//                     ),
-//               );
-//             },
-//           ),
-//     );
-//   }
-//
-//   void _onUpdate() {
-//     showDialog(
-//       context: context,
-//       builder:
-//           (_) => ActionSuccessDialog(
-//             title: 'Success',
-//             message: 'Your changes have been updated successfully.',
-//             onConfirm: () {
-//               setState(() => hasChanges = false);
-//               Navigator.pop(context);
-//             },
-//           ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final course = widget.courseData;
-//     return Scaffold(
-//       backgroundColor: AppColors.primaryDark,
-//       appBar: CommonRoundedAppBar(title: course['title'] ?? 'Course Details'),
-//       body: SafeArea(
-//         child: ListView(
-//           padding: const EdgeInsets.all(16),
-//           children: [
-//             HeaderCourseCard(
-//               icon: course['icon'] ?? Icons.menu_book_rounded,
-//               title: course['title'] ?? 'Untitled Course',
-//               fullDescription:
-//                   course['description'] ?? 'No description available.',
-//               createdAtText: course['createdAt'] ?? 'Created at: --',
-//               price: course['price'] ?? 0,
-//               discountPercent: course['discount'] ?? 0,
-//             ),
-//             const SizedBox(height: 14),
-//
-//             StatsAndStatusGrid(
-//               quizzes: course['quizCount'] ?? 0,
-//               enrolled: course['enrolled'] ?? 0,
-//               sold: course['sold'] ?? 0,
-//               price: course['price'] ?? 0,
-//               discountPercent: course['discount'] ?? 0,
-//               total: course['total'] ?? 0,
-//               durationText: course['duration'] ?? 'N/A',
-//               teacherName: course['teacherName'] ?? 'Unknown',
-//               teacherImage: course['teacherImage'],
-//               initialStatus: courseStatus,
-//               initialRejection: rejectionReason,
-//               onDeleteCourse: _onDeleteCourse,
-//               onEditCourse: () => setState(() => hasChanges = true),
-//               onStatusChanged: _onStatusChanged,
-//             ),
-//             const SizedBox(height: 16),
-//
-//             ...List.generate(quizzes.length, (i) {
-//               final q = quizzes[i];
-//               return Padding(
-//                 padding: EdgeInsets.only(
-//                   bottom: i == quizzes.length - 1 ? 0 : 12,
-//                 ),
-//                 child: QuizItemCard(
-//                   icon: q['icon'] ?? Icons.help_outline,
-//                   title: q['title'] ?? 'Untitled Quiz',
-//                   description: q['desc'] ?? '',
-//                   points: q['points'] ?? 0,
-//                   timeLeft: q['timeLeft'] ?? '0 h 0 m',
-//                   onDetails: () {},
-//                   onEdit: () => _onEditQuiz(i),
-//                   onDelete: () => _onDeleteQuiz(i),
-//                 ),
-//               );
-//             }),
-//
-//             const SizedBox(height: 20),
-//             SizedBox(
-//               width: double.infinity,
-//               child: ElevatedButton(
-//                 onPressed: hasChanges ? _onUpdate : null,
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor:
-//                       hasChanges
-//                           ? AppColors.primaryLight
-//                           : AppColors.white.withValues(alpha: 0.3),
-//                   disabledBackgroundColor: AppColors.white.withValues(
-//                     alpha: 0.3,
-//                   ),
-//                   padding: const EdgeInsets.symmetric(vertical: 12),
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(30),
-//                   ),
-//                 ),
-//                 child: Text(
-//                   'Update',
-//                   style: TextStyle(
-//                     fontFamily: AppTypography.family,
-//                     fontWeight: FontWeight.bold,
-//                     color: hasChanges ? AppColors.white : Colors.white70,
-//                     fontSize: 15,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -251,14 +40,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     _loadQuizzes();
   }
 
-  // ---------------------------------------------------
-  // LOAD COURSE
-  // ---------------------------------------------------
   Future<void> _loadCourse() async {
-    final doc = await FirebaseFirestore.instance
-        .collection("courses")
-        .doc(widget.courseId)
-        .get();
+    final doc =
+        await FirebaseFirestore.instance
+            .collection("courses")
+            .doc(widget.courseId)
+            .get();
 
     if (!doc.exists) return;
 
@@ -267,41 +54,33 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
     setState(() {});
 
-    // Fetch teacher info
     if (course!["teacherId"] != null) {
       _loadTeacher(course!["teacherId"]);
     }
   }
 
-  // ---------------------------------------------------
-  // LOAD TEACHER
-  // ---------------------------------------------------
   Future<void> _loadTeacher(String teacherId) async {
-    final userDoc = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(teacherId)
-        .get();
+    final userDoc =
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(teacherId)
+            .get();
 
     if (!userDoc.exists) return;
 
     final data = userDoc.data() as Map<String, dynamic>;
 
-    // 🔥 SAFE NAME MAPPING
     final safeName =
         data["name"] ??
-            data["fullName"] ??
-            data["username"] ??
-            data["displayName"] ??
-            data["firstName"] ??
-            data["email"] ?? // fallback
-            "Unknown";
+        data["fullName"] ??
+        data["username"] ??
+        data["displayName"] ??
+        data["firstName"] ??
+        data["email"] ??
+        "Unknown";
 
-    // 🔥 SAFE IMAGE MAPPING
     final safeImage =
-        data["profileImage"] ??
-            data["photoUrl"] ??
-            data["avatar"] ??
-            null;
+        data["profileImage"] ?? data["photoUrl"] ?? data["avatar"];
 
     teacher = {
       "teacherName": safeName,
@@ -312,40 +91,32 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     setState(() {});
   }
 
-  // ---------------------------------------------------
-  // LOAD QUIZZES
-  // ---------------------------------------------------
   Future<void> _loadQuizzes() async {
-    final snap = await FirebaseFirestore.instance
-        .collection("courses")
-        .doc(widget.courseId)
-        .collection("quizzes")
-        .get();
+    final snap =
+        await FirebaseFirestore.instance
+            .collection("courses")
+            .doc(widget.courseId)
+            .collection("quizzes")
+            .get();
 
     quizzes = snap.docs.map((d) => {"id": d.id, ...d.data()}).toList();
 
     setState(() {});
   }
 
-  // ---------------------------------------------------
-  // UPDATE STATUS
-  // ---------------------------------------------------
   Future<void> _updateStatus(String status, {String? reason}) async {
     await FirebaseFirestore.instance
         .collection("courses")
         .doc(widget.courseId)
         .update({
-      "status": status,
-      "remark": reason ?? "",
-      "updatedAt": DateTime.now().toIso8601String(),
-    });
+          "status": status,
+          "remark": reason ?? "",
+          "updatedAt": DateTime.now().toIso8601String(),
+        });
 
     _loadCourse();
   }
 
-  // ---------------------------------------------------
-  // DELETE QUIZ
-  // ---------------------------------------------------
   Future<void> _deleteQuiz(int index) async {
     final quizId = quizzes[index]["id"];
 
@@ -362,17 +133,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     });
   }
 
-  // ---------------------------------------------------
-  // DELETE COURSE
-  // ---------------------------------------------------
   Future<void> _deleteCourse() async {
     final batch = FirebaseFirestore.instance.batch();
 
-    final quizDocs = await FirebaseFirestore.instance
-        .collection("courses")
-        .doc(widget.courseId)
-        .collection("quizzes")
-        .get();
+    final quizDocs =
+        await FirebaseFirestore.instance
+            .collection("courses")
+            .doc(widget.courseId)
+            .collection("quizzes")
+            .get();
 
     for (var q in quizDocs.docs) {
       batch.delete(q.reference);
@@ -385,9 +154,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     await batch.commit();
   }
 
-  // ---------------------------------------------------
-  // STATUS CHANGE
-  // ---------------------------------------------------
   void _onStatusChanged(String status, {String? reason}) {
     setState(() {
       courseStatus = status;
@@ -396,11 +162,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     });
   }
 
-  // ---------------------------------------------------
-  // BUILD UI
-  // ---------------------------------------------------
   @override
   Widget build(BuildContext context) {
+    final int price = (course?["price"] as num?)?.toInt() ?? 0;
+    final int discount = (course?["discountPercent"] as num?)?.toInt() ?? 0;
+    final bool applyDiscount = (course?["applyDiscount"] as bool?) ?? false;
+
+    final int total =
+        applyDiscount ? price - ((price * discount) ~/ 100) : price;
+
     if (course == null) {
       return const Scaffold(
         backgroundColor: AppColors.primaryDark,
@@ -431,9 +201,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               quizzes: quizzes.length,
               enrolled: course!["enrolledCount"] ?? 0,
               sold: course!["sold"] ?? 0,
-              price: (course!["price"] ?? 0).toInt(),
-              discountPercent: course!["discountPercent"] ?? 0,
-              total: (course!["price"] ?? 0).toInt(),
+
+              price: price,
+              discountPercent: discount,
+              total: total,
+
               durationText: _calculateDuration(
                 course!['startDate'],
                 course!['endDate'],
@@ -448,18 +220,19 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               onDeleteCourse: () {
                 showDialog(
                   context: context,
-                  builder: (_) => CommonConfirmDialog(
-                    title: "Delete Course",
-                    message: "Are you sure?",
-                    icon: CupertinoIcons.trash,
-                    iconColor: Colors.red,
-                    confirmColor: Colors.red,
-                    onConfirm: () async {
-                      await _deleteCourse();
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                  ),
+                  builder:
+                      (_) => CommonConfirmDialog(
+                        title: "Delete Course",
+                        message: "Are you sure?",
+                        icon: CupertinoIcons.trash,
+                        iconColor: Colors.red,
+                        confirmColor: Colors.red,
+                        onConfirm: () async {
+                          await _deleteCourse();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                      ),
                 );
               },
               onEditCourse: () {},
@@ -483,31 +256,32 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   startDate: q["startDate"],
                   endDate: q["endDate"],
 
-                  timeSeconds: q["time"],  // 🔥 FIXED → use q not quiz
+                  timeSeconds: q["time"],
 
-                  questions: q["questions"] != null
-                      ? List<Map<String, dynamic>>.from(q["questions"])
-                      : [],   // 🔥 FIXED → use q not quiz
+                  questions:
+                      q["questions"] != null
+                          ? List<Map<String, dynamic>>.from(q["questions"])
+                          : [],
 
                   onDetails: () {
-                    final cleanedQuestions = (q["questions"] as List).map((qq) {
-                      final opts = qq["options"];
+                    final cleanedQuestions =
+                        (q["questions"] as List).map((qq) {
+                          final opts = qq["options"];
 
-                      // Convert Map → List<String> in correct order
-                      final List<String> optionsList = [
-                        opts["A"]?.toString() ?? "",
-                        opts["B"]?.toString() ?? "",
-                        opts["C"]?.toString() ?? "",
-                        opts["D"]?.toString() ?? "",
-                      ];
+                          final List<String> optionsList = [
+                            opts["A"]?.toString() ?? "",
+                            opts["B"]?.toString() ?? "",
+                            opts["C"]?.toString() ?? "",
+                            opts["D"]?.toString() ?? "",
+                          ];
 
-                      return {
-                        "question": qq["question"] ?? "",
-                        "options": optionsList,
-                        "correct": qq["correct"] ?? "A",
-                        "description": qq["description"] ?? "",
-                      };
-                    }).toList();
+                          return {
+                            "question": qq["question"] ?? "",
+                            "options": optionsList,
+                            "correct": qq["correct"] ?? "A",
+                            "description": qq["description"] ?? "",
+                          };
+                        }).toList();
 
                     context.pushNamed(
                       "adminQuizDetails",
@@ -519,44 +293,32 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     );
                   },
 
-
-                  // onEdit: () {
-                  //   context.pushNamed(
-                  //     'adminEditQuiz',
-                  //     pathParameters: {
-                  //       'courseId': widget.courseId,
-                  //       'quizId': q['id'],
-                  //     },
-                  //   );
-                  // },
                   onEdit: () {
-                    // 1️⃣ Raw Firestore questions
                     final List rawQuestions = q["questions"] ?? [];
 
-                    // 2️⃣ Convert options Map → List for the edit screen
                     final List<Map<String, dynamic>> parsedQuestions =
-                    rawQuestions.map<Map<String, dynamic>>((item) {
-                      final opts = item["options"] as Map<String, dynamic>? ?? {};
+                        rawQuestions.map<Map<String, dynamic>>((item) {
+                          final opts =
+                              item["options"] as Map<String, dynamic>? ?? {};
 
-                      return {
-                        "question": item["question"] ?? "",
-                        "correct": item["correct"] ?? "A",
-                        "description": item["description"] ?? "",     // 🔥 FIX ADDED
-                        "options": [
-                          (opts["A"] ?? "").toString(),
-                          (opts["B"] ?? "").toString(),
-                          (opts["C"] ?? "").toString(),
-                          (opts["D"] ?? "").toString(),
-                        ],
-                      };
-                    }).toList();
+                          return {
+                            "question": item["question"] ?? "",
+                            "correct": item["correct"] ?? "A",
+                            "description": item["description"] ?? "",
+                            "options": [
+                              (opts["A"] ?? "").toString(),
+                              (opts["B"] ?? "").toString(),
+                              (opts["C"] ?? "").toString(),
+                              (opts["D"] ?? "").toString(),
+                            ],
+                          };
+                        }).toList();
 
-                    // 3️⃣ Navigate with REQUIRED pathParameters + extra payload
                     context.pushNamed(
                       'adminEditQuiz',
                       pathParameters: {
-                        'courseId': widget.courseId,   // 🔥 REQUIRED by /:courseId/:quizId
-                        'quizId': q['id'],             // 🔥 REQUIRED
+                        'courseId': widget.courseId,
+                        'quizId': q['id'],
                       },
                       extra: {
                         "quizId": q['id'],
@@ -572,21 +334,21 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   onDelete: () {
                     showDialog(
                       context: context,
-                      builder: (_) => CommonConfirmDialog(
-                        title: "Delete Quiz",
-                        message: "Delete this quiz?",
-                        icon: CupertinoIcons.trash,
-                        iconColor: Colors.red,
-                        confirmColor: Colors.red,
-                        onConfirm: () async {
-                          await _deleteQuiz(i);
-                          Navigator.pop(context);
-                        },
-                      ),
+                      builder:
+                          (_) => CommonConfirmDialog(
+                            title: "Delete Quiz",
+                            message: "Delete this quiz?",
+                            icon: CupertinoIcons.trash,
+                            iconColor: Colors.red,
+                            confirmColor: Colors.red,
+                            onConfirm: () async {
+                              await _deleteQuiz(i);
+                              Navigator.pop(context);
+                            },
+                          ),
                     );
                   },
                 ),
-
               );
             }),
 
@@ -595,26 +357,30 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: hasChanges
-                    ? () async {
-                  await _updateStatus(courseStatus,
-                      reason: rejectionReason);
+                onPressed:
+                    hasChanges
+                        ? () async {
+                          await _updateStatus(
+                            courseStatus,
+                            reason: rejectionReason,
+                          );
 
-                  showDialog(
-                    context: context,
-                    builder: (_) => ActionSuccessDialog(
-                      title: "Updated",
-                      message: "Course updated successfully",
-                      onConfirm: () => Navigator.pop(context),
-                    ),
-                  );
+                          showDialog(
+                            context: context,
+                            builder:
+                                (_) => ActionSuccessDialog(
+                                  title: "Updated",
+                                  message: "Course updated successfully",
+                                  onConfirm: () => Navigator.pop(context),
+                                ),
+                          );
 
-                  setState(() => hasChanges = false);
-                }
-                    : null,
+                          setState(() => hasChanges = false);
+                        }
+                        : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                  hasChanges ? AppColors.primaryLight : AppColors.white,
+                      hasChanges ? AppColors.primaryLight : AppColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -637,9 +403,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     );
   }
 
-  // ---------------------------------------------------
-  // CALCULATE DURATION
-  // ---------------------------------------------------
   String _calculateDuration(dynamic start, dynamic end) {
     DateTime startDate;
     DateTime endDate;
@@ -655,7 +418,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     } else {
       endDate =
           DateTime.tryParse(end.toString()) ??
-              DateTime.now().add(const Duration(days: 30));
+          DateTime.now().add(const Duration(days: 30));
     }
 
     final diff = endDate.difference(startDate);

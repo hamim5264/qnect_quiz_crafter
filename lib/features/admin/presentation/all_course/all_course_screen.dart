@@ -113,7 +113,7 @@ class _AllCourseScreenState extends ConsumerState<AllCourseScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 14,
                             mainAxisSpacing: 14,
-                            childAspectRatio: 0.85,
+                            childAspectRatio: 0.75,
                           ),
                       itemBuilder: (_, i) {
                         final course =
