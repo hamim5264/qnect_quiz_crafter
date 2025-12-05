@@ -56,7 +56,7 @@ class StudentCourseDetailsScreen extends StatelessWidget {
         builder: (context, courseSnap) {
           if (!courseSnap.hasData || !courseSnap.data!.exists) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: AppLoader(),
             );
           }
 
@@ -116,7 +116,7 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                 border: Border.all(color: Colors.white38,),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primaryLight.withValues(alpha: 0.95),
+                                    color: AppColors.primaryLight.withValues(alpha: 0.35),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   )
@@ -325,49 +325,143 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                   );
                                 }
 
+                                // return Column(
+                                //   children: quizDocs.map((d) {
+                                //     final q =
+                                //     d.data() as Map<String, dynamic>;
+                                //     final quizId = d.id;
+                                //
+                                //     final qTitle =
+                                //     (q['title'] ?? 'Quiz') as String;
+                                //     final qDesc =
+                                //     (q['description'] ?? '') as String;
+                                //     final start = _toDate(q['startDate']);
+                                //     final end = _toDate(q['endDate']);
+                                //
+                                //     final int questionCount =
+                                //     (q['questionCount'] ??
+                                //         (q['questions']?.length ?? 0))
+                                //     as int;
+                                //
+                                //     final now = DateTime.now();
+                                //     //final bool locked = now.isBefore(start);
+                                //     //final bool expired = now.isAfter(end);
+                                //     final bool locked = false; // TEMP: unlock quizzes for testing
+                                //     final bool expired = false; // TEMP: allow testing even after expiration
+                                //
+                                //
+                                //
+                                //
+                                //     const int earnedPoints = 0;
+                                //     final bool completed =
+                                //         earnedPoints > 0; // placeholder
+                                //
+                                //     // return StudentCourseQuizTile(
+                                //     //   courseId: courseId,
+                                //     //   quizId: quizId,
+                                //     //   title: qTitle,
+                                //     //   description: qDesc,
+                                //     //   totalPoints: questionCount,
+                                //     //   earnedPoints: earnedPoints,
+                                //     //   locked: locked,
+                                //     //   expired: expired,
+                                //     //   startDate: start,
+                                //     //   endDate: end,
+                                //     //   completed: completed,
+                                //     // );
+                                //     return StudentCourseQuizTile(
+                                //       courseId: courseId,
+                                //       quizId: quizId,
+                                //       title: qTitle,
+                                //       description: qDesc,
+                                //       totalPoints: questionCount,
+                                //       earnedPoints: earnedPoints,
+                                //       locked: locked,
+                                //       expired: expired,
+                                //       startDate: start,
+                                //       endDate: end,
+                                //       completed: completed,
+                                //       questions: q['questions'] ?? [],     // ← NEW
+                                //       durationSeconds: q['duration'] ?? 900, // default 15 min
+                                //     );
+                                //   }).toList(),
+                                // );
+
                                 return Column(
                                   children: quizDocs.map((d) {
-                                    final q =
-                                    d.data() as Map<String, dynamic>;
+                                    final q = d.data() as Map<String, dynamic>;
                                     final quizId = d.id;
 
-                                    final qTitle =
-                                    (q['title'] ?? 'Quiz') as String;
-                                    final qDesc =
-                                    (q['description'] ?? '') as String;
+                                    final qTitle = (q['title'] ?? 'Quiz') as String;
+                                    final qDesc = (q['description'] ?? '') as String;
+
                                     final start = _toDate(q['startDate']);
                                     final end = _toDate(q['endDate']);
 
                                     final int questionCount =
-                                    (q['questionCount'] ??
-                                        (q['questions']?.length ?? 0))
-                                    as int;
+                                    (q['questionCount'] ?? (q['questions']?.length ?? 0)) as int;
 
+                                    //final bool locked = false;
+                                    //final bool expired = false;
                                     final now = DateTime.now();
                                     final bool locked = now.isBefore(start);
                                     final bool expired = now.isAfter(end);
 
-                                    // For now, we don't have real earned points.
-                                    // You will update from quiz attempt collection later.
-                                    const int earnedPoints = 0;
-                                    final bool completed =
-                                        earnedPoints > 0; // placeholder
+                                    final questions = q['questions'] ?? [];
+                                    final durationSeconds = q['duration'] ?? 900;
 
-                                    return StudentCourseQuizTile(
-                                      courseId: courseId,
-                                      quizId: quizId,
-                                      title: qTitle,
-                                      description: qDesc,
-                                      totalPoints: questionCount,
-                                      earnedPoints: earnedPoints,
-                                      locked: locked,
-                                      expired: expired,
-                                      startDate: start,
-                                      endDate: end,
-                                      completed: completed,
+                                    // FETCH USER ATTEMPT --------------------------
+                                    return FutureBuilder<QuerySnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection("courses")
+                                          .doc(courseId)
+                                          .collection("quizzes")
+                                          .doc(quizId)
+                                          .collection("attempts")
+                                          .where("userId", isEqualTo: uid)
+                                          .limit(1)
+                                          .get(),
+                                      builder: (context, attemptSnap) {
+                                        if (!attemptSnap.hasData) {
+                                          return const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: AppLoader(size: 24,),
+                                          );
+                                        }
+
+                                        bool completed = attemptSnap.data!.docs.isNotEmpty;
+
+                                        String? attemptId;
+                                        int earnedPoints = 0;
+
+                                        if (completed) {
+                                          final doc = attemptSnap.data!.docs.first;
+                                          attemptId = doc.id;
+                                          earnedPoints = (doc['points'] ?? 0) as int;
+                                        }
+
+                                        return StudentCourseQuizTile(
+                                          courseId: courseId,
+                                          quizId: quizId,
+                                          title: qTitle,
+                                          subtitle: qDesc,
+                                          totalPoints: questionCount,
+                                          earnedPoints: earnedPoints,
+                                          locked: locked,
+                                          expired: expired,
+                                          startDate: start,
+                                          endDate: end,
+                                          completed: completed,
+                                          questions: questions,
+                                          durationSeconds: durationSeconds,
+                                          attemptId: attemptId,   // <-- pass to tile
+                                        );
+                                      },
                                     );
                                   }).toList(),
                                 );
+
+
                               },
                             ),
                           ],

@@ -56,6 +56,10 @@ import '../features/guest_and_student/paid_courses/presentation/screens/student_
 import '../features/guest_and_student/paid_courses/presentation/screens/student_course_details_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_my_courses_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_paid_courses_screen.dart';
+import '../features/guest_and_student/quiz/presentation/screens/student_quiz_attempt_screen.dart';
+import '../features/guest_and_student/quiz/presentation/screens/student_quiz_details_screen.dart';
+import '../features/guest_and_student/quiz/presentation/screens/student_quiz_instruction_screen.dart';
+import '../features/guest_and_student/quiz/presentation/screens/student_quiz_result_screen.dart';
 import '../features/guest_and_student/student_profile/student_profile_screen.dart';
 import '../features/teacher/course_management/models/teacher_course_model.dart';
 import '../features/teacher/course_management/presentation/add_course/add_course_screen.dart';
@@ -569,6 +573,69 @@ final router = GoRouter(
       builder: (context, state) {
         final courseId = state.pathParameters['courseId']!;
         return StudentCourseDetailsScreen(courseId: courseId);
+      },
+    ),
+
+    // in router.dart
+
+    GoRoute(
+      path: '/student-quiz-instruction',
+      name: 'studentQuizInstruction',
+      builder: (context, state) {
+        final extra = state.extra! as Map<String, dynamic>;
+        return StudentQuizInstructionScreen(
+          quizId: extra['quizId'],
+          courseId: extra['courseId'],
+          title: extra['title'],
+          durationSeconds: extra['durationSeconds'],
+          questions:
+          (extra['questions'] as List).cast<Map<String, dynamic>>(),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/student-quiz-attempt',
+      name: 'studentQuizAttempt',
+      builder: (context, state) {
+        final extra = state.extra! as Map<String, dynamic>;
+        return StudentQuizAttemptScreen(
+          quizId: extra['quizId'],
+          courseId: extra['courseId'],
+          title: extra['title'],
+          durationSeconds: extra['durationSeconds'],
+          questions:
+          (extra['questions'] as List).cast<Map<String, dynamic>>(),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/student-quiz-result',
+      name: 'studentQuizResult',
+      builder: (context, state) {
+        final extra = state.extra! as Map<String, dynamic>;
+        return StudentQuizResultScreen(
+          title: extra['title'],
+          points: extra['points'] as int,
+          total: extra['total'] as int,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/student-quiz-details',
+      name: 'studentQuizDetails',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+
+        return StudentQuizDetailsScreen(
+          quizId: extra['quizId'],
+          courseId: extra['courseId'],
+          title: extra['title'],
+          questions: extra['questions'],
+          attemptId: extra['attemptId'],
+        );
       },
     ),
 

@@ -371,7 +371,7 @@ class UniversalDashboardAppBar extends ConsumerWidget {
             minHeight: 8,
             backgroundColor: Colors.white24,
             valueColor: const AlwaysStoppedAnimation<Color>(
-              AppColors.primaryLight,
+              AppColors.secondaryDark,
             ),
           ),
         ),
