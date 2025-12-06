@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -14,36 +15,66 @@ class TopTeacherCard extends StatefulWidget {
 
 class _TopTeacherCardState extends State<TopTeacherCard> {
   int _currentIndex = 0;
+  bool _loading = true;
 
-  final List<Map<String, dynamic>> topTeachers = [
-    {
-      'name': 'Mst. Hasna Hena',
-      'level': '06',
-      'likes': 405,
-      'courses': 35,
-      'sold': 21,
-      'growth': '12%',
-      'avatar': 'assets/images/admin/sample_teacher.png',
-    },
-    {
-      'name': 'Shahina Akter',
-      'level': '07',
-      'likes': 368,
-      'courses': 28,
-      'sold': 19,
-      'growth': '9%',
-      'avatar': 'assets/images/admin/sample_teacher2.png',
-    },
-    {
-      'name': 'Tasnim Jui',
-      'level': '08',
-      'likes': 498,
-      'courses': 41,
-      'sold': 27,
-      'growth': '15%',
-      'avatar': 'assets/images/admin/sample_teacher3.png',
-    },
-  ];
+  List<Map<String, dynamic>> topTeachers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTopTeachers();
+  }
+
+  Future<void> _loadTopTeachers() async {
+    final firestore = FirebaseFirestore.instance;
+
+    final teacherDocs =
+        await firestore
+            .collection("users")
+            .where("role", isEqualTo: "teacher")
+            .get();
+
+    List<Map<String, dynamic>> results = [];
+
+    for (var t in teacherDocs.docs) {
+      final data = t.data();
+      final teacherId = t.id;
+
+      final courseDocs =
+          await firestore
+              .collection("courses")
+              .where("teacherId", isEqualTo: teacherId)
+              .get();
+
+      int totalCourses = courseDocs.docs.length;
+      int totalSold = 0;
+
+      for (var c in courseDocs.docs) {
+        final soldValue = c.data()["sold"] ?? 0;
+
+        totalSold +=
+            (soldValue is int)
+                ? soldValue
+                : (soldValue as num).toDouble().toInt();
+      }
+
+      results.add({
+        "name": "${data['firstName']} ${data['lastName']}",
+        "avatar": data["profileImage"] ?? "",
+        "level": data["level"]?.toString() ?? "01",
+        "courses": totalCourses,
+        "sold": totalSold,
+        "growth": "12%",
+      });
+    }
+
+    results.sort((a, b) => b["sold"].compareTo(a["sold"]));
+
+    setState(() {
+      topTeachers = results.take(3).toList();
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,25 +94,33 @@ class _TopTeacherCardState extends State<TopTeacherCard> {
           ),
           const SizedBox(height: 12),
 
-          CarouselSlider.builder(
-            itemCount: topTeachers.length,
-            itemBuilder: (context, index, realIdx) {
-              final teacher = topTeachers[index];
-              return _TeacherCardItem(
-                teacher: teacher,
-                isActive: _currentIndex == index,
-              );
-            },
-            options: CarouselOptions(
+          if (_loading)
+            const SizedBox(
               height: 250,
-              viewportFraction: 1.0,
-              enlargeCenterPage: false,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 5),
-              onPageChanged:
-                  (index, _) => setState(() => _currentIndex = index),
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primaryLight),
+              ),
+            )
+          else
+            CarouselSlider.builder(
+              itemCount: topTeachers.length,
+              itemBuilder: (context, index, realIdx) {
+                final teacher = topTeachers[index];
+                return _TeacherCardItem(
+                  teacher: teacher,
+                  isActive: _currentIndex == index,
+                );
+              },
+              options: CarouselOptions(
+                height: 250,
+                viewportFraction: 1.0,
+                enlargeCenterPage: false,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 5),
+                onPageChanged:
+                    (index, _) => setState(() => _currentIndex = index),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -118,8 +157,10 @@ class _TeacherCardItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 26,
-                backgroundImage: AssetImage(teacher['avatar']),
+                backgroundColor: Colors.grey.shade300,
+                child: ClipOval(child: _buildAvatar(teacher['avatar'])),
               ),
+
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +263,11 @@ class _TeacherCardItem extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    context.push('/user-details/Teacher');
+                    context.pushNamed(
+                      'user-details',
+                      pathParameters: {'role': 'Teacher'},
+                      extra: teacher['email'],
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.chip3,
@@ -268,6 +313,33 @@ class _TeacherCardItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAvatar(String? url) {
+    if (url == null || url.isEmpty) {
+      return const Icon(Icons.person, size: 30, color: AppColors.textPrimary);
+    }
+
+    if (url.startsWith("http")) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        errorBuilder:
+            (_, __, ___) => const Icon(
+              Icons.person,
+              size: 30,
+              color: AppColors.textPrimary,
+            ),
+      );
+    }
+
+    return Image.asset(
+      url,
+      fit: BoxFit.cover,
+      errorBuilder:
+          (_, __, ___) =>
+              const Icon(Icons.person, size: 30, color: AppColors.textPrimary),
     );
   }
 }

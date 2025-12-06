@@ -23,7 +23,7 @@ class LeaderboardUserCard extends StatelessWidget {
     this.highlight = false,
   });
 
-  String? get _trophyAsset {
+  String? get _trophy {
     switch (rank) {
       case 1:
         return 'assets/trophy/gold.json';
@@ -51,9 +51,13 @@ class LeaderboardUserCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: Colors.white,
             radius: 22,
-            backgroundImage: AssetImage(image),
+            backgroundColor: Colors.white,
+            backgroundImage: image.isNotEmpty ? NetworkImage(image) : null,
+            child:
+                image.isEmpty
+                    ? const Icon(Icons.person, size: 28, color: Colors.black54)
+                    : null,
           ),
 
           const SizedBox(width: 12),
@@ -79,55 +83,31 @@ class LeaderboardUserCard extends StatelessWidget {
                     fontSize: 13,
                   ),
                 ),
+
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.chip2,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "Level ${level.toString().padLeft(2, '0')}",
-                        style: const TextStyle(
-                          fontFamily: AppTypography.family,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
+
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.chip3,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "$points Points",
+                    style: const TextStyle(
+                      fontFamily: AppTypography.family,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.chip3,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "${points.toString().padLeft(2, '0')} Points",
-                        style: const TextStyle(
-                          fontFamily: AppTypography.family,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(width: 8),
 
           Container(
             width: 60,
@@ -136,20 +116,10 @@ class LeaderboardUserCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.primaryLight.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
-                width: 1,
-              ),
             ),
             child:
-                _trophyAsset != null
-                    ? Lottie.asset(
-                      _trophyAsset!,
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.contain,
-                      repeat: true,
-                    )
+                _trophy != null
+                    ? Lottie.asset(_trophy!, width: 48, height: 48)
                     : Text(
                       rank.toString(),
                       style: const TextStyle(

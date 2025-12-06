@@ -15,7 +15,6 @@ class QuizDateWarningCard extends StatelessWidget {
   String formatDate(String date) {
     final d = DateTime.parse(date);
     return DateFormat('d MMMM yyyy').format(d);
-    // Example: 1 December 2025
   }
 
   @override
@@ -34,7 +33,6 @@ class QuizDateWarningCard extends StatelessWidget {
           const Icon(Icons.warning_rounded, color: Colors.white, size: 20),
           const SizedBox(width: 8),
 
-          // 🔥 Expanded FIXES overflow by allowing wrapping
           Expanded(
             child: Text(
               "Pick a date between ${formatDate(courseStart)} - ${formatDate(courseEnd)}",

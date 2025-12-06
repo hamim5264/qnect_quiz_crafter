@@ -54,29 +54,28 @@ class StudentMyCourseCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon
             Container(
               height: 56,
               width: 56,
               decoration: BoxDecoration(
                 color: AppColors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white30,)
+                border: Border.all(color: Colors.white30),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: iconPath.isNotEmpty
-                    ? Image.asset(
-                  iconPath,
-                  fit: BoxFit.contain,
-                )
-                    : const Icon(Icons.menu_book_rounded,
-                    color: Colors.white, size: 30),
+                child:
+                    iconPath.isNotEmpty
+                        ? Image.asset(iconPath, fit: BoxFit.contain)
+                        : const Icon(
+                          Icons.menu_book_rounded,
+                          color: Colors.white,
+                          size: 30,
+                        ),
               ),
             ),
             const SizedBox(width: 14),
 
-            // Info + progress
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +104,6 @@ class StudentMyCourseCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Chips for group / level
                   Row(
                     children: [
                       _pill(group, AppColors.chip2),
@@ -116,7 +114,6 @@ class StudentMyCourseCard extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Progress bar
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

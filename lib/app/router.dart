@@ -244,10 +244,11 @@ final router = GoRouter(
       path: '/user-details/:role',
       name: 'user-details',
       builder: (context, state) {
-        final role = state.pathParameters['role'];
-        final email = state.extra as String;
+        final role = state.pathParameters['role'] ?? "Unknown";
 
-        return UserDetailsScreen(role: role!, email: email);
+        final email = state.extra is String ? state.extra as String : "";
+
+        return UserDetailsScreen(role: role, email: email);
       },
     ),
 
@@ -382,7 +383,7 @@ final router = GoRouter(
 
         return QuizQuestionsInfoScreen(
           quizTitle: data["title"] ?? "",
-          quizDuration: data["time"] as Duration, // HERE FIX
+          quizDuration: data["time"] as Duration,
           questions: List<Map<String, dynamic>>.from(data["questions"]),
         );
       },
@@ -418,11 +419,11 @@ final router = GoRouter(
       path: '/leaderboard',
       name: 'leaderboard',
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return LeaderboardScreen(
-          userRole: extra?['role'] ?? 'student',
-          currentUserId: extra?['userId'] ?? '',
-        );
+        final role =
+            state.extra is Map ? (state.extra as Map)['role'] : "student";
+        final userId = state.extra is Map ? (state.extra as Map)['userId'] : "";
+
+        return LeaderboardScreen(userRole: role, currentUserId: userId);
       },
     ),
 
@@ -556,11 +557,10 @@ final router = GoRouter(
       path: '/student-buy-course',
       name: 'studentBuyCourse',
       builder: (context, state) {
-        final course = state.extra as Map<String, dynamic>; // incoming course data
+        final course = state.extra as Map<String, dynamic>;
         return StudentBuyCourseScreen(course: course);
       },
     ),
-    // inside routes list:
     GoRoute(
       path: '/student/my-courses',
       name: 'studentMyCourses',
@@ -576,8 +576,6 @@ final router = GoRouter(
       },
     ),
 
-    // in router.dart
-
     GoRoute(
       path: '/student-quiz-instruction',
       name: 'studentQuizInstruction',
@@ -588,8 +586,7 @@ final router = GoRouter(
           courseId: extra['courseId'],
           title: extra['title'],
           durationSeconds: extra['durationSeconds'],
-          questions:
-          (extra['questions'] as List).cast<Map<String, dynamic>>(),
+          questions: (extra['questions'] as List).cast<Map<String, dynamic>>(),
         );
       },
     ),
@@ -604,8 +601,7 @@ final router = GoRouter(
           courseId: extra['courseId'],
           title: extra['title'],
           durationSeconds: extra['durationSeconds'],
-          questions:
-          (extra['questions'] as List).cast<Map<String, dynamic>>(),
+          questions: (extra['questions'] as List).cast<Map<String, dynamic>>(),
         );
       },
     ),
@@ -638,6 +634,5 @@ final router = GoRouter(
         );
       },
     ),
-
   ],
 );

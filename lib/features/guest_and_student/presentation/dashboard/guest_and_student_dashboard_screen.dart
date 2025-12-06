@@ -52,6 +52,7 @@ class _GuestAndStudentDashboardScreenState
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final isGuest = user == null;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
 
     final studentState = isGuest ? null : ref.watch(studentControllerProvider);
     final student = studentState?.student;
@@ -99,10 +100,14 @@ class _GuestAndStudentDashboardScreenState
 
             const SizedBox(height: 10),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: StatsGrid(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: isGuest
+                  ? const StatsGrid(uid: null)   // guest → null triggers zero stats
+                  : StatsGrid(uid: uid!),        // student → real UID
             ),
+
+
 
             const SizedBox(height: 16),
 
@@ -193,7 +198,12 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'leaderboard',
+                        extra: {'role': 'student', 'userId': uid},
+                      );
+                    },
                   ),
                   QuickActionItem(
                     title: "Teacher List",

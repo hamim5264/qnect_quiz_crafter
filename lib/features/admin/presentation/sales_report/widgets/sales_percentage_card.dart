@@ -4,10 +4,30 @@ import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
 class SellsPercentageCard extends StatelessWidget {
-  const SellsPercentageCard({super.key});
+  final int science;
+  final int arts;
+  final int commerce;
+
+  const SellsPercentageCard({
+    super.key,
+    required this.science,
+    required this.arts,
+    required this.commerce,
+  });
+
+  double _percent(int part, int total) {
+    if (total == 0) return 0;
+    return (part / total) * 100;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final total = science + arts + commerce;
+
+    final sciP = _percent(science, total).toStringAsFixed(2);
+    final artP = _percent(arts, total).toStringAsFixed(2);
+    final comP = _percent(commerce, total).toStringAsFixed(2);
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -21,20 +41,20 @@ class SellsPercentageCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
+              children: [
                 _CategoryItem(
                   title: 'Science',
-                  value: '43.26%',
+                  value: '$sciP%',
                   color: Colors.redAccent,
                 ),
                 _CategoryItem(
                   title: 'Arts',
-                  value: '34.19%',
+                  value: '$artP%',
                   color: AppColors.chip2,
                 ),
                 _CategoryItem(
                   title: 'Commerce',
-                  value: '22.56%',
+                  value: '$comP%',
                   color: Colors.lightGreen,
                 ),
               ],

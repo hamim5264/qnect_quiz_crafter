@@ -13,10 +13,7 @@ import '../widgets/student_course_quiz_tile.dart';
 class StudentCourseDetailsScreen extends StatelessWidget {
   final String courseId;
 
-  const StudentCourseDetailsScreen({
-    super.key,
-    required this.courseId,
-  });
+  const StudentCourseDetailsScreen({super.key, required this.courseId});
 
   DateTime _toDate(dynamic v) {
     if (v == null) return DateTime.now();
@@ -45,58 +42,60 @@ class StudentCourseDetailsScreen extends StatelessWidget {
     final db = FirebaseFirestore.instance;
 
     final courseRef = db.collection('courses').doc(courseId);
-    final myCourseRef =
-    db.collection('users').doc(uid).collection('myCourses').doc(courseId);
+    final myCourseRef = db
+        .collection('users')
+        .doc(uid)
+        .collection('myCourses')
+        .doc(courseId);
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      appBar: CommonRoundedAppBar(title: "Course Details",),
+      appBar: CommonRoundedAppBar(title: "Course Details"),
       body: StreamBuilder<DocumentSnapshot>(
         stream: courseRef.snapshots(),
         builder: (context, courseSnap) {
           if (!courseSnap.hasData || !courseSnap.data!.exists) {
-            return const Center(
-              child: AppLoader(),
-            );
+            return const Center(child: AppLoader());
           }
 
-          final course =
-          courseSnap.data!.data() as Map<String, dynamic>;
+          final course = courseSnap.data!.data() as Map<String, dynamic>;
 
           return StreamBuilder<DocumentSnapshot>(
             stream: myCourseRef.snapshots(),
             builder: (context, myCourseSnap) {
-              final myCourse = myCourseSnap.data?.data() as Map<String, dynamic>?;
+              final myCourse =
+                  myCourseSnap.data?.data() as Map<String, dynamic>?;
               final totalQuizzes = (myCourse?['totalQuizzes'] ?? 0) as int;
               final completedQuizzes =
-              (myCourse?['completedQuizzes'] ?? 0) as int;
+                  (myCourse?['completedQuizzes'] ?? 0) as int;
 
-              final double progress = totalQuizzes == 0
-                  ? 0
-                  : (completedQuizzes / totalQuizzes)
-                  .clamp(0.0, 1.0)
-                  .toDouble();
+              final double progress =
+                  totalQuizzes == 0
+                      ? 0
+                      : (completedQuizzes / totalQuizzes)
+                          .clamp(0.0, 1.0)
+                          .toDouble();
 
               final percent = (progress * 100).round();
 
               final title = (course['title'] ?? 'Untitled Course') as String;
-              final description =
-              (course['description'] ?? '') as String;
+              final description = (course['description'] ?? '') as String;
               final iconPath = (course['iconPath'] ?? '') as String;
-              final enrolledCount =
-              (course['enrolledCount'] ?? 0) as int;
+              final enrolledCount = (course['enrolledCount'] ?? 0) as int;
               final teacherId = (course['teacherId'] ?? '') as String;
               final startDate = _toDate(course['startDate']);
               final endDate = _toDate(course['endDate']);
 
               return FutureBuilder<DocumentSnapshot>(
-                future: teacherId.isEmpty
-                    ? null
-                    : db.collection('users').doc(teacherId).get(),
+                future:
+                    teacherId.isEmpty
+                        ? null
+                        : db.collection('users').doc(teacherId).get(),
                 builder: (context, teacherSnap) {
-                  final teacher = teacherSnap.data?.data() as Map<String, dynamic>?;
+                  final teacher =
+                      teacherSnap.data?.data() as Map<String, dynamic>?;
                   final teacherName =
-                  (teacher?['firstName'] ?? 'Course Teacher') as String;
+                      (teacher?['firstName'] ?? 'Course Teacher') as String;
 
                   return Column(
                     children: [
@@ -105,21 +104,24 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: ListView(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           children: [
-                            // MAIN INFO CARD
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white38,),
+                                border: Border.all(color: Colors.white38),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primaryLight.withValues(alpha: 0.35),
+                                    color: AppColors.primaryLight.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
-                                  )
+                                  ),
                                 ],
                               ),
                               child: Column(
@@ -131,34 +133,41 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                         height: 60,
                                         width: 60,
                                         decoration: BoxDecoration(
-                                          color: AppColors.white.withValues(alpha: 0.3),
-                                          borderRadius:
-                                          BorderRadius.circular(18),
+                                          color: AppColors.white.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            18,
+                                          ),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(18),
-                                          child: iconPath.isNotEmpty
-                                              ? Image.asset(iconPath,
-                                              fit: BoxFit.contain)
-                                              : const Icon(
-                                            Icons.menu_book_rounded,
-                                            color: Colors.white,
-                                            size: 34,
+                                          borderRadius: BorderRadius.circular(
+                                            18,
                                           ),
+                                          child:
+                                              iconPath.isNotEmpty
+                                                  ? Image.asset(
+                                                    iconPath,
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                  : const Icon(
+                                                    Icons.menu_book_rounded,
+                                                    color: Colors.white,
+                                                    size: 34,
+                                                  ),
                                         ),
                                       ),
                                       const SizedBox(width: 14),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               title,
                                               style: const TextStyle(
                                                 fontFamily:
-                                                AppTypography.family,
+                                                    AppTypography.family,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
                                                 color: AppColors.secondaryDark,
@@ -171,7 +180,7 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 fontFamily:
-                                                AppTypography.family,
+                                                    AppTypography.family,
                                                 color: Colors.white70,
                                                 fontSize: 12,
                                               ),
@@ -183,7 +192,8 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                               children: [
                                                 _infoPill(
                                                   icon: CupertinoIcons.group,
-                                                  label: '$enrolledCount Enrolled',
+                                                  label:
+                                                      '$enrolledCount Enrolled',
                                                   bg: const Color(0xFFFFE2E0),
                                                 ),
                                                 _infoPill(
@@ -193,7 +203,8 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                                 ),
                                                 _infoPill(
                                                   icon: CupertinoIcons.book,
-                                                  label: '$totalQuizzes Quizzes',
+                                                  label:
+                                                      '$totalQuizzes Quizzes',
                                                   bg: const Color(0xFFE0F2F1),
                                                 ),
                                               ],
@@ -217,13 +228,14 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(999),
+                                          borderRadius: BorderRadius.circular(
+                                            999,
+                                          ),
                                           child: LinearProgressIndicator(
                                             value: progress,
                                             minHeight: 10,
                                             backgroundColor:
-                                            Colors.grey.shade300,
+                                                Colors.grey.shade300,
                                             color: AppColors.secondaryDark,
                                           ),
                                         ),
@@ -242,11 +254,12 @@ class StudentCourseDetailsScreen extends StatelessWidget {
 
                                   const SizedBox(height: 16),
 
-                                  // Duration pill
                                   Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 10),
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: AppColors.chip3,
                                       borderRadius: BorderRadius.circular(14),
@@ -254,7 +267,7 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                       children: [
                                         SizedBox(
                                           height: 28,
@@ -294,12 +307,12 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
 
-                            // QUIZ LIST
                             StreamBuilder<QuerySnapshot>(
-                              stream: courseRef
-                                  .collection('quizzes')
-                                  .orderBy('startDate')
-                                  .snapshots(),
+                              stream:
+                                  courseRef
+                                      .collection('quizzes')
+                                      .orderBy('startDate')
+                                      .snapshots(),
                               builder: (context, quizSnap) {
                                 if (!quizSnap.hasData) {
                                   return const Center(
@@ -325,143 +338,97 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                   );
                                 }
 
-                                // return Column(
-                                //   children: quizDocs.map((d) {
-                                //     final q =
-                                //     d.data() as Map<String, dynamic>;
-                                //     final quizId = d.id;
-                                //
-                                //     final qTitle =
-                                //     (q['title'] ?? 'Quiz') as String;
-                                //     final qDesc =
-                                //     (q['description'] ?? '') as String;
-                                //     final start = _toDate(q['startDate']);
-                                //     final end = _toDate(q['endDate']);
-                                //
-                                //     final int questionCount =
-                                //     (q['questionCount'] ??
-                                //         (q['questions']?.length ?? 0))
-                                //     as int;
-                                //
-                                //     final now = DateTime.now();
-                                //     //final bool locked = now.isBefore(start);
-                                //     //final bool expired = now.isAfter(end);
-                                //     final bool locked = false; // TEMP: unlock quizzes for testing
-                                //     final bool expired = false; // TEMP: allow testing even after expiration
-                                //
-                                //
-                                //
-                                //
-                                //     const int earnedPoints = 0;
-                                //     final bool completed =
-                                //         earnedPoints > 0; // placeholder
-                                //
-                                //     // return StudentCourseQuizTile(
-                                //     //   courseId: courseId,
-                                //     //   quizId: quizId,
-                                //     //   title: qTitle,
-                                //     //   description: qDesc,
-                                //     //   totalPoints: questionCount,
-                                //     //   earnedPoints: earnedPoints,
-                                //     //   locked: locked,
-                                //     //   expired: expired,
-                                //     //   startDate: start,
-                                //     //   endDate: end,
-                                //     //   completed: completed,
-                                //     // );
-                                //     return StudentCourseQuizTile(
-                                //       courseId: courseId,
-                                //       quizId: quizId,
-                                //       title: qTitle,
-                                //       description: qDesc,
-                                //       totalPoints: questionCount,
-                                //       earnedPoints: earnedPoints,
-                                //       locked: locked,
-                                //       expired: expired,
-                                //       startDate: start,
-                                //       endDate: end,
-                                //       completed: completed,
-                                //       questions: q['questions'] ?? [],     // ← NEW
-                                //       durationSeconds: q['duration'] ?? 900, // default 15 min
-                                //     );
-                                //   }).toList(),
-                                // );
-
                                 return Column(
-                                  children: quizDocs.map((d) {
-                                    final q = d.data() as Map<String, dynamic>;
-                                    final quizId = d.id;
+                                  children:
+                                      quizDocs.map((d) {
+                                        final q =
+                                            d.data() as Map<String, dynamic>;
+                                        final quizId = d.id;
 
-                                    final qTitle = (q['title'] ?? 'Quiz') as String;
-                                    final qDesc = (q['description'] ?? '') as String;
+                                        final qTitle =
+                                            (q['title'] ?? 'Quiz') as String;
+                                        final qDesc =
+                                            (q['description'] ?? '') as String;
 
-                                    final start = _toDate(q['startDate']);
-                                    final end = _toDate(q['endDate']);
+                                        final start = _toDate(q['startDate']);
+                                        final end = _toDate(q['endDate']);
 
-                                    final int questionCount =
-                                    (q['questionCount'] ?? (q['questions']?.length ?? 0)) as int;
+                                        final int questionCount =
+                                            (q['questionCount'] ??
+                                                    (q['questions']?.length ??
+                                                        0))
+                                                as int;
 
-                                    //final bool locked = false;
-                                    //final bool expired = false;
-                                    final now = DateTime.now();
-                                    final bool locked = now.isBefore(start);
-                                    final bool expired = now.isAfter(end);
+                                        /// For test we can use the false value
+                                        //final bool locked = false;
+                                        //final bool expired = false;
+                                        final now = DateTime.now();
+                                        final bool locked = now.isBefore(start);
+                                        final bool expired = now.isAfter(end);
 
-                                    final questions = q['questions'] ?? [];
-                                    final durationSeconds = q['duration'] ?? 900;
+                                        final questions = q['questions'] ?? [];
+                                        final durationSeconds =
+                                            q['duration'] ?? 900;
 
-                                    // FETCH USER ATTEMPT --------------------------
-                                    return FutureBuilder<QuerySnapshot>(
-                                      future: FirebaseFirestore.instance
-                                          .collection("courses")
-                                          .doc(courseId)
-                                          .collection("quizzes")
-                                          .doc(quizId)
-                                          .collection("attempts")
-                                          .where("userId", isEqualTo: uid)
-                                          .limit(1)
-                                          .get(),
-                                      builder: (context, attemptSnap) {
-                                        if (!attemptSnap.hasData) {
-                                          return const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: AppLoader(size: 24,),
-                                          );
-                                        }
+                                        return FutureBuilder<QuerySnapshot>(
+                                          future:
+                                              FirebaseFirestore.instance
+                                                  .collection("courses")
+                                                  .doc(courseId)
+                                                  .collection("quizzes")
+                                                  .doc(quizId)
+                                                  .collection("attempts")
+                                                  .where(
+                                                    "userId",
+                                                    isEqualTo: uid,
+                                                  )
+                                                  .limit(1)
+                                                  .get(),
+                                          builder: (context, attemptSnap) {
+                                            if (!attemptSnap.hasData) {
+                                              return const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: AppLoader(size: 24),
+                                              );
+                                            }
 
-                                        bool completed = attemptSnap.data!.docs.isNotEmpty;
+                                            bool completed =
+                                                attemptSnap
+                                                    .data!
+                                                    .docs
+                                                    .isNotEmpty;
 
-                                        String? attemptId;
-                                        int earnedPoints = 0;
+                                            String? attemptId;
+                                            int earnedPoints = 0;
 
-                                        if (completed) {
-                                          final doc = attemptSnap.data!.docs.first;
-                                          attemptId = doc.id;
-                                          earnedPoints = (doc['points'] ?? 0) as int;
-                                        }
+                                            if (completed) {
+                                              final doc =
+                                                  attemptSnap.data!.docs.first;
+                                              attemptId = doc.id;
+                                              earnedPoints =
+                                                  (doc['points'] ?? 0) as int;
+                                            }
 
-                                        return StudentCourseQuizTile(
-                                          courseId: courseId,
-                                          quizId: quizId,
-                                          title: qTitle,
-                                          subtitle: qDesc,
-                                          totalPoints: questionCount,
-                                          earnedPoints: earnedPoints,
-                                          locked: locked,
-                                          expired: expired,
-                                          startDate: start,
-                                          endDate: end,
-                                          completed: completed,
-                                          questions: questions,
-                                          durationSeconds: durationSeconds,
-                                          attemptId: attemptId,   // <-- pass to tile
+                                            return StudentCourseQuizTile(
+                                              courseId: courseId,
+                                              quizId: quizId,
+                                              title: qTitle,
+                                              subtitle: qDesc,
+                                              totalPoints: questionCount,
+                                              earnedPoints: earnedPoints,
+                                              locked: locked,
+                                              expired: expired,
+                                              startDate: start,
+                                              endDate: end,
+                                              completed: completed,
+                                              questions: questions,
+                                              durationSeconds: durationSeconds,
+                                              attemptId: attemptId,
+                                            );
+                                          },
                                         );
-                                      },
-                                    );
-                                  }).toList(),
+                                      }).toList(),
                                 );
-
-
                               },
                             ),
                           ],

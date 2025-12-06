@@ -1,40 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
+import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/provider/student_stats_provider.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
-class StatsGrid extends StatelessWidget {
-  const StatsGrid({super.key});
+class StatsGrid extends ConsumerWidget {
+  final String? uid;
+
+  const StatsGrid({super.key, this.uid});
 
   @override
-  Widget build(BuildContext context) {
-    final List<_StatItem> items = [
-      _StatItem(
-        animation: "assets/animations/exam.json",
-        value: "00",
-        label: "Total Quizzes",
-        subLabel: "Quiz. Repeat",
-      ),
-      _StatItem(
-        animation: "assets/animations/courses.json",
-        value: "00",
-        label: "Total Courses",
-        subLabel: "Expand learning",
-      ),
-      _StatItem(
-        animation: "assets/animations/current_rank.json",
-        value: "00",
-        label: "Current Rank",
-        subLabel: "Eyes on #1",
-      ),
-      _StatItem(
-        animation: "assets/animations/growth.json",
-        value: "0%",
-        label: "Weekly Growth Rate",
-        subLabel: "Keep the streak",
-      ),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (uid == null || uid!.isEmpty) {
+      final guestItems = [
+        _StatItem(
+          animation: "assets/animations/exam.json",
+          value: "00",
+          label: "Total Quizzes",
+          subLabel: "Quiz. Repeat",
+        ),
+        _StatItem(
+          animation: "assets/animations/courses.json",
+          value: "00",
+          label: "Total Courses",
+          subLabel: "Expand learning",
+        ),
+        _StatItem(
+          animation: "assets/animations/current_rank.json",
+          value: "00",
+          label: "Current Rank",
+          subLabel: "Eyes on #1",
+        ),
+        _StatItem(
+          animation: "assets/animations/growth.json",
+          value: "0%",
+          label: "Weekly Growth Rate",
+          subLabel: "Keep the streak",
+        ),
+      ];
 
+      return _buildGrid(guestItems);
+    }
+
+    final stats = ref.watch(studentStatsProvider(uid!));
+
+    return stats.when(
+      loading: () => const Center(child: AppLoader()),
+      error:
+          (e, _) =>
+              Text("Error: $e", style: const TextStyle(color: Colors.white)),
+      data: (data) {
+        final items = [
+          _StatItem(
+            animation: "assets/animations/exam.json",
+            value: data.totalQuizzes.toString(),
+            label: "Total Quizzes",
+            subLabel: "Quiz. Repeat",
+          ),
+          _StatItem(
+            animation: "assets/animations/courses.json",
+            value: data.totalCourses.toString(),
+            label: "Total Courses",
+            subLabel: "Expand learning",
+          ),
+          _StatItem(
+            animation: "assets/animations/current_rank.json",
+            value: data.rank.toString(),
+            label: "Current Rank",
+            subLabel: "Eyes on #1",
+          ),
+          _StatItem(
+            animation: "assets/animations/growth.json",
+            value: "${data.weeklyGrowth.toStringAsFixed(1)}%",
+            label: "Weekly Growth Rate",
+            subLabel: "Keep the streak",
+          ),
+        ];
+
+        return _buildGrid(items);
+      },
+    );
+  }
+
+  Widget _buildGrid(List<_StatItem> items) {
     return GridView.builder(
       itemCount: items.length,
       shrinkWrap: true,
@@ -62,9 +112,7 @@ class StatsGrid extends StatelessWidget {
                 width: 80,
                 child: Lottie.asset(item.animation, fit: BoxFit.contain),
               ),
-
               const SizedBox(height: 6),
-
               Text(
                 item.value,
                 style: const TextStyle(
@@ -74,9 +122,7 @@ class StatsGrid extends StatelessWidget {
                   color: AppColors.secondaryDark,
                 ),
               ),
-
               const SizedBox(height: 4),
-
               Text(
                 item.label,
                 textAlign: TextAlign.center,
@@ -97,7 +143,6 @@ class StatsGrid extends StatelessWidget {
                   color: Colors.white60,
                 ),
               ),
-              const SizedBox(height: 2),
             ],
           ),
         );

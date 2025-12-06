@@ -48,6 +48,7 @@ class _TeacherDashboardScreenState
   @override
   Widget build(BuildContext context) {
     final teacherState = ref.watch(teacherControllerProvider);
+    final uid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       backgroundColor: AppColors.secondaryDark.withValues(alpha: 0.95),
@@ -177,7 +178,12 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'leaderboard',
+                        extra: {'role': 'teacher', 'userId': uid},
+                      );
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Teacher List",

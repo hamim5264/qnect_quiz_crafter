@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,14 +25,70 @@ class DashboardAppBar extends StatelessWidget {
     return "GOOD EVENING";
   }
 
-  List<Map<String, dynamic>> _generateSalesData() {
+  Future<List<Map<String, dynamic>>> _generateRealDailySales() async {
     final now = DateTime.now();
     final startDate = now.subtract(const Duration(days: 9));
-    return List.generate(10, (i) {
+
+    Map<String, double> dailyTotals = {};
+
+    for (int i = 0; i < 10; i++) {
       final date = startDate.add(Duration(days: i));
-      final sales = (10 + (i * 3) + (i.isEven ? 4 : 0)).toDouble();
-      return {'date': date, 'sales': sales, 'isToday': date.day == now.day};
-    });
+      dailyTotals[DateFormat('yyyy-MM-dd').format(date)] = 0.0;
+    }
+
+    final courses =
+        await FirebaseFirestore.instance.collection("courses").get();
+
+    for (var course in courses.docs) {
+      final data = course.data();
+
+      final int price =
+          (data["price"] is int)
+              ? data["price"]
+              : (data["price"] is double)
+              ? (data["price"] as double).toInt()
+              : int.tryParse(data["price"].toString()) ?? 0;
+
+      final int sold =
+          (data["sold"] is int)
+              ? data["sold"]
+              : (data["sold"] is double)
+              ? (data["sold"] as double).toInt()
+              : int.tryParse(data["sold"].toString()) ?? 0;
+
+      DateTime baseDate = now;
+      try {
+        if (data["updatedAt"] != null) {
+          baseDate = DateTime.parse(data["updatedAt"]);
+        }
+      } catch (_) {}
+
+      int daysToSpread = sold > 10 ? 10 : sold;
+
+      for (int i = 0; i < daysToSpread; i++) {
+        final saleDay = baseDate.subtract(Duration(days: i));
+        final key = DateFormat('yyyy-MM-dd').format(saleDay);
+
+        if (dailyTotals.containsKey(key)) {
+          dailyTotals[key] = dailyTotals[key]! + price.toDouble();
+        }
+      }
+    }
+
+    List<Map<String, dynamic>> finalList = [];
+
+    for (int i = 0; i < 10; i++) {
+      final date = startDate.add(Duration(days: i));
+      final key = DateFormat('yyyy-MM-dd').format(date);
+
+      finalList.add({
+        "date": date,
+        "sales": dailyTotals[key] ?? 0.0,
+        "isToday": date.day == now.day,
+      });
+    }
+
+    return finalList;
   }
 
   Widget _buildProfileImage() {
@@ -46,8 +103,6 @@ class DashboardAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final salesData = _generateSalesData();
-
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.primaryDark,
@@ -57,224 +112,274 @@ class DashboardAppBar extends StatelessWidget {
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => context.pushNamed('adminProfile'),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              height: 65,
-                              width: 65,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: _buildProfileImage(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _greeting(),
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppTypography.family,
-                            ),
-                          ),
-                          Text(
-                            adminName?.toUpperCase() ?? "ADMIN",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: AppTypography.family,
-                            ),
-                          ),
-                          const Text(
-                            "Guard the standard. Grow the platform.",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                              fontFamily: AppTypography.family,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () => context.pushNamed('notification'),
-                        icon: const Icon(
-                          CupertinoIcons.bell_fill,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                      ),
-
-                      Consumer(
-                        builder: (context, ref, _) {
-                          final unread =
-                              ref.watch(unreadMessageCountProvider).value ?? 0;
-
-                          return Stack(
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => context.pushNamed('adminProfile'),
+                          child: Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              IconButton(
-                                onPressed:
-                                    () => context.pushNamed(
-                                      'messages',
-                                      pathParameters: {'role': 'admin'},
-                                    ),
-                                icon: const Icon(
-                                  CupertinoIcons.ellipses_bubble,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
-                              ),
-
-                              if (unread > 0)
-                                Positioned(
-                                  right: 2,
-                                  top: 2,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.redAccent,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Text(
-                                      unread.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontFamily: AppTypography.family,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                              Container(
+                                height: 65,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
                                   ),
                                 ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: _buildProfileImage(),
+                                ),
+                              ),
                             ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                          ),
+                        ),
 
-              const SizedBox(height: 4),
+                        const SizedBox(width: 12),
 
-              const Padding(
-                padding: EdgeInsets.only(left: 6),
-                child: Text(
-                  'DAILY SALES CHART',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: AppTypography.family,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              SizedBox(
-                height: 80,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children:
-                      salesData.map((day) {
-                        final double maxHeight = 60;
-                        final barHeight = (day['sales'] / 40) * maxHeight;
-                        final isToday = day['isToday'];
-
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeInOut,
-                              width: 10,
-                              height: barHeight.clamp(10, maxHeight),
-                              decoration: BoxDecoration(
-                                color:
-                                    isToday
-                                        ? AppColors.secondaryDark
-                                        : Colors.white.withValues(alpha: 0.4),
-                                borderRadius: BorderRadius.circular(4),
+                            Text(
+                              _greeting(),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: AppTypography.family,
                               ),
                             ),
-                            const SizedBox(height: 6),
                             Text(
-                              DateFormat('dd').format(day['date']),
+                              adminName?.toUpperCase() ?? "ADMIN",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppTypography.family,
+                              ),
+                            ),
+                            const Text(
+                              "Guard the standard. Grow the platform.",
                               style: TextStyle(
-                                fontSize: 10,
-                                color:
-                                    isToday
-                                        ? AppColors.secondaryDark
-                                        : Colors.white70,
+                                color: Colors.white70,
+                                fontSize: 12,
                                 fontFamily: AppTypography.family,
                               ),
                             ),
                           ],
-                        );
-                      }).toList(),
+                        ),
+                      ],
+                    ),
+
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () => context.pushNamed('notification'),
+                          icon: const Icon(
+                            CupertinoIcons.bell_fill,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final unread =
+                                ref.watch(unreadMessageCountProvider).value ??
+                                0;
+
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                IconButton(
+                                  onPressed:
+                                      () => context.pushNamed(
+                                        'messages',
+                                        pathParameters: {'role': 'admin'},
+                                      ),
+                                  icon: const Icon(
+                                    CupertinoIcons.ellipses_bubble,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                ),
+                                if (unread > 0)
+                                  Positioned(
+                                    right: 2,
+                                    top: 2,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.redAccent,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        unread.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontFamily: AppTypography.family,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 4),
 
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 6),
                   child: Text(
-                    DateFormat(
-                      'dd MMMM yyyy',
-                    ).format(DateTime.now()).toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: AppTypography.family,
-                      fontSize: 12,
+                    'DAILY SALES CHART',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
+                      fontFamily: AppTypography.family,
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 4),
+
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _generateRealDailySales(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return SizedBox(
+                        height: 80,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: List.generate(10, (index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Container(
+                                  width: 14,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                        ),
+                      );
+                    }
+
+                    final salesData = snapshot.data!;
+
+                    return SizedBox(
+                      height: 80,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children:
+                            salesData.map((day) {
+                              final double maxHeight = 60;
+
+                              final double sales =
+                                  (day['sales'] as num).toDouble();
+
+                              final barHeight = (sales / 40) * maxHeight;
+                              final isToday = day['isToday'];
+
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeInOut,
+                                    width: 10,
+                                    height: barHeight.clamp(10, maxHeight),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isToday
+                                              ? AppColors.secondaryDark
+                                              : Colors.white.withValues(
+                                                alpha: 0.4,
+                                              ),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    DateFormat('dd').format(day['date']),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color:
+                                          isToday
+                                              ? AppColors.secondaryDark
+                                              : Colors.white70,
+                                      fontFamily: AppTypography.family,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Text(
+                      DateFormat(
+                        'dd MMMM yyyy',
+                      ).format(DateTime.now()).toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: AppTypography.family,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

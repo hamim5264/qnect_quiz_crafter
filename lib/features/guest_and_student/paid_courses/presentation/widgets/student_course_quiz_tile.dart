@@ -11,8 +11,8 @@ class StudentCourseQuizTile extends StatelessWidget {
   final String quizId;
   final String title;
   final String subtitle;
-  final int totalPoints; // total questions
-  final int earnedPoints; // current earned points
+  final int totalPoints;
+  final int earnedPoints;
   final bool locked;
   final bool expired;
   final bool completed;
@@ -21,8 +21,6 @@ class StudentCourseQuizTile extends StatelessWidget {
   final List questions;
   final int durationSeconds;
   final String? attemptId;
-
-
 
   const StudentCourseQuizTile({
     super.key,
@@ -40,8 +38,6 @@ class StudentCourseQuizTile extends StatelessWidget {
     required this.questions,
     required this.durationSeconds,
     required this.attemptId,
-
-
   });
 
   String get _durationLabel {
@@ -66,14 +62,11 @@ class StudentCourseQuizTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final bool disabled = locked || expired;
     final bool isAttempted = earnedPoints > 0;
     final bool disabled = locked || expired || isAttempted;
 
-
     return Column(
       children: [
-        // MAIN CARD + LOCK OVERLAY
         Stack(
           children: [
             Container(
@@ -84,7 +77,7 @@ class StudentCourseQuizTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -93,7 +86,6 @@ class StudentCourseQuizTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TOP ROW: ICON + TITLE + SUBTITLE + CHEVRON
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -110,7 +102,7 @@ class StudentCourseQuizTile extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.25),
+                              color: Colors.white.withValues(alpha: 0.25),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -155,26 +147,35 @@ class StudentCourseQuizTile extends StatelessWidget {
                         onTap: () {
                           if (locked) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Quiz is locked until the start date.")),
+                              const SnackBar(
+                                content: Text(
+                                  "Quiz is locked until the start date.",
+                                ),
+                              ),
                             );
                             return;
                           }
 
                           if (expired) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Quiz time has expired.")),
+                              const SnackBar(
+                                content: Text("Quiz time has expired."),
+                              ),
                             );
                             return;
                           }
 
                           if (isAttempted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("You have already attempted this quiz.")),
+                              const SnackBar(
+                                content: Text(
+                                  "You have already attempted this quiz.",
+                                ),
+                              ),
                             );
                             return;
                           }
 
-                          // ⭐ Quiz is available — go to instruction screen
                           context.pushNamed(
                             'studentQuizInstruction',
                             extra: {
@@ -190,15 +191,19 @@ class StudentCourseQuizTile extends StatelessWidget {
                           height: 32,
                           width: 32,
                           decoration: BoxDecoration(
-                            color: locked || expired || isAttempted
-                                ? Colors.white24
-                                : AppColors.secondaryDark,
+                            color:
+                                locked || expired || isAttempted
+                                    ? Colors.white24
+                                    : AppColors.secondaryDark,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Icon(
                             CupertinoIcons.chevron_right,
                             size: 18,
-                            color: locked || expired || isAttempted ? Colors.black38 : Colors.black,
+                            color:
+                                locked || expired || isAttempted
+                                    ? Colors.black38
+                                    : Colors.black,
                           ),
                         ),
                       ),
@@ -207,7 +212,6 @@ class StudentCourseQuizTile extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // BOTTOM ROW: POINTS / EARNED / DETAILS
                   Row(
                     children: [
                       _pill(
@@ -233,7 +237,6 @@ class StudentCourseQuizTile extends StatelessWidget {
                             return;
                           }
 
-                          // If already completed — show details screen
                           if (completed && attemptId != null) {
                             context.pushNamed(
                               'studentQuizDetails',
@@ -248,7 +251,6 @@ class StudentCourseQuizTile extends StatelessWidget {
                             return;
                           }
 
-                          // If not completed — go to quiz instruction
                           context.pushNamed(
                             'studentQuizInstruction',
                             extra: {
@@ -264,7 +266,10 @@ class StudentCourseQuizTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       if (isAttempted)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.chip2,
                             borderRadius: BorderRadius.circular(999),
@@ -284,23 +289,17 @@ class StudentCourseQuizTile extends StatelessWidget {
               ),
             ),
 
-            // LOCK OVERLAY FOR LOCKED QUIZZES
             if (locked)
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.35),
+                    color: Colors.black.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // const Icon(
-                        //   CupertinoIcons.lock_fill,
-                        //   color: Colors.white,
-                        //   size: 26,
-                        // ),
                         SizedBox(
                           height: 60,
                           width: 60,
@@ -311,17 +310,6 @@ class StudentCourseQuizTile extends StatelessWidget {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        //const SizedBox(height: 6),
-                        // Text(
-                        //   _durationLabel,
-                        //   textAlign: TextAlign.center,
-                        //   style: const TextStyle(
-                        //     fontFamily: AppTypography.family,
-                        //     color: Colors.white,
-                        //     fontSize: 12,
-                        //     fontWeight: FontWeight.w600,
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -330,7 +318,6 @@ class StudentCourseQuizTile extends StatelessWidget {
           ],
         ),
 
-        // ATTACHED DURATION "TAIL" UNDER CARD
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
@@ -367,7 +354,6 @@ class StudentCourseQuizTile extends StatelessWidget {
     );
   }
 
-  // Colored tag pills (Points / Earned)
   Widget _pill({
     required String text,
     required Color bgColor,
@@ -391,11 +377,7 @@ class StudentCourseQuizTile extends StatelessWidget {
     );
   }
 
-  // Details pill (right side)
-  Widget _detailsPill({
-    required bool enabled,
-    required VoidCallback onTap,
-  }) {
+  Widget _detailsPill({required bool enabled, required VoidCallback onTap}) {
     final bg = enabled ? const Color(0xFFCDEB87) : Colors.grey.shade300;
     final textColor = enabled ? Colors.white : Colors.black45;
 

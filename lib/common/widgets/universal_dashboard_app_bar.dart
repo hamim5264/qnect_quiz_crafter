@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../ui/design_system/tokens/colors.dart';
 import '../../ui/design_system/tokens/typography.dart';
 import '../screens/chat/providers/chat_unread_provider.dart';
+import '../services/xp_service.dart';
 
 class UniversalDashboardAppBar extends ConsumerWidget {
   final String role;
@@ -49,10 +51,24 @@ class UniversalDashboardAppBar extends ConsumerWidget {
     final bool isTeacher = role == "teacher";
 
     final bool effectiveIsGuest = isTeacher ? false : isGuest;
-
     final String finalName = effectiveIsGuest ? _guestName() : username;
 
-    final String finalXp = effectiveIsGuest ? "XP 0" : xpText;
+    final xpAsync = ref.watch(userXpProvider);
+
+    final String effectiveLevelText = xpAsync.maybeWhen(
+      data: (xp) => xp?.levelText ?? levelText,
+      orElse: () => levelText,
+    );
+
+    final String effectiveXpText =
+        effectiveIsGuest
+            ? "XP 0"
+            : xpAsync.maybeWhen(
+              data: (xp) => xp?.xpText ?? xpText,
+              orElse: () => xpText,
+            );
+
+    final String finalXp = effectiveIsGuest ? "XP 0" : effectiveXpText;
 
     return Container(
       width: double.infinity,
@@ -108,7 +124,6 @@ class UniversalDashboardAppBar extends ConsumerWidget {
                         child: _buildProfileImage(isTeacher, effectiveIsGuest),
                       ),
                     ),
-
                     if (!effectiveIsGuest)
                       Positioned(
                         bottom: -4,
@@ -166,9 +181,7 @@ class UniversalDashboardAppBar extends ConsumerWidget {
                         color: Colors.white.withValues(alpha: .85),
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
                     if (!effectiveIsGuest)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -180,7 +193,7 @@ class UniversalDashboardAppBar extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          levelText,
+                          effectiveLevelText,
                           style: const TextStyle(
                             fontSize: 12,
                             fontFamily: AppTypography.family,
@@ -215,7 +228,6 @@ class UniversalDashboardAppBar extends ConsumerWidget {
                           }
                         },
                       ),
-
                       if (!effectiveIsGuest)
                         Positioned(right: 0, top: -2, child: _UnreadBadge(ref)),
                     ],
@@ -227,7 +239,7 @@ class UniversalDashboardAppBar extends ConsumerWidget {
 
           const SizedBox(height: 18),
 
-          _buildXPBar(finalXp, effectiveIsGuest),
+          _buildXPBar(finalXp, effectiveIsGuest, effectiveLevelText),
 
           const SizedBox(height: 10),
 
@@ -321,11 +333,11 @@ class UniversalDashboardAppBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildXPBar(String xpString, bool effectiveIsGuest) {
+  Widget _buildXPBar(String xpString, bool effectiveIsGuest, String levelText) {
     final int currentXP =
         int.tryParse(xpString.replaceAll("XP", "").trim()) ?? 0;
 
-    const int maxXP = 100;
+    const int maxXP = 1000;
     final double progress =
         (!effectiveIsGuest) ? (currentXP / maxXP).clamp(0.0, 1.0) : 0;
 
@@ -361,9 +373,7 @@ class UniversalDashboardAppBar extends ConsumerWidget {
             ),
           ],
         ),
-
         const SizedBox(height: 6),
-
         ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: LinearProgressIndicator(

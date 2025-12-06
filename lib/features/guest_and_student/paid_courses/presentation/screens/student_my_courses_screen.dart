@@ -25,16 +25,16 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      appBar:CommonRoundedAppBar(title: "My Courses",),
+      appBar: CommonRoundedAppBar(title: "My Courses"),
       body: Column(
         children: [
           const SizedBox(height: 16),
 
-          // 🔍 Search field
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: TextField(
-              onChanged: (v) => setState(() => _search = v.trim().toLowerCase()),
+              onChanged:
+                  (v) => setState(() => _search = v.trim().toLowerCase()),
               style: const TextStyle(
                 fontFamily: AppTypography.family,
                 color: Colors.white,
@@ -48,8 +48,10 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 filled: true,
                 fillColor: Colors.white10,
-                contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,
@@ -60,20 +62,18 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
 
           const SizedBox(height: 16),
 
-          // 📚 My courses list
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(uid)
-                  .collection('myCourses')
-                  .orderBy('boughtAt', descending: true)
-                  .snapshots(),
+              stream:
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(uid)
+                      .collection('myCourses')
+                      .orderBy('boughtAt', descending: true)
+                      .snapshots(),
               builder: (context, myCourseSnap) {
                 if (myCourseSnap.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: AppLoader(),
-                  );
+                  return const Center(child: AppLoader());
                 }
 
                 if (!myCourseSnap.hasData || myCourseSnap.data!.docs.isEmpty) {
@@ -81,16 +81,14 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // BIG EMPTY ICON
                         Icon(
-                          CupertinoIcons.book_fill, // or any icon you like
+                          CupertinoIcons.book_fill,
                           size: 85,
                           color: Colors.white24,
                         ),
 
                         const SizedBox(height: 20),
 
-                        // MAIN MESSAGE
                         const Text(
                           "You haven’t bought any course yet.",
                           textAlign: TextAlign.center,
@@ -104,7 +102,6 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
 
                         const SizedBox(height: 6),
 
-                        // SUB MESSAGE (optional)
                         const Text(
                           "Purchase a course to get started learning!",
                           textAlign: TextAlign.center,
@@ -122,47 +119,50 @@ class _StudentMyCoursesScreenState extends State<StudentMyCoursesScreen> {
                 final myCourses = myCourseSnap.data!.docs;
 
                 return ListView.builder(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   itemCount: myCourses.length,
                   itemBuilder: (_, i) {
                     final myCourseData =
-                    myCourses[i].data() as Map<String, dynamic>;
+                        myCourses[i].data() as Map<String, dynamic>;
                     final courseId = myCourseData['courseId'] as String;
 
-                    // Fetch actual course data
                     return FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('courses')
-                          .doc(courseId)
-                          .get(),
+                      future:
+                          FirebaseFirestore.instance
+                              .collection('courses')
+                              .doc(courseId)
+                              .get(),
                       builder: (context, courseSnap) {
                         if (!courseSnap.hasData || !courseSnap.data!.exists) {
                           return const SizedBox.shrink();
                         }
 
-                        final courseData = courseSnap.data!.data()
-                        as Map<String, dynamic>;
+                        final courseData =
+                            courseSnap.data!.data() as Map<String, dynamic>;
 
                         final title =
-                        (courseData['title'] ?? 'Untitled Course') as String;
+                            (courseData['title'] ?? 'Untitled Course')
+                                as String;
 
-                        // Search filter by course title
                         if (_search.isNotEmpty &&
                             !title.toLowerCase().contains(_search)) {
                           return const SizedBox.shrink();
                         }
 
                         final int totalQuizzes =
-                        (myCourseData['totalQuizzes'] ?? 0) as int;
+                            (myCourseData['totalQuizzes'] ?? 0) as int;
                         final int completedQuizzes =
-                        (myCourseData['completedQuizzes'] ?? 0) as int;
+                            (myCourseData['completedQuizzes'] ?? 0) as int;
 
-                        final double progress = totalQuizzes == 0
-                            ? 0
-                            : (completedQuizzes / totalQuizzes)
-                            .clamp(0.0, 1.0)
-                            .toDouble();
+                        final double progress =
+                            totalQuizzes == 0
+                                ? 0
+                                : (completedQuizzes / totalQuizzes)
+                                    .clamp(0.0, 1.0)
+                                    .toDouble();
 
                         return StudentMyCourseCard(
                           courseId: courseId,

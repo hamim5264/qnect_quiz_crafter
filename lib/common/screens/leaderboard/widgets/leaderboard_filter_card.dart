@@ -7,6 +7,8 @@ class LeaderboardFilterCard extends StatelessWidget {
   final String selectedGroup;
   final String selectedLevel;
   final String selectedCourse;
+  final List<Map<String, dynamic>> availableCourses;
+
   final ValueChanged<String> onGroupChanged;
   final ValueChanged<String> onLevelChanged;
   final ValueChanged<String> onCourseChanged;
@@ -17,17 +19,23 @@ class LeaderboardFilterCard extends StatelessWidget {
     required this.selectedGroup,
     required this.selectedLevel,
     required this.selectedCourse,
+    required this.availableCourses,
     required this.onGroupChanged,
     required this.onLevelChanged,
     required this.onCourseChanged,
   });
 
-  Widget _buildDropdownField({
-    required String value,
+  Widget _buildDropdown({
+    required String? value,
     required List<String> items,
     required ValueChanged<String> onChanged,
     required String hint,
   }) {
+    final String? dropdownValue =
+        (value != null && value.isNotEmpty && items.contains(value))
+            ? value
+            : null;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -41,7 +49,7 @@ class LeaderboardFilterCard extends StatelessWidget {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: value,
+          value: dropdownValue,
           hint: Text(
             hint,
             style: const TextStyle(
@@ -72,7 +80,10 @@ class LeaderboardFilterCard extends StatelessWidget {
                     ),
                   )
                   .toList(),
-          onChanged: (v) => onChanged(v ?? value),
+          onChanged: (v) {
+            if (v == null) return;
+            onChanged(v);
+          },
         ),
       ),
     );
@@ -80,7 +91,23 @@ class LeaderboardFilterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isStudent = userRole == "student";
+    final bool isStudent = userRole == "student";
+
+    String? selectedCourseTitle;
+    if (selectedCourse.isNotEmpty && availableCourses.isNotEmpty) {
+      final match = availableCourses.firstWhere(
+        (e) => e["id"].toString() == selectedCourse,
+        orElse: () => <String, dynamic>{},
+      );
+      if (match.isNotEmpty) {
+        selectedCourseTitle = match["title"]?.toString();
+      }
+    }
+
+    final List<String> courseTitles =
+        availableCourses
+            .map((e) => e["title"]?.toString() ?? "Unknown Course")
+            .toList();
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -93,23 +120,33 @@ class LeaderboardFilterCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isStudent)
-            _buildDropdownField(
+            _buildDropdown(
               value: selectedGroup,
-              items: const ["HSC", "SSC"],
+              items: const ["Science", "Arts", "Commerce"],
               onChanged: onGroupChanged,
               hint: "Select Group",
             ),
+
           if (!isStudent)
-            _buildDropdownField(
+            _buildDropdown(
               value: selectedLevel,
-              items: const ["Science", "Arts", "Commerce"],
+              items: const ["HSC", "SSC"],
               onChanged: onLevelChanged,
               hint: "Select Level",
             ),
-          _buildDropdownField(
-            value: selectedCourse,
-            items: const ["Finance", "Math", "English", "ICT", "Biology"],
-            onChanged: onCourseChanged,
+
+          _buildDropdown(
+            value: selectedCourseTitle,
+            items: courseTitles,
+            onChanged: (title) {
+              final match = availableCourses.firstWhere(
+                (e) => (e["title"]?.toString() ?? "") == title,
+                orElse: () => <String, dynamic>{},
+              );
+              if (match.isNotEmpty) {
+                onCourseChanged(match["id"].toString());
+              }
+            },
             hint: "Select Course",
           ),
         ],
