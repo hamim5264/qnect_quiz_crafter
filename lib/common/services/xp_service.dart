@@ -35,22 +35,25 @@ class XpService {
     final user = _auth.currentUser;
     if (user == null) return null;
 
+    print("XP DEBUG ▶ Calculating XP for ${user.uid}");
+
     final userDoc = await _firestore.collection('users').doc(user.uid).get();
     if (!userDoc.exists) return null;
 
     final data = userDoc.data()!;
     final role = (data['role'] ?? 'student').toString().toLowerCase();
 
+    print("XP DEBUG ▶ User role = $role");
+
     int xp = _int(data['xp']);
+    print("XP DEBUG ▶ Starting XP from Firestore = $xp");
 
-    if (xp < 100) xp = 100;
-
+    // TEACHER LOGIC
     if (role == 'teacher') {
-      final coursesSnap =
-          await _firestore
-              .collection('courses')
-              .where('teacherId', isEqualTo: user.uid)
-              .get();
+      final coursesSnap = await _firestore
+          .collection('courses')
+          .where('teacherId', isEqualTo: user.uid)
+          .get();
 
       int approved = 0;
       int quizzes = 0;
@@ -58,56 +61,72 @@ class XpService {
 
       for (var doc in coursesSnap.docs) {
         final c = doc.data();
+
+        quizzes += _int(c['quizCount']);
+        sold += _int(c['sold']);
+
         if ((c['status'] ?? '').toString().toLowerCase() == 'approved') {
           approved++;
         }
-        quizzes += _int(c['quizCount']);
-        sold += _int(c['sold']);
       }
 
       xp += coursesSnap.docs.length * 30;
       xp += quizzes * 10;
       xp += approved * 50;
       xp += sold * 15;
-    } else {
-      final myCoursesSnap =
-          await _firestore
-              .collection('users')
-              .doc(user.uid)
-              .collection('myCourses')
-              .get();
+
+      print("XP DEBUG ▶ Teacher final XP = $xp");
+    }
+
+    // STUDENT LOGIC
+    else {
+      final myCoursesSnap = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('myCourses')
+          .get();
 
       int enrolled = myCoursesSnap.docs.length;
+      print("XP DEBUG ▶ Student enrolled courses = $enrolled");
+
       xp += enrolled * 100;
+      print("XP DEBUG ▶ Enrolled XP = ${enrolled * 100}");
 
       int finishedCourses = 0;
 
       for (var doc in myCoursesSnap.docs) {
         final c = doc.data();
-        final t = _int(c['totalQuizzes']);
-        final d = _int(c['completedQuizzes']);
+        final totalQ = _int(c['totalQuizzes']);
+        final doneQ = _int(c['completedQuizzes']);
 
-        if (t > 0 && d >= t) {
+        print("XP DEBUG ▶ myCourse totalQ=$totalQ doneQ=$doneQ");
+
+        if (totalQ > 0 && doneQ >= totalQ) {
           finishedCourses++;
         }
       }
 
       xp += finishedCourses * 100;
+      print("XP DEBUG ▶ Completed courses = $finishedCourses");
+      print("XP DEBUG ▶ Completed XP = ${finishedCourses * 100}");
 
-      final attemptsSnap =
-          await _firestore
-              .collectionGroup('attempts')
-              .where('userId', isEqualTo: user.uid)
-              .get();
+      final attemptsSnap = await _firestore
+          .collectionGroup('attempts')
+          .where('userId', isEqualTo: user.uid)
+          .get();
+
+      print("XP DEBUG ▶ Total attempts = ${attemptsSnap.docs.length}");
 
       int totalPoints = 0;
-
       for (var doc in attemptsSnap.docs) {
         totalPoints += _int(doc['points']);
       }
 
       int earnedXp = (totalPoints ~/ 10) * 20;
       xp += earnedXp;
+
+      print("XP DEBUG ▶ Points = $totalPoints");
+      print("XP DEBUG ▶ Attempt XP = $earnedXp");
     }
 
     if (xp > 10000) xp = 10000;
@@ -115,33 +134,34 @@ class XpService {
     int level = (xp ~/ 1000) + 1;
     if (level > 10) level = 10;
 
-    int levelMin = (level - 1) * 1000;
-    int inLevel = xp - levelMin;
+    int inLevel = xp - ((level - 1) * 1000);
     int percent = ((inLevel / 1000) * 100).round();
 
-    final levelText = "LEVEL ${level.toString().padLeft(2, '0')}";
-    final xpText = "XP $percent";
+    print("XP DEBUG ▶ FINAL XP = $xp");
+    print("XP DEBUG ▶ FINAL LEVEL = $level");
+    print("XP DEBUG ▶ PERCENT = $percent");
 
     await _firestore.collection('users').doc(user.uid).set({
       'xp': xp,
       'level': level,
     }, SetOptions(merge: true));
 
+    print("XP DEBUG ▶ SAVED TO FIRESTORE SUCCESSFULLY!");
+
     return UserXpLevel(
       xp: xp,
       level: level,
       xpPercent: percent,
-      levelText: levelText,
-      xpText: xpText,
+      levelText: "LEVEL ${level.toString().padLeft(2, '0')}",
+      xpText: "$percent / 1000",
     );
   }
 }
 
-final xpServiceProvider = Provider<XpService>((ref) {
+final xpServiceProvider = Provider((ref) {
   return XpService(FirebaseAuth.instance, FirebaseFirestore.instance);
 });
 
-final userXpProvider = FutureProvider<UserXpLevel?>((ref) async {
-  final service = ref.watch(xpServiceProvider);
-  return service.calculateCurrentUserXp();
+final userXpProvider = FutureProvider((ref) async {
+  return ref.watch(xpServiceProvider).calculateCurrentUserXp();
 });
