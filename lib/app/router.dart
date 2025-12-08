@@ -29,6 +29,10 @@ import '../common/screens/need_help_screen.dart';
 import '../common/screens/no_internet_screen.dart';
 import '../common/screens/qc_vault/data/qc_vault_models.dart';
 import '../common/screens/quiz_genie/quiz_genie_screen.dart';
+import '../common/user_certificates/certificate_preview_screen.dart';
+import '../common/user_certificates/user_certificates_controller.dart';
+import '../common/user_certificates/user_certificates_screen.dart';
+import '../common/widgets/achievements/screen/user_achievements_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
 import '../features/admin/presentation/certificates/certificates_screen.dart';
 import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
@@ -634,5 +638,27 @@ final router = GoRouter(
         );
       },
     ),
+    GoRoute(
+      path: '/achievements/:role',
+      name: 'userAchievements',
+      builder: (context, state) {
+        final role = state.pathParameters['role'] ?? 'student';
+        return UserAchievementsScreen(role: role.toLowerCase());
+      },
+    ),
+    GoRoute(
+      path: '/user-certificates',
+      name: 'userCertificates',
+      builder: (context, state) => const UserCertificatesScreen(),
+    ),
+    GoRoute(
+      path: "/certificate-preview",
+      name: "certificatePreview",
+      builder: (context, state) {
+        final cert = state.extra as UserCertificate;
+        return CertificatePreviewScreen(cert: cert);
+      },
+    ),
+
   ],
 );

@@ -203,7 +203,12 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'userAchievements',
+                        pathParameters: {'role': 'teacher'},
+                      );
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Planner",

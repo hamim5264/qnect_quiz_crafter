@@ -223,7 +223,12 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'userAchievements',
+                        pathParameters: {'role': 'student'},
+                      );
+                    },
                   ),
                   QuickActionItem(
                     title: "Planner",

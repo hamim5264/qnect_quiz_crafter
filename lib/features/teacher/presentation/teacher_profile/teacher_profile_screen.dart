@@ -62,7 +62,7 @@ class TeacherProfileScreen extends ConsumerWidget {
                       context.push('/edit-profile/teacher');
                     },
                     onCertificates: () {
-                      context.push('/teacher-certificates');
+                      context.pushNamed('userCertificates');
                     },
                     onDeleteAccount: () {
                       context.push('/delete-account');

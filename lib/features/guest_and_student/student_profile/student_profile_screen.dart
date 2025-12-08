@@ -71,7 +71,9 @@ class StudentProfileScreen extends ConsumerWidget {
                         context.push('/edit-profile/student');
                       }
                     },
-                    onCertificates: () {},
+                    onCertificates: () {
+                      context.pushNamed('userCertificates');
+                    },
                     onDeleteAccount: () {},
                     onStudentFeedback: () {},
                     onAdminFeedback: () => context.push('/guidelines'),
