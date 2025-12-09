@@ -178,35 +178,67 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
                   const SizedBox(height: 24),
 
+                  // ProfileHeaderSection(
+                  //   role: widget.role,
+                  //   name: firstNameCtrl.text,
+                  //   email:
+                  //       widget.role == "admin"
+                  //           ? adminState?.admin?.email
+                  //           : widget.role == "student"
+                  //           ? studentState?.student?.email
+                  //           : teacherState?.teacher?.email,
+                  //   profileImage: profileImageUrl,
+                  //   isLoading: isLoading,
+                  //   onImageSelected: (file) {
+                  //     if (file == null) return;
+                  //
+                  //     if (widget.role == "admin") {
+                  //       ref
+                  //           .read(adminControllerProvider.notifier)
+                  //           .updateImage(uid, file);
+                  //     } else if (widget.role == "student") {
+                  //       ref
+                  //           .read(studentControllerProvider.notifier)
+                  //           .updateImage(uid, file);
+                  //     } else if (widget.role == "teacher") {
+                  //       ref
+                  //           .read(teacherControllerProvider.notifier)
+                  //           .updateTeacherImage(uid, file);
+                  //     }
+                  //   },
+                  // ),
                   ProfileHeaderSection(
                     role: widget.role,
                     name: firstNameCtrl.text,
-                    email:
-                        widget.role == "admin"
-                            ? adminState?.admin?.email
-                            : widget.role == "student"
-                            ? studentState?.student?.email
-                            : teacherState?.teacher?.email,
+                    email: widget.role == "admin"
+                        ? adminState?.admin?.email
+                        : widget.role == "student"
+                        ? studentState?.student?.email
+                        : teacherState?.teacher?.email,
                     profileImage: profileImageUrl,
                     isLoading: isLoading,
+
+                    // ⭐ REAL LEVEL PASSED HERE
+                    level: widget.role == "student"
+                        ? (studentState?.student?.level as int? ?? 0)
+                        : widget.role == "teacher"
+                        ? (teacherState?.teacher?.level as int? ?? 0)
+                        : null,
+
+
                     onImageSelected: (file) {
                       if (file == null) return;
 
                       if (widget.role == "admin") {
-                        ref
-                            .read(adminControllerProvider.notifier)
-                            .updateImage(uid, file);
+                        ref.read(adminControllerProvider.notifier).updateImage(uid, file);
                       } else if (widget.role == "student") {
-                        ref
-                            .read(studentControllerProvider.notifier)
-                            .updateImage(uid, file);
+                        ref.read(studentControllerProvider.notifier).updateImage(uid, file);
                       } else if (widget.role == "teacher") {
-                        ref
-                            .read(teacherControllerProvider.notifier)
-                            .updateTeacherImage(uid, file);
+                        ref.read(teacherControllerProvider.notifier).updateTeacherImage(uid, file);
                       }
                     },
                   ),
+
 
                   const SizedBox(height: 24),
 

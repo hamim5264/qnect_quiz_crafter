@@ -461,12 +461,13 @@ class UniversalDashboardAppBar extends ConsumerWidget {
       orElse: () => levelText,
     );
 
-    final String effectiveXpText = effectiveIsGuest
-        ? "XP 0"
-        : xpAsync.maybeWhen(
-      data: (xp) => xp?.xpText ?? xpText,
-      orElse: () => xpText,
-    );
+    final String effectiveXpText =
+        effectiveIsGuest
+            ? "XP 0"
+            : xpAsync.maybeWhen(
+              data: (xp) => xp?.xpText ?? xpText,
+              orElse: () => xpText,
+            );
 
     final String finalXp = effectiveIsGuest ? "XP 0" : effectiveXpText;
 
@@ -481,221 +482,231 @@ class UniversalDashboardAppBar extends ConsumerWidget {
         ),
       ),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           // ---------------- HEADER ROW ----------------
           Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          GestureDetector(
-          onTap: () {
-    if (isTeacher) {
-    context.push(
-    '/teacher-profile',
-    extra: {
-    'username': username,
-    'email': email,
-    'profileImage': profileImage,
-    },
-    );
-    } else {
-    context.push(
-    '/student-profile',
-    extra: {
-    'isGuest': effectiveIsGuest,
-    'username': finalName,
-    'email': email,
-    'profileImage': profileImage,
-    },
-    );
-    }
-    },
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            height: 65,
-            width: 65,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: _buildProfileImage(isTeacher, effectiveIsGuest),
-            ),
-          ),
-          if (!effectiveIsGuest)
-            Positioned(
-              bottom: -4,
-              right: -4,
-              child: Container(
-                height: 28,
-                width: 28,
-                decoration: BoxDecoration(
-                  color: AppColors.chip3,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1),
-                ),
-                child: const Icon(
-                  Icons.edit_rounded,
-                  color: AppColors.textPrimary,
-                  size: 14,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  if (isTeacher) {
+                    context.push(
+                      '/teacher-profile',
+                      extra: {
+                        'username': username,
+                        'email': email,
+                        'profileImage': profileImage,
+                      },
+                    );
+                  } else {
+                    context.push(
+                      '/student-profile',
+                      extra: {
+                        'isGuest': effectiveIsGuest,
+                        'username': finalName,
+                        'email': email,
+                        'profileImage': profileImage,
+                      },
+                    );
+                  }
+                },
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: 65,
+                      width: 65,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: _buildProfileImage(isTeacher, effectiveIsGuest),
+                      ),
+                    ),
+                    if (!effectiveIsGuest)
+                      Positioned(
+                        bottom: -4,
+                        right: -4,
+                        child: Container(
+                          height: 28,
+                          width: 28,
+                          decoration: BoxDecoration(
+                            color: AppColors.chip3,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1),
+                          ),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            color: AppColors.textPrimary,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
+
+              const SizedBox(width: 12),
+
+              // ---------------- USER DETAILS ----------------
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      greeting,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: AppTypography.family,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      finalName,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: AppTypography.family,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      effectiveIsGuest && !isTeacher
+                          ? "Welcome to QuizCrafter!"
+                          : motto,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: AppTypography.family,
+                        color: Colors.white.withValues(alpha: .85),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+
+                    if (!effectiveIsGuest)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.chip1,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          effectiveLevelText,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontFamily: AppTypography.family,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              // ---------------- RIGHT ACTION BUTTONS ----------------
+              Column(
+                children: [
+                  // _glassButton(
+                  //   disabled: effectiveIsGuest,
+                  //   icon: CupertinoIcons.bell,
+                  //   onTap: () {},
+                  // ),
+                  _glassButton(
+                    disabled: effectiveIsGuest,
+                    icon: CupertinoIcons.bell,
+                    onTap: () {
+                      if (effectiveIsGuest) return;
+
+                      if (role == "teacher") {
+                        context.pushNamed("teacherNotification");
+                      } else if (role == "student") {
+                        context.pushNamed("studentNotification");
+                      }
+                    },
+                  ),
+
+                  // ------- MESSAGES + UNREAD BADGE -------
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _glassButton(
+                        disabled: effectiveIsGuest,
+                        icon: CupertinoIcons.bubble_right,
+                        onTap: () {
+                          if (!effectiveIsGuest) {
+                            context.pushNamed(
+                              'messages',
+                              pathParameters: {"role": role},
+                            );
+                          }
+                        },
+                      ),
+                      if (!effectiveIsGuest)
+                        Positioned(right: 0, top: -2, child: _UnreadBadge(ref)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // ⭐ NEW XP REFRESH BUTTON ⭐
+                  _glassButton(
+                    disabled: effectiveIsGuest,
+                    icon: Icons.refresh_rounded,
+                    onTap: () {
+                      ref.invalidate(userXpProvider); // 🔥 instant XP reload
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+
+          // ---------------- XP BAR ----------------
+          _buildXPBar(
+            finalXp,
+            effectiveIsGuest,
+            effectiveLevelText,
+            realXP: realXP,
+            realLevel: realLevel,
+          ),
+
+          const SizedBox(height: 10),
+
+          if (effectiveIsGuest && !isTeacher)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "You're in guest mode ",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontFamily: AppTypography.family,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: onLoginTap,
+                  child: const Text(
+                    "Login now",
+                    style: TextStyle(
+                      color: AppColors.secondaryDark,
+                      fontFamily: AppTypography.family,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
         ],
       ),
-    ),
-
-    const SizedBox(width: 12),
-
-    // ---------------- USER DETAILS ----------------
-    Expanded(
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Text(
-    greeting,
-    style: const TextStyle(
-    fontSize: 16,
-    fontFamily: AppTypography.family,
-    fontWeight: FontWeight.w600,
-    color: Colors.white,
-    ),
-    ),
-    Text(
-    finalName,
-    style: const TextStyle(
-    fontSize: 15,
-    fontFamily: AppTypography.family,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-    ),
-    ),
-    Text(
-    effectiveIsGuest && !isTeacher
-    ? "Welcome to QuizCrafter!"
-        : motto,
-    style: TextStyle(
-    fontSize: 12,
-    fontFamily: AppTypography.family,
-    color: Colors.white.withValues(alpha: .85),
-    ),
-    ),
-    const SizedBox(height: 6),
-
-    if (!effectiveIsGuest)
-    Container(
-    padding: const EdgeInsets.symmetric(
-    horizontal: 10,
-    vertical: 4,
-    ),
-    decoration: BoxDecoration(
-    color: AppColors.chip1,
-    borderRadius: BorderRadius.circular(20),
-    ),
-    child: Text(
-    effectiveLevelText,
-    style: const TextStyle(
-    fontSize: 12,
-    fontFamily: AppTypography.family,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-    ),
-    ),
-    ),
-    ],
-    ),
-    ),
-
-    // ---------------- RIGHT ACTION BUTTONS ----------------
-    Column(
-    children: [
-    _glassButton(
-    disabled: effectiveIsGuest,
-    icon: CupertinoIcons.bell,
-    onTap: () {},
-    ),
-
-    // ------- MESSAGES + UNREAD BADGE -------
-    Stack(
-    clipBehavior: Clip.none,
-    children: [
-    _glassButton(
-    disabled: effectiveIsGuest,
-    icon: CupertinoIcons.bubble_right,
-    onTap: () {
-    if (!effectiveIsGuest) {
-    context.pushNamed(
-    'messages',
-    pathParameters: {"role": role},
-    );
-    }
-    },
-    ),
-    if (!effectiveIsGuest)
-    Positioned(
-    right: 0,
-    top: -2,
-    child: _UnreadBadge(ref),
-    ),
-    ],
-    ),
-
-    const SizedBox(height: 6),
-
-    // ⭐ NEW XP REFRESH BUTTON ⭐
-    _glassButton(
-    disabled: effectiveIsGuest,
-    icon: Icons.refresh_rounded,
-    onTap: () {
-    ref.invalidate(userXpProvider); // 🔥 instant XP reload
-    },
-    ),
-    ],
-    ),
-    ]),
-
-    const SizedBox(height: 18),
-
-    // ---------------- XP BAR ----------------
-    _buildXPBar(
-    finalXp,
-    effectiveIsGuest,
-    effectiveLevelText,
-    realXP: realXP,
-    realLevel: realLevel,
-    ),
-
-    const SizedBox(height: 10),
-
-    if (effectiveIsGuest && !isTeacher)
-    Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-    const Text(
-    "You're in guest mode ",
-    style: TextStyle(
-    color: Colors.white70,
-    fontFamily: AppTypography.family,
-    ),
-    ),
-    GestureDetector(
-    onTap: onLoginTap,
-    child: const Text(
-    "Login now",
-    style: TextStyle(
-    color: AppColors.secondaryDark,
-    fontFamily: AppTypography.family,
-    fontWeight: FontWeight.bold,
-    ),
-    ),
-    ),
-    ],
-    ),
-    ],
-    ),
     );
   }
 
@@ -747,7 +758,9 @@ class UniversalDashboardAppBar extends ConsumerWidget {
         height: 40,
         decoration: BoxDecoration(
           color:
-          disabled ? Colors.white.withValues(alpha: 0.12) : Colors.transparent,
+              disabled
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: IconButton(
@@ -759,12 +772,12 @@ class UniversalDashboardAppBar extends ConsumerWidget {
   }
 
   Widget _buildXPBar(
-      String xpString,
-      bool effectiveIsGuest,
-      String levelText, {
-        required int realXP,
-        required int realLevel,
-      }) {
+    String xpString,
+    bool effectiveIsGuest,
+    String levelText, {
+    required int realXP,
+    required int realLevel,
+  }) {
     if (effectiveIsGuest) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -832,8 +845,9 @@ class UniversalDashboardAppBar extends ConsumerWidget {
             value: progress,
             minHeight: 8,
             backgroundColor: Colors.white24,
-            valueColor:
-            const AlwaysStoppedAnimation<Color>(AppColors.secondaryDark),
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              AppColors.secondaryDark,
+            ),
           ),
         ),
       ],

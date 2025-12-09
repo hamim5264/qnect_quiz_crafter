@@ -114,7 +114,12 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'adminPracticeQuiz',
+                        pathParameters: {'role': 'teacher'},
+                      );
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Notice Board",
@@ -128,7 +133,7 @@ class _TeacherDashboardScreenState
                   ),
                   TeacherQuickActionItem(
                     title: "My Courses",
-                    subtitle: "Your enrolled courses",
+                    subtitle: "Manage your courses",
                     icon: const Icon(
                       Icons.book_rounded,
                       size: 22,
@@ -146,17 +151,21 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('studentPaidCourses');
+                    },
                   ),
                   TeacherQuickActionItem(
-                    title: "Purchase History",
-                    subtitle: "Track your purchases",
+                    title: "QC Vault",
+                    subtitle: "Manage quiz crafter question bank",
                     icon: const Icon(
-                      Icons.history_rounded,
+                      Icons.library_books_rounded,
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/qc-vault');
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Community Chat",
@@ -172,7 +181,7 @@ class _TeacherDashboardScreenState
                   ),
                   TeacherQuickActionItem(
                     title: "Leaderboard",
-                    subtitle: "See your progress",
+                    subtitle: "See your students progress",
                     icon: const Icon(
                       Icons.leaderboard_rounded,
                       size: 22,

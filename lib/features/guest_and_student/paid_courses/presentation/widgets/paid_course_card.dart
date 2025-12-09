@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -65,13 +66,13 @@ class PaidCourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9E9E9),
+        color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
             color: AppColors.white.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
+            blurRadius: 7,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -106,7 +107,7 @@ class PaidCourseCard extends StatelessWidget {
                         fontFamily: AppTypography.family,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -116,7 +117,7 @@ class PaidCourseCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontFamily: AppTypography.family,
-                        color: Colors.black54,
+                        color: Colors.white60,
                         fontSize: 12,
                       ),
                     ),
@@ -128,33 +129,151 @@ class PaidCourseCard extends StatelessWidget {
 
           const SizedBox(height: 14),
 
+          // Row(
+          //   children: [
+          //     const Icon(Icons.person, size: 16, color: Colors.black54),
+          //     const SizedBox(width: 6),
+          //     Text(
+          //       "Teacher: $teacherName",
+          //       style: const TextStyle(
+          //         fontFamily: AppTypography.family,
+          //         fontSize: 12,
+          //         color: Colors.black54,
+          //       ),
+          //     ),
+          //     const Spacer(),
+          //     const Icon(Icons.group, size: 16, color: Colors.black54),
+          //     const SizedBox(width: 6),
+          //     Text(
+          //       "$enrolledCount Enrolled",
+          //       style: const TextStyle(
+          //         fontFamily: AppTypography.family,
+          //         fontSize: 12,
+          //         color: Colors.black54,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(course["teacherId"])
+              .get(),
+          builder: (context, snap) {
+            final data = snap.data?.data() as Map<String, dynamic>?;
+
+            final teacherName = data?["firstName"] ?? "Teacher";
+
+            return Row(
+              children: [
+                // 🟩 TEACHER NAME NEON CHIP
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryDark,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.secondaryDark.withOpacity(0.4),
+                        blurRadius: 8,
+                        spreadRadius: 1,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.person, size: 14, color: Colors.black),
+                      const SizedBox(width: 6),
+                      Text(
+                        teacherName,
+                        style: const TextStyle(
+                          fontFamily: AppTypography.family,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Spacer(),
+
+                // 🟨 ENROLLED COUNT NEON CHIP
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.textPrimary,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryLight.withOpacity(0.4),
+                        blurRadius: 8,
+                        spreadRadius: 1,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.group, size: 14, color: Colors.white),
+                      const SizedBox(width: 6),
+                      Text(
+                        "$enrolledCount Enrolled",
+                        style: const TextStyle(
+                          fontFamily: AppTypography.family,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+
+
+        const SizedBox(height: 14),
           Row(
             children: [
-              const Icon(Icons.person, size: 16, color: Colors.black54),
-              const SizedBox(width: 6),
-              Text(
-                "Teacher: $teacherName",
-                style: const TextStyle(
-                  fontFamily: AppTypography.family,
-                  fontSize: 12,
-                  color: Colors.black54,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.chip3,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  course["group"] ?? "Group",
+                  style: const TextStyle(
+                    fontFamily: AppTypography.family,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
                 ),
               ),
-              const Spacer(),
-              const Icon(Icons.group, size: 16, color: Colors.black54),
-              const SizedBox(width: 6),
-              Text(
-                "$enrolledCount Enrolled",
-                style: const TextStyle(
-                  fontFamily: AppTypography.family,
-                  fontSize: 12,
-                  color: Colors.black54,
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.chip2,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  course["level"] ?? "Level",
+                  style: const TextStyle(
+                    fontFamily: AppTypography.family,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
           Row(
             children: [
@@ -164,7 +283,7 @@ class PaidCourseCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: AppColors.chip1,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
@@ -209,17 +328,31 @@ class PaidCourseCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryLight,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Text(
-                  enrollmentLabel,
-                  style: const TextStyle(
-                    fontFamily: AppTypography.family,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 28,
+                      width: 28,
+                      child: Lottie.asset(
+                        'assets/icons/quiz_time.json',
+                        repeat: true,
+                        animate: true,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      enrollmentLabel,
+                      style: const TextStyle(
+                        fontFamily: AppTypography.family,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -236,6 +369,7 @@ class PaidCourseCard extends StatelessWidget {
                         if (alreadyBought) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
+                              backgroundColor: Colors.redAccent,
                               content: Text(
                                 "You already purchased this course.",
                               ),
@@ -244,6 +378,7 @@ class PaidCourseCard extends StatelessWidget {
                         } else if (enrollmentClosed) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
+                              backgroundColor: Colors.redAccent,
                               content: Text("Enrollment period has ended."),
                             ),
                           );
@@ -252,7 +387,7 @@ class PaidCourseCard extends StatelessWidget {
                       : onBuy,
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    disableBuyButton ? Colors.grey : Colors.redAccent,
+                    disableBuyButton ? Colors.white30 : AppColors.secondaryDark,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -264,9 +399,9 @@ class PaidCourseCard extends StatelessWidget {
                     : enrollmentClosed
                     ? "Enrollment Closed"
                     : "Buy Now",
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTypography.family,
-                  color: Colors.white,
+                  color: disableBuyButton ? Colors.black38 : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                 ),

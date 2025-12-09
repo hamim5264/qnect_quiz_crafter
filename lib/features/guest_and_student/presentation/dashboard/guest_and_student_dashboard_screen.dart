@@ -176,7 +176,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.push('/student-purchase-history');
+                    },
                   ),
                   QuickActionItem(
                     title: "Community Chat",

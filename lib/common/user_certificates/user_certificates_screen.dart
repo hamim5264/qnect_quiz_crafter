@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
 import '../../../../ui/design_system/tokens/typography.dart';
@@ -18,6 +21,36 @@ class _UserCertificatesScreenState
     extends ConsumerState<UserCertificatesScreen> {
   String filter = "All";
   String search = "";
+
+  String _userFullName = "";
+  String _userRole = "Student"; // default fallback
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final doc =
+    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+
+    final data = doc.data() ?? {};
+
+    final first = data["firstName"] ?? "";
+    final last = data["lastName"] ?? "";
+    final role = data["role"] ?? "student";
+
+    setState(() {
+      _userFullName = "$first $last".trim();
+      _userRole = role.toString().toLowerCase().contains("teacher")
+          ? "Teacher"
+          : "Student";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +82,7 @@ class _UserCertificatesScreenState
 
             Expanded(
               child: state.loading
-                  ? const Center(child: AppLoader(),)
+                  ? const Center(child: AppLoader())
                   : filtered.isEmpty
                   ? _buildEmpty()
                   : _buildList(filtered),
@@ -171,34 +204,48 @@ class _UserCertificatesScreenState
       itemCount: items.length,
       itemBuilder: (context, i) {
         final c = items[i];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white.withOpacity(.10),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                c.certName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: AppTypography.family,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+
+        return GestureDetector(
+          onTap: () {
+            context.push(
+              "/user-certificate-preview",
+              extra: {
+                "certName": c.certName,
+                "userName": _userFullName,
+                "role": _userRole,
+                "issueDate": c.issueDate,
+              },
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white.withOpacity(.10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  c.certName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: AppTypography.family,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                "Issued on ${c.issueDate}",
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontFamily: AppTypography.family,
+                const SizedBox(height: 6),
+                Text(
+                  "Issued on ${c.issueDate}",
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontFamily: AppTypography.family,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

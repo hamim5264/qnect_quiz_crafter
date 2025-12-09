@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../../common/screens/chat/providers/chat_unread_provider.dart';
+import '../../../../../common/screens/notification/providers/notification_count_provider.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
@@ -184,13 +185,48 @@ class DashboardAppBar extends StatelessWidget {
 
                     Column(
                       children: [
-                        IconButton(
-                          onPressed: () => context.pushNamed('notification'),
-                          icon: const Icon(
-                            CupertinoIcons.bell_fill,
-                            color: Colors.white,
-                            size: 22,
-                          ),
+                        // IconButton(
+                        //   onPressed: () => context.pushNamed('notification'),
+                        //   icon: const Icon(
+                        //     CupertinoIcons.bell_fill,
+                        //     color: Colors.white,
+                        //     size: 22,
+                        //   ),
+                        // ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final unread = ref.watch(unreadNotificationCountProvider("admin")).value ?? 0;
+
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                IconButton(
+                                  onPressed: () => context.pushNamed('notification'),
+                                  icon: const Icon(CupertinoIcons.bell_fill, color: Colors.white),
+                                ),
+                                if (unread > 0)
+                                  Positioned(
+                                    right: 2,
+                                    top: 2,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.redAccent,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        unread.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
 
                         Consumer(

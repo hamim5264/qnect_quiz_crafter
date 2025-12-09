@@ -7,22 +7,29 @@ class UserCertificate {
   final String id;
   final String certName;
   final String issueDate;
-  final int levelGroup; // 5 or 10
+  final int levelGroup;
+  final String role;
+  final String userName;
 
   const UserCertificate({
     required this.id,
     required this.certName,
     required this.issueDate,
     required this.levelGroup,
+    required this.role,
+    required this.userName,
   });
 
   factory UserCertificate.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
     return UserCertificate(
       id: doc.id,
       certName: data['certName'] ?? '',
       issueDate: data['issueDate'] ?? '',
       levelGroup: data['levelGroup'] ?? 5,
+      role: data['role'] ?? 'Student',
+      userName: data['userName'] ?? 'Unknown User',
     );
   }
 }
@@ -48,12 +55,12 @@ class UserCertificatesController
 
   Future<void> _load() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
+
     if (uid == null) {
       state = const UserCertificatesState(loading: false, items: []);
       return;
     }
 
-    // Fetch certificates from GLOBAL collection
     final snap = await FirebaseFirestore.instance
         .collection('certificates')
         .where('userId', isEqualTo: uid)
@@ -72,4 +79,5 @@ class UserCertificatesController
 
 final userCertificatesProvider =
 StateNotifierProvider<UserCertificatesController, UserCertificatesState>(
-        (ref) => UserCertificatesController());
+      (ref) => UserCertificatesController(),
+);

@@ -15,6 +15,7 @@ class ProfileHeaderSection extends StatelessWidget {
   final String? profileImage;
 
   final bool isLoading;
+  final int? level;
 
   final Function(File?) onImageSelected;
 
@@ -26,6 +27,7 @@ class ProfileHeaderSection extends StatelessWidget {
     required this.profileImage,
     required this.isLoading,
     required this.onImageSelected,
+    this.level,
   });
 
   @override
@@ -71,38 +73,71 @@ class ProfileHeaderSection extends StatelessWidget {
 
         const SizedBox(height: 10),
 
+        // if (isTeacher || isStudent)
+        //   isLoading
+        //       ? const LevelBadgeSkeleton()
+        //       : Container(
+        //         padding: const EdgeInsets.symmetric(
+        //           horizontal: 12,
+        //           vertical: 6,
+        //         ),
+        //         decoration: BoxDecoration(
+        //           color: AppColors.secondaryDark,
+        //           borderRadius: BorderRadius.circular(20),
+        //         ),
+        //         child: Row(
+        //           mainAxisSize: MainAxisSize.min,
+        //           children: const [
+        //             Text(
+        //               "Level 04 ",
+        //               style: TextStyle(
+        //                 fontFamily: AppTypography.family,
+        //                 fontWeight: FontWeight.w600,
+        //                 fontSize: 13,
+        //                 color: AppColors.textPrimary,
+        //               ),
+        //             ),
+        //             Icon(
+        //               Icons.star_rounded,
+        //               color: Colors.orangeAccent,
+        //               size: 18,
+        //             ),
+        //           ],
+        //         ),
+        //       ),
         if (isTeacher || isStudent)
           isLoading
               ? const LevelBadgeSkeleton()
               : Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 6,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryDark,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Level ${level ?? 0} ",
+                  style: const TextStyle(
+                    fontFamily: AppTypography.family,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryDark,
-                  borderRadius: BorderRadius.circular(20),
+                const Icon(
+                  Icons.star_rounded,
+                  color: Colors.orangeAccent,
+                  size: 18,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(
-                      "Level 04 ",
-                      style: TextStyle(
-                        fontFamily: AppTypography.family,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Icon(
-                      Icons.star_rounded,
-                      color: Colors.orangeAccent,
-                      size: 18,
-                    ),
-                  ],
-                ),
-              ),
+              ],
+            ),
+          ),
+
       ],
     );
   }

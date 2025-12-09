@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -47,7 +48,14 @@ class StatsGrid extends ConsumerWidget {
     final stats = ref.watch(studentStatsProvider(uid!));
 
     return stats.when(
-      loading: () => const Center(child: AppLoader()),
+      // loading: () => const Center(child: AppLoader()),
+      loading: () => const Center(
+        child: CupertinoActivityIndicator(
+          color: AppColors.primaryLight,
+          radius: 14,
+        ),
+      ),
+
       error:
           (e, _) =>
               Text("Error: $e", style: const TextStyle(color: Colors.white)),

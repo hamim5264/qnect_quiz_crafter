@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,10 +15,16 @@ class TeacherStatsGrid extends ConsumerWidget {
     final statsAsync = ref.watch(teacherStatsProvider);
 
     return statsAsync.when(
-      loading:
-          () => const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          ),
+      // loading:
+      //     () => const Center(
+      //       child: CircularProgressIndicator(color: Colors.white),
+      //     ),
+      loading: () => const Center(
+        child: CupertinoActivityIndicator(
+          color: AppColors.primaryLight,
+          radius: 14,
+        ),
+      ),
       error:
           (e, _) => Center(
             child: Text(

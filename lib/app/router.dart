@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/common/screens/community_chat/community_chat_screen.dart';
 import 'package:qnect_quiz_crafter/common/screens/dev_info_screen.dart';
@@ -60,6 +61,7 @@ import '../features/guest_and_student/paid_courses/presentation/screens/student_
 import '../features/guest_and_student/paid_courses/presentation/screens/student_course_details_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_my_courses_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_paid_courses_screen.dart';
+import '../features/guest_and_student/purchase_history/student_purchase_history_screen.dart';
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_attempt_screen.dart';
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_details_screen.dart';
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_instruction_screen.dart';
@@ -112,10 +114,32 @@ final router = GoRouter(
       builder: (_, __) => const DevInfoScreen(),
     ),
 
+    // GoRoute(
+    //   path: '/notification',
+    //   name: 'notification',
+    //   builder: (_, __) => const NotificationScreen(),
+    // ),
     GoRoute(
-      path: '/notification',
-      name: 'notification',
-      builder: (_, __) => const NotificationScreen(),
+      name: "notification",
+      path: "/notification",
+      builder: (_, __) => const NotificationScreen(role: "admin"),
+    ),
+
+    GoRoute(
+      name: "teacherNotification",
+      path: "/teacher-notification",
+      builder: (context, state) {
+        final uid = FirebaseAuth.instance.currentUser!.uid;
+        return NotificationScreen(role: "teacher", uid: uid);
+      },
+    ),
+    GoRoute(
+      name: "studentNotification",
+      path: "/student-notification",
+      builder: (context, state) {
+        final uid = FirebaseAuth.instance.currentUser!.uid;
+        return NotificationScreen(role: "student", uid: uid);
+      },
     ),
 
     GoRoute(
@@ -402,6 +426,7 @@ final router = GoRouter(
       },
     ),
 
+
     GoRoute(
       name: 'adminSurpriseQuiz',
       path: '/admin-surprise-quiz',
@@ -651,14 +676,28 @@ final router = GoRouter(
       name: 'userCertificates',
       builder: (context, state) => const UserCertificatesScreen(),
     ),
+
     GoRoute(
-      path: "/certificate-preview",
-      name: "certificatePreview",
+      path: '/user-certificate-preview',
+      name: 'userCertificatePreview',
       builder: (context, state) {
-        final cert = state.extra as UserCertificate;
-        return CertificatePreviewScreen(cert: cert);
+        final data = state.extra as Map<String, dynamic>?;
+
+        return UserCertificatePreviewScreen(
+          certName: data?['certName'] ?? '',
+          userName: data?['userName'] ?? '',
+          role: data?['role'] ?? 'Student',
+          issueDate: data?['issueDate'] ?? '',
+        );
       },
     ),
+
+    GoRoute(
+      name: "studentPurchaseHistory",
+      path: "/student-purchase-history",
+      builder: (context, state) => const StudentPurchaseHistoryScreen(),
+    ),
+
 
   ],
 );
