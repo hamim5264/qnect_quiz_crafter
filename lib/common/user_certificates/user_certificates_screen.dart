@@ -23,7 +23,7 @@ class _UserCertificatesScreenState
   String search = "";
 
   String _userFullName = "";
-  String _userRole = "Student"; // default fallback
+  String _userRole = "Student";
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _UserCertificatesScreenState
     if (uid == null) return;
 
     final doc =
-    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+        await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
     final data = doc.data() ?? {};
 
@@ -46,9 +46,10 @@ class _UserCertificatesScreenState
 
     setState(() {
       _userFullName = "$first $last".trim();
-      _userRole = role.toString().toLowerCase().contains("teacher")
-          ? "Teacher"
-          : "Student";
+      _userRole =
+          role.toString().toLowerCase().contains("teacher")
+              ? "Teacher"
+              : "Student";
     });
   }
 
@@ -56,13 +57,15 @@ class _UserCertificatesScreenState
   Widget build(BuildContext context) {
     final state = ref.watch(userCertificatesProvider);
 
-    final filtered = state.items.where((item) {
-      final matchSearch = item.certName.toLowerCase().contains(search);
-      final matchFilter = filter == "All"
-          ? true
-          : item.levelGroup == (filter == "Level 05" ? 5 : 10);
-      return matchSearch && matchFilter;
-    }).toList();
+    final filtered =
+        state.items.where((item) {
+          final matchSearch = item.certName.toLowerCase().contains(search);
+          final matchFilter =
+              filter == "All"
+                  ? true
+                  : item.levelGroup == (filter == "Level 05" ? 5 : 10);
+          return matchSearch && matchFilter;
+        }).toList();
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
@@ -81,11 +84,12 @@ class _UserCertificatesScreenState
             const SizedBox(height: 16),
 
             Expanded(
-              child: state.loading
-                  ? const Center(child: AppLoader())
-                  : filtered.isEmpty
-                  ? _buildEmpty()
-                  : _buildList(filtered),
+              child:
+                  state.loading
+                      ? const Center(child: AppLoader())
+                      : filtered.isEmpty
+                      ? _buildEmpty()
+                      : _buildList(filtered),
             ),
           ],
         ),
@@ -93,14 +97,15 @@ class _UserCertificatesScreenState
     );
   }
 
-  // ------------------ WIDGETS -----------------------
-
   Widget _buildHeader(int count) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.workspace_premium_rounded,
-            color: Colors.white, size: 20),
+        const Icon(
+          Icons.workspace_premium_rounded,
+          color: Colors.white,
+          size: 20,
+        ),
         const SizedBox(width: 6),
         Text(
           "$count certificates earned",
@@ -143,30 +148,35 @@ class _UserCertificatesScreenState
     final filters = ["All", "Level 05", "Level 10"];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: filters.map((f) {
-        final selected = f == filter;
-        return GestureDetector(
-          onTap: () => setState(() => filter = f),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: selected
-                  ? AppColors.secondaryDark
-                  : Colors.white.withOpacity(.10),
-            ),
-            child: Text(
-              f,
-              style: TextStyle(
-                color: selected ? Colors.black : Colors.white,
-                fontFamily: AppTypography.family,
-                fontWeight: FontWeight.bold,
+      children:
+          filters.map((f) {
+            final selected = f == filter;
+            return GestureDetector(
+              onTap: () => setState(() => filter = f),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color:
+                      selected
+                          ? AppColors.secondaryDark
+                          : Colors.white.withOpacity(.10),
+                ),
+                child: Text(
+                  f,
+                  style: TextStyle(
+                    color: selected ? Colors.black : Colors.white,
+                    fontFamily: AppTypography.family,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-          ),
-        );
-      }).toList(),
+            );
+          }).toList(),
     );
   }
 

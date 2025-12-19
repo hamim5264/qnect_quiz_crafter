@@ -1,15 +1,13 @@
-// lib/common/services/xp_service.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserXpLevel {
-  final int xp;         // total xp (0–10000)
-  final int level;      // 1–10
-  final int xpPercent;  // 0–100 inside current level
+  final int xp;
+  final int level;
+  final int xpPercent;
   final String levelText;
-  final String xpText;  // e.g. "XP 240 / 1000"
+  final String xpText;
 
   const UserXpLevel({
     required this.xp,
@@ -33,9 +31,6 @@ class XpService {
     return 0;
   }
 
-  /// 🔥 Idempotent XP calculation for a specific user.
-  /// Calling this multiple times gives the SAME result
-  /// as long as Firestore data (courses / attempts) don’t change.
   Future<UserXpLevel?> calculateXpForUser(String uid) async {
     print("XP DEBUG ▶ Calculating XP for $uid");
 
@@ -47,21 +42,19 @@ class XpService {
 
     final data = userDoc.data()!;
     final role = (data['role'] ?? 'student').toString().toLowerCase();
-    final storedXp = _int(data['xp']); // legacy / previous xp (to not go backwards)
+    final storedXp = _int(data['xp']);
 
     print("XP DEBUG ▶ User role = $role");
     print("XP DEBUG ▶ Stored XP in Firestore = $storedXp");
 
     int eventsXp = 0;
 
-    // ---------------------------------
-    // TEACHER XP LOGIC (pure from data)
-    // ---------------------------------
     if (role == 'teacher') {
-      final coursesSnap = await _firestore
-          .collection('courses')
-          .where('teacherId', isEqualTo: uid)
-          .get();
+      final coursesSnap =
+          await _firestore
+              .collection('courses')
+              .where('teacherId', isEqualTo: uid)
+              .get();
 
       int approved = 0;
       int quizzes = 0;
@@ -83,26 +76,22 @@ class XpService {
       eventsXp += approved * 50;
       eventsXp += sold * 15;
 
-      // teacher minimum 100 xp if they have any activity
       if (eventsXp > 0 && eventsXp < 100) {
         eventsXp = 100;
       }
 
       print("XP DEBUG ▶ Teacher courses=${coursesSnap.docs.length}");
-      print("XP DEBUG ▶ Teacher quizzes=$quizzes sold=$sold approved=$approved");
+      print(
+        "XP DEBUG ▶ Teacher quizzes=$quizzes sold=$sold approved=$approved",
+      );
       print("XP DEBUG ▶ Teacher events XP = $eventsXp");
-    }
-
-    // ---------------------------------
-    // STUDENT XP LOGIC (pure from data)
-    // ---------------------------------
-    else {
-      // myCourses
-      final myCoursesSnap = await _firestore
-          .collection('users')
-          .doc(uid)
-          .collection('myCourses')
-          .get();
+    } else {
+      final myCoursesSnap =
+          await _firestore
+              .collection('users')
+              .doc(uid)
+              .collection('myCourses')
+              .get();
 
       final enrolled = myCoursesSnap.docs.length;
       final enrolledXp = enrolled * 100;
@@ -111,7 +100,6 @@ class XpService {
       print("XP DEBUG ▶ Student enrolled courses = $enrolled");
       print("XP DEBUG ▶ Enrolled XP = $enrolledXp");
 
-      // completed courses
       int finishedCourses = 0;
       for (var doc in myCoursesSnap.docs) {
         final c = doc.data();
@@ -131,13 +119,13 @@ class XpService {
       print("XP DEBUG ▶ Completed courses = $finishedCourses");
       print("XP DEBUG ▶ Completed XP = $completedXp");
 
-      // attempts (collectionGroup)
       int totalPoints = 0;
       try {
-        final attemptsSnap = await _firestore
-            .collectionGroup('attempts')
-            .where('userId', isEqualTo: uid)
-            .get();
+        final attemptsSnap =
+            await _firestore
+                .collectionGroup('attempts')
+                .where('userId', isEqualTo: uid)
+                .get();
 
         print("XP DEBUG ▶ Total attempts = ${attemptsSnap.docs.length}");
 
@@ -145,8 +133,9 @@ class XpService {
           totalPoints += _int(doc['points']);
         }
       } catch (e) {
-        // rules may block this → just ignore & use 0
-        print("XP DEBUG ▶ Attempts blocked by rules or error: $e, using 0 points");
+        print(
+          "XP DEBUG ▶ Attempts blocked by rules or error: $e, using 0 points",
+        );
       }
 
       final attemptXp = (totalPoints ~/ 10) * 20;
@@ -156,17 +145,11 @@ class XpService {
       print("XP DEBUG ▶ Attempt XP = $attemptXp");
     }
 
-    // ---------------------------------
-    // FINAL XP = max(storedXp, eventsXp)
-    // so we never go backwards, and we never
-    // double count on restart.
-    // ---------------------------------
     int xp = eventsXp;
     if (storedXp > xp) xp = storedXp;
 
     if (xp > 10000) xp = 10000;
 
-    // 10 levels → each 1000 xp
     int level = (xp ~/ 1000) + 1;
     if (level > 10) level = 10;
 
@@ -183,14 +166,10 @@ class XpService {
     print("XP DEBUG ▶ IN-LEVEL XP = $inLevelXp");
     print("XP DEBUG ▶ PERCENT = $percent");
 
-    // Save back (idempotent)
-    await _firestore.collection('users').doc(uid).set(
-      {
-        'xp': xp,
-        'level': level,
-      },
-      SetOptions(merge: true),
-    );
+    await _firestore.collection('users').doc(uid).set({
+      'xp': xp,
+      'xpLevel': level,
+    }, SetOptions(merge: true));
 
     print("XP DEBUG ▶ SAVED TO FIRESTORE SUCCESSFULLY!");
 
@@ -204,21 +183,14 @@ class XpService {
   }
 }
 
-// ------------------------------------------------------------------
-// PROVIDERS
-// ------------------------------------------------------------------
-
-// 🔁 Auth stream so XP updates when user changes (logout/login)
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
 
-// XpService provider
 final xpServiceProvider = Provider<XpService>((ref) {
   return XpService(FirebaseAuth.instance, FirebaseFirestore.instance);
 });
 
-// Main XP provider used by app bar
 final userXpProvider = FutureProvider<UserXpLevel?>((ref) async {
   final authState = ref.watch(authStateChangesProvider);
 

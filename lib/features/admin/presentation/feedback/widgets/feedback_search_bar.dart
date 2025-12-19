@@ -4,7 +4,9 @@ import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
 class FeedbackSearchBar extends StatelessWidget {
-  const FeedbackSearchBar({super.key});
+  final ValueChanged<String>? onChanged;
+
+  const FeedbackSearchBar({super.key, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -19,22 +21,22 @@ class FeedbackSearchBar extends StatelessWidget {
             color: AppColors.primaryLight.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.search, color: Colors.white70),
-              SizedBox(width: 10),
+              const Icon(Icons.search, color: Colors.white70),
+              const SizedBox(width: 10),
               Expanded(
                 child: TextField(
+                  onChanged: onChanged,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.search,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppTypography.family,
                     color: Colors.white,
                   ),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     filled: false,
                     enabledBorder: InputBorder.none,
-                    fillColor: Colors.transparent,
                     focusedBorder: InputBorder.none,
                     border: InputBorder.none,
                     hintText: 'Search Course',

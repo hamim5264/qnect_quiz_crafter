@@ -1,17 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/provider/student_provider.dart';
+import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/provider/student_latest_surprise_quiz_provider.dart';
+import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/widgets/student_surprise_quiz_card.dart' show StudentSurpriseQuizCard;
 
+import '../../../../common/screens/quiz_genie/widgets/approved_courses_provider.dart';
 import '../../../../common/widgets/universal_dashboard_app_bar.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
 
+import '../../../teacher/presentation/teacher_dashboard/widgets/teacher_explore_paid_courses.dart';
 import 'controller/dashboard_scroll_controller.dart';
 import 'widgets/stats_grid.dart';
 import 'widgets/practice_card.dart';
 import 'widgets/quick_actions_section.dart';
-import 'widgets/explore_paid_courses.dart';
 import 'widgets/concept_vault.dart';
 import 'widgets/support_feedback.dart';
 
@@ -103,17 +107,41 @@ class _GuestAndStudentDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: isGuest
-                  ? const StatsGrid(uid: null)   // guest → null triggers zero stats
-                  : StatsGrid(uid: uid!),        // student → real UID
+                  ? const StatsGrid(uid: null)
+                  : StatsGrid(uid: uid!),
             ),
 
 
 
             const SizedBox(height: 16),
 
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: PracticeCard(onTap: () => context.push('/practice-quiz')),
+              child: isGuest
+                  ? PracticeCard(
+                onTap: () => context.pushNamed('guestQuizWarning'),
+              )
+                  : Consumer(
+                builder: (context, ref, _) {
+                  final quizAsync = ref.watch(studentLatestSurpriseQuizProvider);
+
+
+                  return quizAsync.when(
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                    data: (quiz) {
+                      if (quiz == null) {
+                        return PracticeCard(
+                          onTap: () => context.push('/practice-quiz'),
+                        );
+                      }
+                      return StudentSurpriseQuizCard(quiz: quiz);
+                    },
+                  );
+
+                },
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -132,7 +160,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('studentPracticeQuizList');
+                    },
                   ),
                   QuickActionItem(
                     title: "Notice Board",
@@ -142,7 +172,12 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed(
+                        'noticeFeed',
+                        extra: 'Students',
+                      );
+                    },
                   ),
                   QuickActionItem(
                     title: "My Courses",
@@ -208,14 +243,16 @@ class _GuestAndStudentDashboardScreenState
                     },
                   ),
                   QuickActionItem(
-                    title: "Teacher List",
-                    subtitle: "See all teachers",
+                    title: "Classroom",
+                    subtitle: "Your academic space",
                     icon: Icon(
                       Icons.diversity_1_rounded,
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('classroom');
+                    },
                   ),
                   QuickActionItem(
                     title: "Achievements",
@@ -240,7 +277,9 @@ class _GuestAndStudentDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('planner');
+                    },
                   ),
                 ],
               ),
@@ -248,23 +287,49 @@ class _GuestAndStudentDashboardScreenState
 
             const SizedBox(height: 30),
 
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ExplorePaidCourses(
-                courses: [
-                  CourseItem(
-                    title: "ICT Complete Course",
-                    image:
-                        "https://i.ibb.co.com/r5ZxKXX/placeholder-course.png",
-                    quizCount: 50,
-                    enrolled: 1200,
-                    price: 490,
-                    discount: 20,
-                  ),
-                ],
-                onSeeAll: () => context.push('/explore-courses'),
-                onTapCourse:
-                    (course) => context.push('/course-details', extra: course),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final coursesAsync = ref.watch(approvedCoursesProvider);
+
+                  return coursesAsync.when(
+                    loading: () => const SizedBox(
+                      height: 150,
+                      child: Center(child: CupertinoActivityIndicator(color: AppColors.white,)),
+                    ),
+                    error: (e, _) => const SizedBox(
+                      height: 150,
+                      child: Center(
+                        child: Text(
+                          'Failed to load courses',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ),
+                    data: (courses) {
+                      if (courses.isEmpty) {
+                        return const SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: Text(
+                              'No approved courses yet',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return TeacherExplorePaidCourses(
+                        courses: courses,
+                        onSeeAll: () => context.push('/student-paid-courses'),
+                        onTapCourse: (course) =>
+                            context.push('/student-paid-courses', extra: course),
+                      );
+                    },
+                  );
+                },
               ),
             ),
 
@@ -325,9 +390,21 @@ class _GuestAndStudentDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SupportFeedback(
-                onFAQ: () {},
-                onSupport: () => context.push('/support'),
-                onShare: () {},
+                onFAQ: () {
+                  context.push('/faq');
+                },
+                onSupport: () => context.push('/need-help'),
+                onDeveloper: () => context.push('/developer-info'),
+
+                onShare: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Feature not available right now!", style: TextStyle(color: Colors.white,),),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                },
+
               ),
             ),
           ],

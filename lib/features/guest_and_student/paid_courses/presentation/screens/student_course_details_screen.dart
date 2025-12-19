@@ -362,6 +362,7 @@ class StudentCourseDetailsScreen extends StatelessWidget {
                                         /// For test we can use the false value
                                         //final bool locked = false;
                                         //final bool expired = false;
+
                                         final now = DateTime.now();
                                         final bool locked = now.isBefore(start);
                                         final bool expired = now.isAfter(end);

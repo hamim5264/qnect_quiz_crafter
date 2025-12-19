@@ -9,6 +9,7 @@ class ProfileActionsSection extends StatelessWidget {
   final VoidCallback onDeleteAccount;
   final VoidCallback onStudentFeedback;
   final VoidCallback onAdminFeedback;
+  final VoidCallback onTeacherAddRating;
 
   const ProfileActionsSection({
     super.key,
@@ -17,6 +18,7 @@ class ProfileActionsSection extends StatelessWidget {
     required this.onDeleteAccount,
     required this.onStudentFeedback,
     required this.onAdminFeedback,
+    required this.onTeacherAddRating,
   });
 
   @override
@@ -97,7 +99,7 @@ class ProfileActionsSection extends StatelessWidget {
           icon: Icons.star,
           title: "Rate Us",
           subtitle: "Give us your feedback",
-          onTap: onAdminFeedback,
+          onTap: onTeacherAddRating,
         ),
       ],
     );

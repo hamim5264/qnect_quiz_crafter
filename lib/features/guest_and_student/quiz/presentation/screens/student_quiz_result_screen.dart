@@ -19,11 +19,10 @@ class StudentQuizResultScreen extends StatelessWidget {
     required this.total,
   });
 
-  /// Get the logged-in user's first name
   Future<String> _getUserName() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final snap =
-    await FirebaseFirestore.instance.collection("users").doc(uid).get();
+        await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
     return (snap.data()?["firstName"] ?? "Student") as String;
   }
@@ -32,7 +31,6 @@ class StudentQuizResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final double percentage = total == 0 ? 0 : (points / total) * 100;
 
-    // Animation & Message Logic
     String message;
     String subMessage;
     String animationAsset;
@@ -40,15 +38,15 @@ class StudentQuizResultScreen extends StatelessWidget {
     if (percentage < 40) {
       message = "Don't Give Up!";
       subMessage = "Keep practicing, you’ll improve!";
-      animationAsset = "assets/animations/sad.json"; // change to your sad animation
+      animationAsset = "assets/animations/sad.json";
     } else if (percentage < 70) {
       message = "Good Effort!";
       subMessage = "You're improving — keep going!";
-      animationAsset = "assets/animations/improvement.json"; // change to your medium animation
+      animationAsset = "assets/animations/improvement.json";
     } else {
       message = "Excellent!";
       subMessage = "Outstanding performance!";
-      animationAsset = "assets/animations/win.json"; // change to your happy animation
+      animationAsset = "assets/animations/win.json";
     }
 
     return FutureBuilder<String>(
@@ -65,7 +63,6 @@ class StudentQuizResultScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
 
-                  // Title
                   const Text(
                     "Quiz Result",
                     style: TextStyle(
@@ -78,7 +75,6 @@ class StudentQuizResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Lottie Animation (Full Screen Top)
                   SizedBox(
                     height: 220,
                     child: Lottie.asset(animationAsset, repeat: true),
@@ -86,7 +82,6 @@ class StudentQuizResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Congratulations Text
                   Text(
                     "$message, $userName!",
                     textAlign: TextAlign.center,
@@ -124,7 +119,6 @@ class StudentQuizResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // Points Display
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -171,21 +165,18 @@ class StudentQuizResultScreen extends StatelessWidget {
 
                   const Spacer(),
 
-                  // Go to Dashboard Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.secondaryDark,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 13,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(26),
                         ),
                       ),
                       onPressed: () {
-                        context.goNamed("guestHome"); // Update route
+                        context.goNamed("guestHome");
                       },
                       child: const Text(
                         "Back to Dashboard",

@@ -32,7 +32,6 @@ class PaidCourseCard extends StatelessWidget {
     final int finalPrice =
         hasDiscount ? price - ((price * discountPercent) ~/ 100) : price;
 
-    final String teacherName = course["teacherName"] ?? "Teacher";
     final int enrolledCount = (course["enrolledCount"] ?? 0).toInt();
 
     final DateTime startDate = _toDate(course["startDate"]);
@@ -129,117 +128,99 @@ class PaidCourseCard extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // Row(
-          //   children: [
-          //     const Icon(Icons.person, size: 16, color: Colors.black54),
-          //     const SizedBox(width: 6),
-          //     Text(
-          //       "Teacher: $teacherName",
-          //       style: const TextStyle(
-          //         fontFamily: AppTypography.family,
-          //         fontSize: 12,
-          //         color: Colors.black54,
-          //       ),
-          //     ),
-          //     const Spacer(),
-          //     const Icon(Icons.group, size: 16, color: Colors.black54),
-          //     const SizedBox(width: 6),
-          //     Text(
-          //       "$enrolledCount Enrolled",
-          //       style: const TextStyle(
-          //         fontFamily: AppTypography.family,
-          //         fontSize: 12,
-          //         color: Colors.black54,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance
-              .collection('users')
-              .doc(course["teacherId"])
-              .get(),
-          builder: (context, snap) {
-            final data = snap.data?.data() as Map<String, dynamic>?;
+          FutureBuilder<DocumentSnapshot>(
+            future:
+                FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(course["teacherId"])
+                    .get(),
+            builder: (context, snap) {
+              final data = snap.data?.data() as Map<String, dynamic>?;
 
-            final teacherName = data?["firstName"] ?? "Teacher";
+              final teacherName = data?["firstName"] ?? "Teacher";
 
-            return Row(
-              children: [
-                // 🟩 TEACHER NAME NEON CHIP
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryDark,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.secondaryDark.withOpacity(0.4),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.person, size: 14, color: Colors.black),
-                      const SizedBox(width: 6),
-                      Text(
-                        teacherName,
-                        style: const TextStyle(
-                          fontFamily: AppTypography.family,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontSize: 12,
+              return Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryDark,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.secondaryDark.withValues(alpha: 0.4),
+                          blurRadius: 8,
+                          spreadRadius: 1,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const Spacer(),
-
-                // 🟨 ENROLLED COUNT NEON CHIP
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.textPrimary,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryLight.withOpacity(0.4),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.group, size: 14, color: Colors.white),
-                      const SizedBox(width: 6),
-                      Text(
-                        "$enrolledCount Enrolled",
-                        style: const TextStyle(
-                          fontFamily: AppTypography.family,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 12,
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.person, size: 14, color: Colors.black),
+                        const SizedBox(width: 6),
+                        Text(
+                          teacherName,
+                          style: const TextStyle(
+                            fontFamily: AppTypography.family,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
-        ),
 
+                  const Spacer(),
 
-        const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.textPrimary,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryLight.withValues(alpha: 0.4),
+                          blurRadius: 8,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.group, size: 14, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Text(
+                          "$enrolledCount Enrolled",
+                          style: const TextStyle(
+                            fontFamily: AppTypography.family,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 14),
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.chip3,
                   borderRadius: BorderRadius.circular(20),
@@ -256,7 +237,10 @@ class PaidCourseCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.chip2,
                   borderRadius: BorderRadius.circular(20),

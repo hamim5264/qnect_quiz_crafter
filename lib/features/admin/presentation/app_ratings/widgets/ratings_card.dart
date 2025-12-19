@@ -6,11 +6,13 @@ import '../../../../../ui/design_system/tokens/typography.dart';
 
 class RatingsCard extends StatelessWidget {
   final String name;
-  final String avatar;
+  final String? avatar;
   final int performance;
   final int privacy;
   final int experience;
   final String comment;
+
+  final VoidCallback? onDelete;
 
   const RatingsCard({
     super.key,
@@ -20,6 +22,7 @@ class RatingsCard extends StatelessWidget {
     required this.privacy,
     required this.experience,
     required this.comment,
+    this.onDelete,
   });
 
   @override
@@ -35,11 +38,7 @@ class RatingsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 22,
-                backgroundImage: AssetImage(avatar),
-              ),
+              _buildAvatar(),
               const SizedBox(width: 10),
               Text(
                 name,
@@ -89,41 +88,61 @@ class RatingsCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed:
-                  () => showDialog(
-                    context: context,
-                    builder:
-                        (_) => ActionFeedbackDialog(
-                          icon: CupertinoIcons.trash,
-                          title: 'Delete Rating?',
-                          subtitle:
-                              'Are you sure you want to delete this rating permanently?',
-                          buttonText: 'Confirm Delete',
-                          onPressed: () => Navigator.pop(context),
-                        ),
+          if (onDelete != null)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed:
+                    () => showDialog(
+                      context: context,
+                      builder:
+                          (_) => ActionFeedbackDialog(
+                            icon: CupertinoIcons.trash,
+                            title: 'Delete Rating?',
+                            subtitle:
+                                'Are you sure you want to delete this rating permanently?',
+                            buttonText: 'Confirm Delete',
+                            onPressed: onDelete!,
+                          ),
+                    ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
                 ),
-              ),
-              child: const Text(
-                'Delete',
-                style: TextStyle(
-                  fontFamily: AppTypography.family,
-                  color: Colors.white,
-                  fontSize: 14,
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(
+                    fontFamily: AppTypography.family,
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    final url = avatar?.trim();
+
+    if (url == null || url.isEmpty) {
+      return const CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: 22,
+        child: Icon(Icons.person, color: Colors.grey),
+      );
+    }
+
+    return CircleAvatar(
+      backgroundColor: Colors.white,
+      radius: 22,
+      backgroundImage: NetworkImage(url),
+      onBackgroundImageError: (_, __) {},
     );
   }
 

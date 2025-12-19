@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +12,6 @@ import 'widgets/user_distribution_card.dart';
 import 'widgets/pulse_board_grid.dart';
 
 import '../../../../../ui/design_system/tokens/colors.dart';
-import '../../../../../common/widgets/app_loader.dart';
 
 class AdminDashboardHomeScreen extends ConsumerStatefulWidget {
   const AdminDashboardHomeScreen({super.key});
@@ -39,25 +36,6 @@ class _AdminDashboardHomeScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(adminControllerProvider);
-    final isLoading = state.loading;
-
-    if (isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(color: Colors.white10),
-              ),
-            ),
-
-            const Center(child: AppLoader(size: 75)),
-          ],
-        ),
-      );
-    }
 
     return Scaffold(
       backgroundColor: AppColors.secondaryDark,
@@ -69,7 +47,6 @@ class _AdminDashboardHomeScreenState
           adminImageUrl: state.admin?.imageUrl,
         ),
       ),
-
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: const [

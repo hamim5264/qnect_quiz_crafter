@@ -1,157 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:qnect_quiz_crafter/features/admin/presentation/certificates/widgets/generated_certificate_item.dart';
-// import '../../../../../common/widgets/common_rounded_app_bar.dart';
-// import '../../../../../ui/design_system/tokens/colors.dart';
-// import '../../../../../ui/design_system/tokens/typography.dart';
-//
-// class GeneratedCertificatesScreen extends StatefulWidget {
-//   final List<Map<String, String>>? certificates;
-//
-//   const GeneratedCertificatesScreen({super.key, this.certificates});
-//
-//   @override
-//   State<GeneratedCertificatesScreen> createState() =>
-//       _GeneratedCertificatesScreenState();
-// }
-//
-// class _GeneratedCertificatesScreenState
-//     extends State<GeneratedCertificatesScreen> {
-//   late List<Map<String, String>> _certs;
-//   final Set<int> _sent = {};
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _certs = List<Map<String, String>>.from(widget.certificates ?? []);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: AppColors.primaryDark,
-//       appBar: const CommonRoundedAppBar(title: 'Generated Certificates'),
-//       body: SafeArea(
-//         child:
-//             _certs.isEmpty
-//                 ? _emptyState()
-//                 : ListView.builder(
-//                   padding: const EdgeInsets.all(16),
-//                   itemCount: _certs.length,
-//                   itemBuilder: (context, i) {
-//                     final c = _certs[i];
-//                     final sent = _sent.contains(i);
-//                     return GeneratedCertificateItem(
-//                       role: c['role'] ?? '',
-//                       certName: c['certName'] ?? '',
-//                       userName: c['userName'] ?? '',
-//                       issueDate: c['issueDate'] ?? 'N/A',
-//                       isSent: sent,
-//                       onSend: () {
-//                         setState(() => _sent.add(i));
-//                         ScaffoldMessenger.of(context).showSnackBar(
-//                           SnackBar(
-//                             backgroundColor: AppColors.secondaryDark,
-//                             content: Text(
-//                               'Certificate sent to ${c['userName']}!',
-//                               style: const TextStyle(
-//                                 fontFamily: AppTypography.family,
-//                                 color: Colors.white,
-//                               ),
-//                             ),
-//                           ),
-//                         );
-//                       },
-//                       onDeleteRequest: () => _confirmDelete(i),
-//                     );
-//                   },
-//                 ),
-//       ),
-//     );
-//   }
-//
-//   Widget _emptyState() => Center(
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: const [
-//         CircleAvatar(
-//           radius: 50,
-//           backgroundColor: AppColors.primaryLight,
-//           child: Icon(Icons.close_rounded, color: Colors.white, size: 44),
-//         ),
-//         SizedBox(height: 14),
-//         Text(
-//           'No certificate generated yet',
-//           style: TextStyle(
-//             fontFamily: AppTypography.family,
-//             color: Colors.white70,
-//             fontSize: 15,
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-//
-//   void _confirmDelete(int index) async {
-//     final ok = await showDialog<bool>(
-//       context: context,
-//       builder:
-//           (_) => AlertDialog(
-//             backgroundColor: AppColors.primaryLight,
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(16),
-//             ),
-//             title: const Text(
-//               'Delete certificate?',
-//               style: TextStyle(
-//                 fontFamily: AppTypography.family,
-//                 color: Colors.white,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//             content: const Text(
-//               'This action cannot be undone.',
-//               style: TextStyle(
-//                 fontFamily: AppTypography.family,
-//                 color: Colors.white70,
-//               ),
-//             ),
-//             actions: [
-//               ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: Colors.white,
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                 ),
-//                 onPressed: () => Navigator.pop(context, true),
-//                 child: const Text(
-//                   'Cancel',
-//                   style: TextStyle(color: AppColors.textPrimary),
-//                 ),
-//               ),
-//               ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                   backgroundColor: Colors.redAccent,
-//                   shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(10),
-//                   ),
-//                 ),
-//                 onPressed: () => Navigator.pop(context, true),
-//                 child: const Text('Delete'),
-//               ),
-//             ],
-//           ),
-//     );
-//     if (ok == true) {
-//       setState(() {
-//         _certs.removeAt(index);
-//         _sent.remove(index);
-//       });
-//     }
-//   }
-// }
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/certificates/widgets/generated_certificate_item.dart';
@@ -161,7 +7,6 @@ import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
 class GeneratedCertificatesScreen extends StatelessWidget {
-  // Keep param for backwards compatibility, but now unused (we use Firestore)
   final List<Map<String, String>>? certificates;
 
   const GeneratedCertificatesScreen({super.key, this.certificates});
@@ -173,14 +18,17 @@ class GeneratedCertificatesScreen extends StatelessWidget {
       appBar: const CommonRoundedAppBar(title: 'Generated Certificates'),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('certificates')
-              .orderBy('createdAt', descending: true)
-              .snapshots(),
+          stream:
+              FirebaseFirestore.instance
+                  .collection('certificates')
+                  .orderBy('createdAt', descending: true)
+                  .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.secondaryDark),
+                child: CircularProgressIndicator(
+                  color: AppColors.secondaryDark,
+                ),
               );
             }
 
@@ -211,9 +59,7 @@ class GeneratedCertificatesScreen extends StatelessWidget {
 
                 final role = (data['role'] ?? '') as String;
                 final uiRole =
-                role.toLowerCase() == 'teacher'
-                    ? 'Teacher'
-                    : 'Student'; // for UI
+                    role.toLowerCase() == 'teacher' ? 'Teacher' : 'Student';
 
                 final certName = (data['certName'] ?? '') as String;
                 final userName = (data['userName'] ?? '') as String;
@@ -260,19 +106,17 @@ class GeneratedCertificatesScreen extends StatelessWidget {
   );
 
   Future<void> _handleSend(
-      BuildContext context,
-      String certId,
-      Map<String, dynamic> data,
-      ) async {
+    BuildContext context,
+    String certId,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final firestore = FirebaseFirestore.instance;
 
-      // 1) Mark certificate as sent
       await firestore.collection('certificates').doc(certId).update({
         'isSent': true,
       });
 
-      // 2) Push notification to user
       final String userId = (data['userId'] ?? '') as String;
       if (userId.isNotEmpty) {
         await firestore
@@ -280,12 +124,12 @@ class GeneratedCertificatesScreen extends StatelessWidget {
             .doc(userId)
             .collection('items')
             .add({
-          'type': 'certificate',
-          'title': 'New Certificate Earned!',
-          'message':
-          'You have received the ${(data['certName'] ?? 'certificate')}.',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+              'type': 'certificate',
+              'title': 'New Certificate Earned!',
+              'message':
+                  'You have received the ${(data['certName'] ?? 'certificate')}.',
+              'createdAt': FieldValue.serverTimestamp(),
+            });
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -319,52 +163,53 @@ class GeneratedCertificatesScreen extends StatelessWidget {
   void _confirmDelete(BuildContext context, String certId) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.primaryLight,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Delete certificate?',
-          style: TextStyle(
-            fontFamily: AppTypography.family,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: const Text(
-          'This action cannot be undone.',
-          style: TextStyle(
-            fontFamily: AppTypography.family,
-            color: Colors.white70,
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+      builder:
+          (_) => AlertDialog(
+            backgroundColor: AppColors.primaryLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text(
+              'Delete certificate?',
+              style: TextStyle(
+                fontFamily: AppTypography.family,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+            content: const Text(
+              'This action cannot be undone.',
+              style: TextStyle(
+                fontFamily: AppTypography.family,
+                color: Colors.white70,
               ),
             ),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Delete'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
 
     if (ok == true) {

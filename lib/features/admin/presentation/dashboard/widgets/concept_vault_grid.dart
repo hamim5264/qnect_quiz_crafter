@@ -143,27 +143,34 @@ class _ConceptVaultGridState extends State<ConceptVaultGrid> {
 
               const SizedBox(height: 14),
 
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                decoration: BoxDecoration(
-                  color: AppColors.chip2,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(LucideIcons.share2, color: AppColors.white, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Share App',
-                      style: TextStyle(
-                        fontFamily: AppTypography.family,
-                        fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: _showComingSoonOverlay,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  decoration: BoxDecoration(
+                    color: AppColors.chip2,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        LucideIcons.share2,
                         color: AppColors.white,
+                        size: 20,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 8),
+                      Text(
+                        'Share App',
+                        style: TextStyle(
+                          fontFamily: AppTypography.family,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

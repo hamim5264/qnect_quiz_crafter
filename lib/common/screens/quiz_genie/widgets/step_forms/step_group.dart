@@ -15,8 +15,12 @@ class StepGroup extends StatelessWidget {
       iconEnabledColor: Colors.white,
       value: value,
       items: const [
-        DropdownMenuItem(value: QuizGenieGroup.ssc, child: Text("SSC")),
-        DropdownMenuItem(value: QuizGenieGroup.hsc, child: Text("HSC")),
+        DropdownMenuItem(value: QuizGenieGroup.science, child: Text("Science")),
+        DropdownMenuItem(value: QuizGenieGroup.arts, child: Text("Arts")),
+        DropdownMenuItem(
+          value: QuizGenieGroup.commerce,
+          child: Text("Commerce"),
+        ),
       ],
       onChanged: (v) => v != null ? onChanged(v) : null,
       decoration: const InputDecoration(

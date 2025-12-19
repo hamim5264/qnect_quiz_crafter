@@ -74,9 +74,24 @@ class StudentProfileScreen extends ConsumerWidget {
                     onCertificates: () {
                       context.pushNamed('userCertificates');
                     },
-                    onDeleteAccount: () {},
-                    onStudentFeedback: () {},
+                    onDeleteAccount: () {
+                      if (!isGuest) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Feature not available",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      }
+                    },
+                    onStudentFeedback: () {
+                      context.pushNamed('feedback');
+                    },
                     onAdminFeedback: () => context.push('/guidelines'),
+                    onStudentAddRating: () => context.pushNamed('addAppRating'),
                   ),
                 ],
               ),

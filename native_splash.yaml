@@ -1,0 +1,13 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  background_image: "assets/core/app_background.png"
+  image: "assets/core/app_secondary_logo.png"
+  branding: "assets/core/app_brand.png"
+
+  android_12:
+    color: "#015055"
+    image: "assets/core/app_secondary_logo.png"
+    branding: "assets/core/app_brand.png"

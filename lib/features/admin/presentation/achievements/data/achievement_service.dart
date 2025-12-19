@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AchievementService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// LEVEL thresholds for badges
   final teacherBadges = const {
     "Spark Crafter": 1,
     "Steady Guide": 2,
@@ -30,26 +29,25 @@ class AchievementService {
     "Legend Scholar": 10,
   };
 
-  /// ----------------------------
-  /// Get users eligible for badges
-  /// ----------------------------
   Future<List<Map<String, dynamic>>> getEligibleUsers(String role) async {
-    final snapshot = await _firestore
-        .collection("users")
-        .where("role", isEqualTo: role.toLowerCase())
-        .get();
+    final snapshot =
+        await _firestore
+            .collection("users")
+            .where("role", isEqualTo: role.toLowerCase())
+            .get();
 
-    return snapshot.docs.map((d) => {
-      "uid": d.id,
-      "name": d["username"],
-      "level": d["level"],
-      "achievements": d.data()["achievements"] ?? {},
-    }).toList();
+    return snapshot.docs
+        .map(
+          (d) => {
+            "uid": d.id,
+            "name": d["username"],
+            "level": d["level"],
+            "achievements": d.data()["achievements"] ?? {},
+          },
+        )
+        .toList();
   }
 
-  /// ---------------------------------------------------
-  /// Get which badges this user can unlock (not unlocked)
-  /// ---------------------------------------------------
   List<String> getUnlockableBadges({
     required String role,
     required int level,
@@ -58,25 +56,19 @@ class AchievementService {
     final badgeMap = role == "Teacher" ? teacherBadges : studentBadges;
 
     return badgeMap.entries
-        .where((entry) =>
-    level >= entry.value &&
-        (achievements[entry.key] != true)) // not unlocked
+        .where(
+          (entry) => level >= entry.value && (achievements[entry.key] != true),
+        )
         .map((e) => e.key)
         .toList();
   }
 
-  /// ----------------------------
-  /// Unlock badge for a user
-  /// ----------------------------
   Future<void> unlockBadge({
     required String uid,
     required String badgeName,
   }) async {
-    await _firestore
-        .collection("users")
-        .doc(uid)
-        .set({
-      "achievements": {badgeName: true}
+    await _firestore.collection("users").doc(uid).set({
+      "achievements": {badgeName: true},
     }, SetOptions(merge: true));
   }
 }

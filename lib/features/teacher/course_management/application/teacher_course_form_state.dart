@@ -49,7 +49,6 @@ class TeacherCourseFormState extends Equatable {
     if (title.trim().isEmpty) return false;
     if (price <= 0) return false;
     if (startDate.isAfter(endDate)) return false;
-    // cannot edit if approved
     if (isEdit && status == CourseStatus.approved) return false;
     return true;
   }

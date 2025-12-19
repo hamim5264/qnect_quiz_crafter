@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -6,12 +7,14 @@ class SupportFeedback extends StatelessWidget {
   final VoidCallback onFAQ;
   final VoidCallback onSupport;
   final VoidCallback onShare;
+  final VoidCallback onDeveloper;
 
   const SupportFeedback({
     super.key,
     required this.onFAQ,
     required this.onSupport,
     required this.onShare,
+    required this.onDeveloper,
   });
 
   @override
@@ -37,6 +40,13 @@ class SupportFeedback extends StatelessWidget {
           "Contact Support",
           "Get in touch with our team",
           onSupport,
+        ),
+        const SizedBox(height: 10),
+        _item(
+          CupertinoIcons.rectangle_stack_person_crop,
+          "Developers",
+          "Meet our developers",
+          onDeveloper,
         ),
         const SizedBox(height: 10),
         _item(

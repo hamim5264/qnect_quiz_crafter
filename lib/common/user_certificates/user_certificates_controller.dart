@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class UserCertificate {
@@ -38,17 +37,13 @@ class UserCertificatesState {
   final bool loading;
   final List<UserCertificate> items;
 
-  const UserCertificatesState({
-    required this.loading,
-    required this.items,
-  });
+  const UserCertificatesState({required this.loading, required this.items});
 
   factory UserCertificatesState.initial() =>
       const UserCertificatesState(loading: true, items: []);
 }
 
-class UserCertificatesController
-    extends StateNotifier<UserCertificatesState> {
+class UserCertificatesController extends StateNotifier<UserCertificatesState> {
   UserCertificatesController() : super(UserCertificatesState.initial()) {
     _load();
   }
@@ -61,23 +56,21 @@ class UserCertificatesController
       return;
     }
 
-    final snap = await FirebaseFirestore.instance
-        .collection('certificates')
-        .where('userId', isEqualTo: uid)
-        .get();
+    final snap =
+        await FirebaseFirestore.instance
+            .collection('certificates')
+            .where('userId', isEqualTo: uid)
+            .get();
 
     final items = snap.docs.map((e) => UserCertificate.fromDoc(e)).toList();
 
-    state = UserCertificatesState(
-      loading: false,
-      items: items,
-    );
+    state = UserCertificatesState(loading: false, items: items);
   }
 
   Future<void> refresh() => _load();
 }
 
 final userCertificatesProvider =
-StateNotifierProvider<UserCertificatesController, UserCertificatesState>(
+    StateNotifierProvider<UserCertificatesController, UserCertificatesState>(
       (ref) => UserCertificatesController(),
-);
+    );

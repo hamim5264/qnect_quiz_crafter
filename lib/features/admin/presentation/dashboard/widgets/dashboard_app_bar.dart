@@ -185,24 +185,26 @@ class DashboardAppBar extends StatelessWidget {
 
                     Column(
                       children: [
-                        // IconButton(
-                        //   onPressed: () => context.pushNamed('notification'),
-                        //   icon: const Icon(
-                        //     CupertinoIcons.bell_fill,
-                        //     color: Colors.white,
-                        //     size: 22,
-                        //   ),
-                        // ),
                         Consumer(
                           builder: (context, ref, _) {
-                            final unread = ref.watch(unreadNotificationCountProvider("admin")).value ?? 0;
+                            final unread =
+                                ref
+                                    .watch(
+                                      unreadNotificationCountProvider("admin"),
+                                    )
+                                    .value ??
+                                0;
 
                             return Stack(
                               clipBehavior: Clip.none,
                               children: [
                                 IconButton(
-                                  onPressed: () => context.pushNamed('notification'),
-                                  icon: const Icon(CupertinoIcons.bell_fill, color: Colors.white),
+                                  onPressed:
+                                      () => context.pushNamed('notification'),
+                                  icon: const Icon(
+                                    CupertinoIcons.bell_fill,
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 if (unread > 0)
                                   Positioned(

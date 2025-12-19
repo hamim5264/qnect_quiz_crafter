@@ -12,6 +12,7 @@ class StudentProfileActionsSection extends StatelessWidget {
   final VoidCallback onDeleteAccount;
   final VoidCallback onStudentFeedback;
   final VoidCallback onAdminFeedback;
+  final VoidCallback onStudentAddRating;
 
   const StudentProfileActionsSection({
     super.key,
@@ -21,6 +22,7 @@ class StudentProfileActionsSection extends StatelessWidget {
     required this.onDeleteAccount,
     required this.onStudentFeedback,
     required this.onAdminFeedback,
+    required this.onStudentAddRating,
   });
 
   @override
@@ -112,11 +114,14 @@ class StudentProfileActionsSection extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        _actionItem(
-          icon: Icons.star,
-          title: "Rate Us",
-          subtitle: "Give us your feedback",
-          onTap: onAdminFeedback,
+        _frostedWrapper(
+          disabled: isGuest,
+          child: _actionItem(
+            icon: Icons.star,
+            title: "Rate Us",
+            subtitle: "Give us your feedback",
+            onTap: onStudentAddRating,
+          ),
         ),
       ],
     );
@@ -138,7 +143,7 @@ class StudentProfileActionsSection extends StatelessWidget {
               child: Container(
                 height: 70,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                 ),
               ),
             ),

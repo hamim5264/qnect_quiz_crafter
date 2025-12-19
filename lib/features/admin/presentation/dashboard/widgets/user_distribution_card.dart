@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,8 +46,8 @@ class _UserDistributionCardState extends ConsumerState<UserDistributionCard>
     final statsAsync = ref.watch(adminStatsProvider);
 
     return statsAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      loading: () => const _CardLoader(height: 420),
+      error: (_, __) => const _CardLoader(height: 420),
 
       data: (stats) {
         return Padding(
@@ -239,6 +240,32 @@ class _UserDistributionCardState extends ConsumerState<UserDistributionCard>
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CardLoader extends StatelessWidget {
+  final double height;
+
+  const _CardLoader({required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: const Center(
+          child: CupertinoActivityIndicator(
+            radius: 14,
+            color: AppColors.primaryLight,
+          ),
+        ),
+      ),
     );
   }
 }

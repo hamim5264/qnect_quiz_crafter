@@ -14,7 +14,8 @@ class PurchaseCard extends StatelessWidget {
   final dynamic date;
   final VoidCallback onDelete;
 
-  const PurchaseCard({super.key,
+  const PurchaseCard({
+    super.key,
     required this.title,
     required this.courseId,
     required this.amount,
@@ -56,7 +57,6 @@ class PurchaseCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Course Icon Box
               Container(
                 height: 60,
                 width: 60,
@@ -73,7 +73,6 @@ class PurchaseCard extends StatelessWidget {
 
               const SizedBox(width: 12),
 
-              // Texts
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +108,6 @@ class PurchaseCard extends StatelessWidget {
                 ),
               ),
 
-              // Right side icons
               Column(
                 children: [
                   GestureDetector(
@@ -123,8 +121,11 @@ class PurchaseCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_month,
-                          color: Colors.white70, size: 16),
+                      const Icon(
+                        Icons.calendar_month,
+                        color: Colors.white70,
+                        size: 16,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         _formattedDate(),
@@ -137,12 +138,11 @@ class PurchaseCard extends StatelessWidget {
                     ],
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
 
-        // Status Ribbon
         Positioned(
           top: 0,
           right: 0,

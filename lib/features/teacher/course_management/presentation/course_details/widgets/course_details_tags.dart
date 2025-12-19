@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../../ui/design_system/tokens/typography.dart';
 import '../../../models/teacher_course_model.dart';
 
@@ -36,7 +35,7 @@ class CourseDetailsTags extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

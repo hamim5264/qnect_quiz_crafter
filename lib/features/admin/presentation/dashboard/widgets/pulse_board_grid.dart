@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -140,7 +141,7 @@ class _PulseBoardGridState extends State<PulseBoardGrid> {
               Expanded(
                 child:
                     loading
-                        ? const ShimmerBox(height: 180, width: double.infinity)
+                        ? const _CardLoader(height: 180)
                         : _PulseCard(
                           title: 'Pending Courses',
                           value: pending.toString(),
@@ -156,7 +157,7 @@ class _PulseBoardGridState extends State<PulseBoardGrid> {
               Expanded(
                 child:
                     loading
-                        ? const ShimmerBox(height: 180, width: double.infinity)
+                        ? const _CardLoader(height: 180)
                         : _PulseCard(
                           title: 'Approved Courses',
                           value: approved.toString(),
@@ -174,7 +175,7 @@ class _PulseBoardGridState extends State<PulseBoardGrid> {
           const SizedBox(height: 12),
 
           loading
-              ? const ShimmerBox(height: 200, width: double.infinity)
+              ? const _CardLoader(height: 200)
               : _PulseCardWide(
                 totalSold: totalSold,
                 soldScience: soldScience,
@@ -511,6 +512,36 @@ class _BulletColumn extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CardLoader extends StatelessWidget {
+  final double height;
+
+  const _CardLoader({required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: const Center(
+        child: CupertinoActivityIndicator(
+          radius: 14,
+          color: AppColors.primaryLight,
+        ),
+      ),
     );
   }
 }

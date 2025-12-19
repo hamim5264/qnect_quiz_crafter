@@ -37,7 +37,6 @@ class StudentQuizInstructionScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top bar
                   Row(
                     children: [
                       GestureDetector(
@@ -71,7 +70,6 @@ class StudentQuizInstructionScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // White instruction card
                   Expanded(
                     child: Container(
                       width: double.infinity,
@@ -82,7 +80,7 @@ class StudentQuizInstructionScreen extends StatelessWidget {
                         border: Border.all(color: Colors.white30, width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.12),
+                            color: Colors.black.withValues(alpha: 0.12),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),
@@ -91,7 +89,6 @@ class StudentQuizInstructionScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Icon + meta row
                           Row(
                             children: [
                               Container(
@@ -140,7 +137,6 @@ class StudentQuizInstructionScreen extends StatelessWidget {
 
                           const SizedBox(height: 18),
 
-                          // Questions / Time summary row
                           Row(
                             children: [
                               _summaryTile(
@@ -176,11 +172,11 @@ class StudentQuizInstructionScreen extends StatelessWidget {
                             child: SingleChildScrollView(
                               child: Text(
                                 "• 1 mark awarded for a correct answer, no negative marking.\n"
-                                    "• Tap on an option to select / change your answer.\n"
-                                    "• You can move between questions anytime.\n"
-                                    "• Do not take screenshots or screen recordings while attempting.\n"
-                                    "• If time is over, your current answers will be submitted automatically.\n"
-                                    "• If you go back from the quiz, it will be submitted immediately.",
+                                "• Tap on an option to select / change your answer.\n"
+                                "• You can move between questions anytime.\n"
+                                "• Do not take screenshots or screen recordings while attempting.\n"
+                                "• If time is over, your current answers will be submitted automatically.\n"
+                                "• If you go back from the quiz, it will be submitted immediately.",
                                 style: TextStyle(
                                   fontFamily: AppTypography.family,
                                   fontSize: 13,
@@ -199,7 +195,9 @@ class StudentQuizInstructionScreen extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryLight,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 24),
+                                  vertical: 14,
+                                  horizontal: 24,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),

@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
 
 import '../../../../../../common/widgets/universal_dashboard_app_bar.dart';
 import '../../../../../../ui/design_system/tokens/colors.dart';
 
+import '../../../../common/screens/quiz_genie/widgets/approved_courses_provider.dart';
 import '../../data/providers/teacher_providers.dart';
 import 'controller/teacher_dashboard_scrollbar_controller.dart';
 
@@ -48,6 +49,7 @@ class _TeacherDashboardScreenState
   @override
   Widget build(BuildContext context) {
     final teacherState = ref.watch(teacherControllerProvider);
+
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
@@ -64,7 +66,11 @@ class _TeacherDashboardScreenState
                 if (teacherState.loading) {
                   return const Padding(
                     padding: EdgeInsets.only(top: 40),
-                    child: Center(child: AppLoader(size: 40)),
+                    child: Center(
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.white,
+                      ),
+                    ),
                   );
                 }
 
@@ -129,7 +135,9 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('noticeFeed', extra: 'Teachers');
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "My Courses",
@@ -195,14 +203,16 @@ class _TeacherDashboardScreenState
                     },
                   ),
                   TeacherQuickActionItem(
-                    title: "Teacher List",
-                    subtitle: "See all teachers",
+                    title: "Classroom",
+                    subtitle: "Your academic space",
                     icon: const Icon(
                       Icons.diversity_1_rounded,
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('classroom');
+                    },
                   ),
                   TeacherQuickActionItem(
                     title: "Achievements",
@@ -227,7 +237,9 @@ class _TeacherDashboardScreenState
                       size: 22,
                       color: AppColors.chip2,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      context.pushNamed('planner');
+                    },
                   ),
                 ],
               ),
@@ -237,30 +249,55 @@ class _TeacherDashboardScreenState
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TeacherExplorePaidCourses(
-                courses: [
-                  CourseItem(
-                    title: "ICT Complete Course",
-                    image:
-                        "https://i.ibb.co.com/r5ZxKXX/placeholder-course.png",
-                    quizCount: 50,
-                    enrolled: 1200,
-                    price: 490,
-                    discount: 20,
-                  ),
-                  CourseItem(
-                    title: "Physics Mastery",
-                    image:
-                        "https://i.ibb.co.com/r5ZxKXX/placeholder-course.png",
-                    quizCount: 60,
-                    enrolled: 800,
-                    price: 350,
-                    discount: 15,
-                  ),
-                ],
-                onSeeAll: () => context.push('/explore-courses'),
-                onTapCourse:
-                    (course) => context.push('/course-details', extra: course),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final coursesAsync = ref.watch(approvedCoursesProvider);
+
+                  return coursesAsync.when(
+                    loading:
+                        () => const SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: CupertinoActivityIndicator(
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
+                    error:
+                        (e, _) => const SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: Text(
+                              'Failed to load courses',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        ),
+                    data: (courses) {
+                      if (courses.isEmpty) {
+                        return const SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: Text(
+                              'No approved courses yet',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return TeacherExplorePaidCourses(
+                        courses: courses,
+                        onSeeAll: () => context.push('/student-paid-courses'),
+                        onTapCourse:
+                            (course) => context.push(
+                              '/student-paid-courses',
+                              extra: course,
+                            ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
 
@@ -319,13 +356,23 @@ class _TeacherDashboardScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SupportFeedback(
-                onFAQ: () async {
-                  await FirebaseAuth.instance.signOut();
-                  if (!mounted) return;
-                  context.go('/sign-in');
+                onFAQ: () {
+                  context.push('/faq');
                 },
-                onSupport: () => context.push('/support'),
-                onShare: () {},
+                onSupport: () => context.push('/need-help'),
+                onDeveloper: () => context.push('/developer-info'),
+
+                onShare: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Feature not available right now!",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                },
               ),
             ),
           ],

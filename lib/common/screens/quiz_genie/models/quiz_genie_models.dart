@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-enum QuizGenieGroup { ssc, hsc }
+enum QuizGenieGroup { science, arts, commerce }
 
-enum QuizGenieLevel { science, arts, commerce }
+enum QuizGenieLevel { ssc, hsc }
 
 String quizGenieGroupToString(QuizGenieGroup g) => g.toString().split('.').last;
 

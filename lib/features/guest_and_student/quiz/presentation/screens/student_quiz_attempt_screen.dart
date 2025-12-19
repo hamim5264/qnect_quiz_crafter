@@ -33,7 +33,7 @@ class StudentQuizAttemptScreen extends StatefulWidget {
 }
 
 class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
-  late List<String?> selected; // 'A' | 'B' | 'C' | 'D' | null
+  late List<String?> selected;
   int currentIndex = 0;
   late int remainingSeconds;
   Timer? _timer;
@@ -49,10 +49,8 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
     selected = List<String?>.filled(widget.questions.length, null);
     remainingSeconds = widget.durationSeconds;
 
-    // 🚫 Block screenshot (Android + iOS)
     ScreenProtector.preventScreenshotOn();
 
-    // Start timer
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       if (remainingSeconds <= 0) {
@@ -63,32 +61,19 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
     });
   }
 
-
-
-
-
-
-
-
   @override
   void dispose() {
     _timer?.cancel();
-    ScreenProtector.preventScreenshotOff(); // allow screenshot again
+    ScreenProtector.preventScreenshotOff();
     super.dispose();
   }
-
-
-
-
-
 
   Future<bool> _onWillPop() async {
     if (_finished) return true;
 
     final shouldLeave = await _showConfirmDialog(
       title: "Exit Quiz?",
-      message:
-      "If you go back now, your current answers will be submitted.",
+      message: "If you go back now, your current answers will be submitted.",
     );
     if (shouldLeave == true) {
       _submitQuiz(reason: "manual_exit");
@@ -125,23 +110,22 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
     }
 
     final totalQuestions = questions.length;
-    final points = correctCount; // 1 per correct
-
-    // TODO: Save result to Firestore (course progress, quiz earnedPoints, etc.)
+    final points = correctCount;
 
     try {
-      final attemptsRef = FirebaseFirestore.instance
-          .collection("courses")
-          .doc(widget.courseId)
-          .collection("quizzes")
-          .doc(widget.quizId)
-          .collection("attempts")
-          .doc(); // auto ID
+      final attemptsRef =
+          FirebaseFirestore.instance
+              .collection("courses")
+              .doc(widget.courseId)
+              .collection("quizzes")
+              .doc(widget.quizId)
+              .collection("attempts")
+              .doc();
 
       await attemptsRef.set({
         "quizId": widget.quizId,
         "courseId": widget.courseId,
-        "userId": FirebaseAuth.instance.currentUser!.uid,  // 🔥 REQUIRED
+        "userId": FirebaseAuth.instance.currentUser!.uid,
         "points": points,
         "total": totalQuestions,
         "answers": selected,
@@ -149,8 +133,6 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
         "reason": reason,
       });
 
-
-      // Update earned points in student's course progress
       final courseProgressRef = FirebaseFirestore.instance
           .collection("users")
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -166,15 +148,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
       debugPrint("Error saving quiz result: $e");
     }
 
-
     if (!mounted) return;
     context.pushReplacementNamed(
       "studentQuizResult",
-      extra: {
-        "title": widget.title,
-        "points": points,
-        "total": totalQuestions,
-      },
+      extra: {"title": widget.title, "points": points, "total": totalQuestions},
     );
   }
 
@@ -187,7 +164,7 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
   }
 
   bool get _allAnswered =>
-      selected.every((value) => value != null && value!.isNotEmpty);
+      selected.every((value) => value != null && value.isNotEmpty);
 
   Future<bool?> _showConfirmDialog({
     required String title,
@@ -195,32 +172,33 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontFamily: AppTypography.family,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          message,
-          style: const TextStyle(fontFamily: AppTypography.family),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("No"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              "Yes",
-              style: TextStyle(fontWeight: FontWeight.bold),
+      builder:
+          (_) => AlertDialog(
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontFamily: AppTypography.family,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            content: Text(
+              message,
+              style: const TextStyle(fontFamily: AppTypography.family),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("No"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  "Yes",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -239,8 +217,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: Row(
                       children: [
                         GestureDetector(
@@ -258,8 +238,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                             decoration: BoxDecoration(
                               color: AppColors.secondaryDark,
                               shape: BoxShape.circle,
-                              border:
-                              Border.all(color: Colors.white30, width: 1),
+                              border: Border.all(
+                                color: Colors.white30,
+                                width: 1,
+                              ),
                             ),
                             child: const Icon(
                               CupertinoIcons.back,
@@ -285,11 +267,14 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
-                            color: remainingSeconds <= 60
-                                ? Colors.redAccent
-                                : AppColors.white,
+                            color:
+                                remainingSeconds <= 60
+                                    ? Colors.redAccent
+                                    : AppColors.white,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
@@ -310,7 +295,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                                   fontFamily: AppTypography.family,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
-                                  color: remainingSeconds <= 60 ? Colors.white: Colors.black,
+                                  color:
+                                      remainingSeconds <= 60
+                                          ? Colors.white
+                                          : Colors.black,
                                 ),
                               ),
                             ],
@@ -322,7 +310,6 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
 
                   const SizedBox(height: 8),
 
-                  // Question number strip
                   SizedBox(
                     height: 40,
                     child: ListView.separated(
@@ -375,7 +362,6 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
 
                   const SizedBox(height: 12),
 
-                  // Question card
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -386,23 +372,20 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                     ),
                   ),
 
-                  // Bottom bar
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryDark,
-                    ),
+                    decoration: BoxDecoration(color: AppColors.primaryDark),
                     child: Row(
                       children: [
-                        // Previous
                         IconButton(
-                          onPressed: currentIndex == 0
-                              ? null
-                              : () {
-                            setState(() {
-                              currentIndex--;
-                            });
-                          },
+                          onPressed:
+                              currentIndex == 0
+                                  ? null
+                                  : () {
+                                    setState(() {
+                                      currentIndex--;
+                                    });
+                                  },
                           icon: Container(
                             height: 40,
                             width: 40,
@@ -412,24 +395,24 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                             ),
                             child: Icon(
                               CupertinoIcons.back,
-                              color: currentIndex == 0
-                                  ? Colors.black12
-                                  : Colors.black,
+                              color:
+                                  currentIndex == 0
+                                      ? Colors.black12
+                                      : Colors.black,
                             ),
                           ),
                         ),
 
                         const SizedBox(width: 6),
 
-                        // Submit button
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _allAnswered
-                                  ? AppColors.primaryLight
-                                  : Colors.grey.shade500,
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 12),
+                              backgroundColor:
+                                  _allAnswered
+                                      ? AppColors.primaryLight
+                                      : Colors.grey.shade500,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 side: const BorderSide(
@@ -438,27 +421,29 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                                 ),
                               ),
                             ),
-                            onPressed: !_allAnswered || _submitting
-                                ? null
-                                : () async {
-                              final ok = await _showConfirmDialog(
-                                title: "Submit Quiz?",
-                                message:
-                                "Are you sure you want to submit your answers?",
-                              );
-                              if (ok == true) {
-                                _submitQuiz(reason: "submitted");
-                              }
-                            },
+                            onPressed:
+                                !_allAnswered || _submitting
+                                    ? null
+                                    : () async {
+                                      final ok = await _showConfirmDialog(
+                                        title: "Submit Quiz?",
+                                        message:
+                                            "Are you sure you want to submit your answers?",
+                                      );
+                                      if (ok == true) {
+                                        _submitQuiz(reason: "submitted");
+                                      }
+                                    },
                             child: Text(
                               "Submit Answer",
                               style: TextStyle(
                                 fontFamily: AppTypography.family,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: _allAnswered
-                                    ? Colors.white
-                                    : Colors.white60,
+                                color:
+                                    _allAnswered
+                                        ? Colors.white
+                                        : Colors.white60,
                               ),
                             ),
                           ),
@@ -466,15 +451,15 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
 
                         const SizedBox(width: 6),
 
-                        // Next
                         IconButton(
-                          onPressed: currentIndex == total - 1
-                              ? null
-                              : () {
-                            setState(() {
-                              currentIndex++;
-                            });
-                          },
+                          onPressed:
+                              currentIndex == total - 1
+                                  ? null
+                                  : () {
+                                    setState(() {
+                                      currentIndex++;
+                                    });
+                                  },
                           icon: Container(
                             height: 40,
                             width: 40,
@@ -484,9 +469,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                             ),
                             child: Icon(
                               CupertinoIcons.forward,
-                              color: currentIndex == total - 1
-                                  ? Colors.white24
-                                  : Colors.white,
+                              color:
+                                  currentIndex == total - 1
+                                      ? Colors.white24
+                                      : Colors.white,
                             ),
                           ),
                         ),
@@ -552,17 +538,21 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                     });
                   },
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.chip2.withOpacity(0.4)
-                          : const Color(0xFFF4F5F7),
+                      color:
+                          isSelected
+                              ? AppColors.chip2.withValues(alpha: 0.4)
+                              : const Color(0xFFF4F5F7),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primaryLight
-                            : Colors.transparent,
+                        color:
+                            isSelected
+                                ? AppColors.primaryLight
+                                : Colors.transparent,
                         width: 1.6,
                       ),
                     ),
@@ -573,9 +563,10 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                           width: 32,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.primaryLight
-                                : Colors.white,
+                            color:
+                                isSelected
+                                    ? AppColors.primaryLight
+                                    : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -583,9 +574,7 @@ class _StudentQuizAttemptScreenState extends State<StudentQuizAttemptScreen> {
                             style: TextStyle(
                               fontFamily: AppTypography.family,
                               fontWeight: FontWeight.bold,
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.black87,
+                              color: isSelected ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),

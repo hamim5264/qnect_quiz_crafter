@@ -62,7 +62,7 @@ class QuizCard extends StatelessWidget {
 
                 const SizedBox(height: 6),
                 Text(
-                  "$groupLabel • $levelLabel",
+                  "$groupLabel • $levelLabel".toUpperCase(),
                   style: const TextStyle(
                     fontFamily: AppTypography.family,
                     color: Colors.black87,

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
 import 'package:qnect_quiz_crafter/features/guest_and_student/presentation/dashboard/provider/student_stats_provider.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -48,13 +47,13 @@ class StatsGrid extends ConsumerWidget {
     final stats = ref.watch(studentStatsProvider(uid!));
 
     return stats.when(
-      // loading: () => const Center(child: AppLoader()),
-      loading: () => const Center(
-        child: CupertinoActivityIndicator(
-          color: AppColors.primaryLight,
-          radius: 14,
-        ),
-      ),
+      loading:
+          () => const Center(
+            child: CupertinoActivityIndicator(
+              color: AppColors.white,
+              radius: 14,
+            ),
+          ),
 
       error:
           (e, _) =>

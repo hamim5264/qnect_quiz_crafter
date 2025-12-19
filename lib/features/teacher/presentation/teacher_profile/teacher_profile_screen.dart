@@ -65,13 +65,24 @@ class TeacherProfileScreen extends ConsumerWidget {
                       context.pushNamed('userCertificates');
                     },
                     onDeleteAccount: () {
-                      context.push('/delete-account');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Feature not available",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
                     },
                     onStudentFeedback: () {
-                      context.push('/teacher-feedback');
+                      context.pushNamed('feedback');
                     },
                     onAdminFeedback: () {
-                      context.push('/admin-feedback', extra: email);
+                      context.pushNamed('teacherAdminFeedback');
+                    },
+                    onTeacherAddRating: () {
+                      context.pushNamed('addAppRating');
                     },
                   ),
                 ],

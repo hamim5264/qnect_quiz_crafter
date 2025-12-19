@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:just_audio/just_audio.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
 
 class ChatInputBar extends StatefulWidget {
@@ -28,7 +27,6 @@ class ChatInputBar extends StatefulWidget {
 class _ChatInputBarState extends State<ChatInputBar> {
   final _recorder = AudioRecorder();
   bool _isRecording = false;
-  String? _currentAudioPath;
   int _duration = 0;
 
   void _startTimer() {
@@ -41,18 +39,6 @@ class _ChatInputBarState extends State<ChatInputBar> {
       setState(() => _duration++);
       return true;
     });
-  }
-
-  Future<int> _getAudioDuration(String path) async {
-    try {
-      final player = AudioPlayer();
-      await player.setFilePath(path);
-      final duration = player.duration?.inSeconds ?? 1;
-      await player.dispose();
-      return duration;
-    } catch (_) {
-      return 1;
-    }
   }
 
   Future<void> _pickImage() async {
@@ -155,7 +141,6 @@ class _ChatInputBarState extends State<ChatInputBar> {
         _duration = 0;
       });
 
-      // 🔥 Start timer to count seconds
       _startTimer();
     } catch (e) {
       debugPrint("REC START ERROR: $e");

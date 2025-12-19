@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/notify_hub/data/notice_service.dart';
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../common/widgets/action_feedback_dialog.dart';
@@ -17,7 +18,7 @@ class _AddNoticeScreenState extends State<AddNoticeScreen> {
   final _descController = TextEditingController();
   String audience = "All";
 
-  void _sendNotice() {
+  void _sendNotice() async {
     if (_titleController.text.trim().isEmpty ||
         _descController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
@@ -26,14 +27,19 @@ class _AddNoticeScreenState extends State<AddNoticeScreen> {
       return;
     }
 
+    await NoticeService().addNotice(
+      title: _titleController.text.trim(),
+      description: _descController.text.trim(),
+      audience: audience,
+    );
+
     showDialog(
       context: context,
       builder:
           (_) => ActionFeedbackDialog(
             icon: Icons.check_circle_outline,
             title: "Notice Sent",
-            subtitle:
-                "Your notice has been successfully sent to $audience users.",
+            subtitle: "Your notice has been sent successfully.",
             buttonText: "OK",
             onPressed: () {
               Navigator.pop(context);

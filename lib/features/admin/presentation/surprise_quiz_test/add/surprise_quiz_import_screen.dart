@@ -24,8 +24,6 @@ class _SurpriseQuizImportScreenState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(surpriseQuizControllerProvider);
-
     return Stack(
       children: [
         Scaffold(

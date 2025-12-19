@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../ui/design_system/tokens/colors.dart';
 import '../widgets/network_helper.dart';
+import 'dart:async';
+import 'package:lottie/lottie.dart';
 
 class StartupGate extends ConsumerStatefulWidget {
   const StartupGate({super.key});
@@ -15,10 +17,37 @@ class StartupGate extends ConsumerStatefulWidget {
 }
 
 class _StartupGateState extends ConsumerState<StartupGate> {
+  final List<String> _messages = [
+    "Getting things ready for you…",
+    "Warming up the experience…",
+    "Almost there, hang tight…",
+    "Preparing your learning journey…",
+    "Just a moment more…",
+  ];
+
+  int _currentIndex = 0;
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+    _startMessageRotation();
     _initialize();
+  }
+
+  void _startMessageRotation() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % _messages.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<void> _initialize() async {
@@ -86,10 +115,30 @@ class _StartupGateState extends ConsumerState<StartupGate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(
-        child: Text(
-          "Checking connection & preparing your journey...",
-          style: TextStyle(fontSize: 16, color: Colors.white),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/animations/walk.json',
+              height: 180,
+              repeat: true,
+            ),
+            const SizedBox(height: 20),
+
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Text(
+                _messages[_currentIndex],
+                key: ValueKey(_currentIndex),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              ),
+            ),
+          ],
         ),
       ),
       backgroundColor: AppColors.primaryDark,

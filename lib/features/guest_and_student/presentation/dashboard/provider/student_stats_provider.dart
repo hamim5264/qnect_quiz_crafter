@@ -19,7 +19,7 @@ final studentStatsProvider = FutureProvider.family<StudentStats, String>((
     final data = doc.data();
     data.forEach((key, value) {
       if (key.startsWith("earnedPoints_") && value is int) {
-        totalQuizzes++; // quiz attempted
+        totalQuizzes++;
         totalPoints += value;
       }
     });

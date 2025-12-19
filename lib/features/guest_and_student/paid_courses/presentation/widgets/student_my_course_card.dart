@@ -7,7 +7,7 @@ import '../../../../../ui/design_system/tokens/typography.dart';
 class StudentMyCourseCard extends StatelessWidget {
   final String courseId;
   final Map<String, dynamic> course;
-  final double progress; // 0.0 – 1.0
+  final double progress;
   final int completedQuizzes;
   final int totalQuizzes;
 

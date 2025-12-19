@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../ui/design_system/tokens/colors.dart';
-import '../../../../ui/design_system/tokens/typography.dart';
 import '../../../../common/widgets/common_rounded_app_bar.dart';
 import '../../features/admin/presentation/certificates/widgets/certificate_card.dart';
 
 class UserCertificatePreviewScreen extends StatelessWidget {
   final String certName;
   final String userName;
-  final String role;        // Teacher / Student
+  final String role;
   final String issueDate;
 
   const UserCertificatePreviewScreen({

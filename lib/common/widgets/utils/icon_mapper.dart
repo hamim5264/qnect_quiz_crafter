@@ -16,7 +16,7 @@ class QuizIconMapper {
       case "math":
         return Icons.calculate_rounded;
       default:
-        return Icons.help_outline; // fallback
+        return Icons.help_outline;
     }
   }
 }

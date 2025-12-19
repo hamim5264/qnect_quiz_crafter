@@ -73,10 +73,11 @@ class ExplorePaidCourses extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                              ),
+                            image: DecorationImage(
+                              image:
+                                  item.image.startsWith('http')
+                                      ? NetworkImage(item.image)
+                                      : AssetImage(item.image) as ImageProvider,
                               fit: BoxFit.cover,
                             ),
                           ),

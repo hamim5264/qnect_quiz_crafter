@@ -1,5 +1,3 @@
-// lib/common/widgets/achievements/user_achievement_info_dialog.dart
-
 import 'package:flutter/material.dart';
 import '../../../ui/design_system/tokens/colors.dart';
 import '../../../ui/design_system/tokens/typography.dart';
@@ -20,16 +18,13 @@ class UserAchievementInfoDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: AppColors.primaryLight,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.lock_outline,
-                color: Colors.amber, size: 40),
+            const Icon(Icons.lock_outline, color: Colors.amber, size: 40),
             const SizedBox(height: 10),
             Text(
               badgeName,
@@ -54,7 +49,7 @@ class UserAchievementInfoDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               "• Level $requiredLevel or higher\n"
-                  "• At least $requiredXp XP",
+              "• At least $requiredXp XP",
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: AppTypography.family,

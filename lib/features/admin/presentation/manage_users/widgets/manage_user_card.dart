@@ -100,9 +100,13 @@ class ManageUserCard extends StatelessWidget {
                       final peerDoc = userSnap.docs.first;
                       final peerUid = peerDoc.id;
 
-                      final peerFirst = peerDoc["firstName"] ?? "";
-                      final peerLast = peerDoc["lastName"] ?? "";
+                      final peerData = peerDoc.data();
+
+                      final peerFirst = peerData['firstName']?.toString() ?? "";
+                      final peerLast = peerData['lastName']?.toString() ?? "";
                       final peerFullName = "$peerFirst $peerLast".trim();
+
+                      final avatar = peerData['profileImage']?.toString() ?? "";
 
                       final chatId =
                           currentUid.compareTo(peerUid) < 0
@@ -115,7 +119,7 @@ class ManageUserCard extends StatelessWidget {
                           'chatId': chatId,
                           'peerId': peerUid,
                           'name': peerFullName,
-                          'avatar': peerDoc["profileImage"] ?? "",
+                          'avatar': avatar,
                           'isActive': true,
                           'peerRole': role.toLowerCase(),
                         },

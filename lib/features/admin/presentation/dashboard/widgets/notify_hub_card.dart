@@ -1,103 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/providers/notice_providers.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
 
-class NotifyHubCard extends StatefulWidget {
+class NotifyHubCard extends ConsumerStatefulWidget {
   const NotifyHubCard({super.key});
 
   @override
-  State<NotifyHubCard> createState() => _NotifyHubCardState();
+  ConsumerState<NotifyHubCard> createState() => _NotifyHubCardState();
 }
 
-class _NotifyHubCardState extends State<NotifyHubCard> {
+class _NotifyHubCardState extends ConsumerState<NotifyHubCard> {
   int _currentIndex = 0;
-
-  final List<Map<String, String>> notices = [
-    {
-      'title': 'Exam Schedule Published',
-      'audience': 'Students',
-      'subtitle':
-          'The final exam routine has been uploaded. Check your dashboard for updated timing...',
-      'time': '6 Nov 2025, 10:45 AM',
-    },
-    {
-      'title': 'Meeting Reminder',
-      'audience': 'Teachers',
-      'subtitle':
-          'All teachers must attend today’s academic council meeting at 3:00 PM in Conference Hall...',
-      'time': '5 Nov 2025, 8:30 AM',
-    },
-    {
-      'title': 'Server Maintenance',
-      'audience': 'All Users',
-      'subtitle':
-          'System will be down for maintenance from 12:00 AM to 2:00 AM. Please avoid submissions...',
-      'time': '4 Nov 2025, 11:00 PM',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Notify Hub',
-            style: TextStyle(
-              fontFamily: AppTypography.family,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 14),
+    final noticesAsync = ref.watch(latestNoticesProvider);
 
-          CarouselSlider.builder(
-            itemCount: notices.length,
-            itemBuilder: (context, index, _) {
-              final n = notices[index];
-              return _NoticeCard(
-                title: n['title']!,
-                audience: n['audience']!,
-                subtitle: n['subtitle']!,
-                time: n['time']!,
-                onTap: () => context.push('/notify-hub'),
-              );
-            },
-            options: CarouselOptions(
-              height: 250,
-              viewportFraction: 1.0,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 5),
-              onPageChanged: (i, _) => setState(() => _currentIndex = i),
-            ),
-          ),
+    return noticesAsync.when(
+      loading: () => const SizedBox(),
+      error: (_, __) => const SizedBox(),
+      data: (notices) {
+        if (notices.isEmpty) return const SizedBox();
 
-          const SizedBox(height: 10),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              notices.length,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color:
-                      _currentIndex == index ? AppColors.chip1 : Colors.white,
-                  shape: BoxShape.circle,
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Notify Hub',
+                style: TextStyle(
+                  fontFamily: AppTypography.family,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: AppColors.textPrimary,
                 ),
               ),
-            ),
+              const SizedBox(height: 14),
+
+              CarouselSlider.builder(
+                itemCount: notices.length,
+                itemBuilder: (context, index, _) {
+                  final n = notices[index];
+                  return _NoticeCard(
+                    title: n['title'],
+                    audience: n['audience'],
+                    subtitle: n['subtitle'],
+                    time: n['time'],
+                    onTap: () => context.pushNamed('notifyHub'),
+                  );
+                },
+                options: CarouselOptions(
+                  height: 250,
+                  viewportFraction: 1.0,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 5),
+                  onPageChanged: (i, _) => setState(() => _currentIndex = i),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  notices.length,
+                  (index) => Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color:
+                          _currentIndex == index
+                              ? AppColors.chip1
+                              : Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -129,7 +119,6 @@ class _NoticeCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 🔹 Notice Icon
           Container(
             width: 52,
             height: 52,

@@ -63,7 +63,6 @@ class TeacherCourseFormController extends Notifier<TeacherCourseFormState> {
       state = state.copyWith(endDate: d, errorMessage: null);
 
   void updateDiscount(String v) {
-    // v like "10%" or "Free"
     if (v == 'Free') {
       state = state.copyWith(
         discountPercent: 100,

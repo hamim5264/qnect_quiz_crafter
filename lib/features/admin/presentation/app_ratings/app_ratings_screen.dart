@@ -1,34 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
+import 'data/app_ratings_providers.dart';
 import 'widgets/ratings_summary_box.dart';
 import 'widgets/ratings_card.dart';
 
-class AppRatingsScreen extends StatelessWidget {
+class AppRatingsScreen extends ConsumerWidget {
   const AppRatingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final ratings = [
-      {
-        'name': 'John Doe',
-        'avatar': 'assets/images/admin/sample_teacher.png',
-        'performance': 4,
-        'privacy': 3,
-        'experience': 5,
-        'comment':
-            'All course are perfectly aligned and teachers learning system is very well. Recommended this app for new learner.',
-      },
-      {
-        'name': 'Tasnim',
-        'avatar': 'assets/images/admin/sample_teacher3.png',
-        'performance': 4,
-        'privacy': 3,
-        'experience': 5,
-        'comment':
-            'All course are perfectly aligned and teachers learning system is very well. Recommended this app for new learner.',
-      },
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final roleAsync = ref.watch(ratingsRoleProvider);
+    final ratingsAsync = ref.watch(appRatingsProvider);
+    final summary = ref.watch(appRatingsSummaryProvider);
+
+    final role = roleAsync.value;
+    final isAdmin = role == 'admin';
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
@@ -38,29 +29,53 @@ class AppRatingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const RatingsSummaryBox(
-                total: 219,
-                performanceAvg: 4.7,
-                privacyAvg: 4.7,
-                experienceAvg: 4.7,
+              RatingsSummaryBox(
+                total: summary['total'] as int,
+                performanceAvg: summary['performanceAvg'] as double,
+                privacyAvg: summary['privacyAvg'] as double,
+                experienceAvg: summary['experienceAvg'] as double,
               ),
               const SizedBox(height: 16),
 
               Expanded(
-                child: ListView.separated(
-                  itemCount: ratings.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (_, index) {
-                    final item = ratings[index];
-                    return RatingsCard(
-                      name: item['name'] as String,
-                      avatar: item['avatar'] as String,
-                      performance: item['performance'] as int,
-                      privacy: item['privacy'] as int,
-                      experience: item['experience'] as int,
-                      comment: item['comment'] as String,
-                    );
-                  },
+                child: ratingsAsync.when(
+                  loading:
+                      () => const Center(child: CupertinoActivityIndicator()),
+                  error:
+                      (_, __) => const Center(
+                        child: Text(
+                          'Failed to load ratings',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                  data:
+                      (list) => ListView.separated(
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (_, i) {
+                          final r = list[i];
+
+                          return RatingsCard(
+                            name: (r['userName'] ?? '').toString(),
+                            avatar: (r['profileImage'] ?? '').toString(),
+                            performance: (r['performance'] ?? 0) as int,
+                            privacy: (r['privacy'] ?? 0) as int,
+                            experience: (r['experience'] ?? 0) as int,
+                            comment: (r['comment'] ?? '').toString(),
+                            onDelete:
+                                isAdmin
+                                    ? () async {
+                                      await FirebaseFirestore.instance
+                                          .collection('app_ratings')
+                                          .doc(r['id'])
+                                          .delete();
+                                      if (context.mounted)
+                                        Navigator.pop(context);
+                                    }
+                                    : null,
+                          );
+                        },
+                      ),
                 ),
               ),
             ],

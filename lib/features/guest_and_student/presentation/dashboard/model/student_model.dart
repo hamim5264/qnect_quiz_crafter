@@ -43,7 +43,10 @@ class StudentModel {
       address: data['address']?.toString(),
       group: data['group']?.toString(),
 
-      level: data['level']?.toString() ?? "Level 00",
+      level: (data['xpLevel'] is int)
+          ? data['xpLevel'].toString()
+          : int.tryParse(data['xpLevel']?.toString() ?? "0")!.toString(),
+
       xp: data['xp']?.toString() ?? "0 XP",
     );
   }
@@ -57,7 +60,7 @@ class StudentModel {
       "dob": dob,
       "address": address,
       "group": group,
-      "level": level,
+      "xpLevel": level,
       "xp": xp,
     };
   }

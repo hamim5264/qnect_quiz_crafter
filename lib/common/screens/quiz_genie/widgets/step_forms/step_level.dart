@@ -14,12 +14,8 @@ class StepLevel extends StatelessWidget {
       iconDisabledColor: Colors.white,
       value: value,
       items: const [
-        DropdownMenuItem(value: QuizGenieLevel.science, child: Text("Science")),
-        DropdownMenuItem(value: QuizGenieLevel.arts, child: Text("Arts")),
-        DropdownMenuItem(
-          value: QuizGenieLevel.commerce,
-          child: Text("Commerce"),
-        ),
+        DropdownMenuItem(value: QuizGenieLevel.hsc, child: Text("HSC")),
+        DropdownMenuItem(value: QuizGenieLevel.ssc, child: Text("SSC")),
       ],
       onChanged: (v) => v != null ? onChanged(v) : null,
       decoration: const InputDecoration(

@@ -170,7 +170,11 @@ class _StudentPaidCoursesScreenState extends State<StudentPaidCoursesScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(CupertinoIcons.doc_text_fill, size: 60, color: Colors.white70,),
+                            Icon(
+                              CupertinoIcons.doc_text_fill,
+                              size: 60,
+                              color: Colors.white70,
+                            ),
                             Text(
                               "No paid courses available",
                               style: TextStyle(
@@ -218,7 +222,11 @@ class _StudentPaidCoursesScreenState extends State<StudentPaidCoursesScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(CupertinoIcons.doc_text_fill, size: 60, color: Colors.white70,),
+                            Icon(
+                              CupertinoIcons.doc_text_fill,
+                              size: 60,
+                              color: Colors.white70,
+                            ),
                             Text(
                               "No courses found",
                               style: TextStyle(
@@ -254,72 +262,69 @@ class _StudentPaidCoursesScreenState extends State<StudentPaidCoursesScreen> {
 
                         return PaidCourseCard(
                           course: courseMap,
-                          // onBuy: () {
-                          //   const studentGroup = "Science";
-                          //   const studentLevel = "HSC";
-                          //
-                          //   final group = data["group"];
-                          //   final level = data["level"];
-                          //
-                          //   if (group != studentGroup ||
-                          //       level != studentLevel) {
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       const SnackBar(
-                          //         content: Text(
-                          //           "You can only buy courses from your Group & Level!",
-                          //         ),
-                          //       ),
-                          //     );
-                          //     return;
-                          //   }
-                          //
-                          //   context.pushNamed(
-                          //     "studentBuyCourse",
-                          //     extra: {"id": courseId, ...data},
-                          //   );
-                          // },
+
                           onBuy: () {
                             final user = FirebaseAuth.instance.currentUser;
-                            if (user == null) return;
-
-                            // READ ROLE SAFELY
-                            FirebaseFirestore.instance.collection('users').doc(user.uid).get().then((snap) {
-                              final role = snap.data()?['role'] ?? 'student';
-
-                              if (role != "student") {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Colors.redAccent,
-                                    content: Text("Only students can buy courses.", style: TextStyle(color: Colors.white,),),
+                            if (user == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Colors.redAccent,
+                                  content: Text(
+                                    "Please login first to purchase this course.",
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                );
-                                return;
-                              }
-
-                              // Existing student validation ↓
-                              const studentGroup = "Science";
-                              const studentLevel = "HSC";
-
-                              final group = data["group"];
-                              final level = data["level"];
-
-                              if (group != studentGroup || level != studentLevel) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Colors.redAccent,
-                                    content: Text("You can only buy courses from your Group & Level!"),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              context.pushNamed(
-                                "studentBuyCourse",
-                                extra: {"id": courseId, ...data},
+                                ),
                               );
-                            });
-                          },
+                              return;
+                            }
 
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .get()
+                                .then((snap) {
+                                  final role =
+                                      snap.data()?['role'] ?? 'student';
+
+                                  if (role != "student") {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        backgroundColor: Colors.redAccent,
+                                        content: Text(
+                                          "Only students can buy courses.",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  const studentGroup = "Science";
+                                  const studentLevel = "HSC";
+
+                                  final group = data["group"];
+                                  final level = data["level"];
+
+                                  if (group != studentGroup ||
+                                      level != studentLevel) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        backgroundColor: Colors.redAccent,
+                                        content: Text(
+                                          "You can only buy courses from your Group & Level!",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  context.pushNamed(
+                                    "studentBuyCourse",
+                                    extra: {"id": courseId, ...data},
+                                  );
+                                });
+                          },
                         );
                       },
                     );

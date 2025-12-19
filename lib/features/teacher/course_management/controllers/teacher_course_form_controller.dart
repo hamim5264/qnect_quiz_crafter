@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../models/teacher_course_model.dart';
 import '../repositories/teacher_course_repository.dart';

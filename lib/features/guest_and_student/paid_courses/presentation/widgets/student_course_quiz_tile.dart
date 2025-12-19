@@ -63,7 +63,6 @@ class StudentCourseQuizTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isAttempted = earnedPoints > 0;
-    final bool disabled = locked || expired || isAttempted;
 
     return Column(
       children: [

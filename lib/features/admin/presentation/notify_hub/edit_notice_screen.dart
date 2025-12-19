@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qnect_quiz_crafter/features/admin/presentation/notify_hub/data/notice_service.dart';
 import '../../../../../common/widgets/common_rounded_app_bar.dart';
 import '../../../../../ui/design_system/tokens/colors.dart';
 import '../../../../../ui/design_system/tokens/typography.dart';
@@ -42,7 +43,7 @@ class _EditNoticeScreenState extends State<EditNoticeScreen> {
     }
   }
 
-  void _updateNotice() {
+  void _updateNotice() async {
     if (_titleController.text.trim().isEmpty ||
         _descController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
@@ -51,14 +52,20 @@ class _EditNoticeScreenState extends State<EditNoticeScreen> {
       return;
     }
 
+    await NoticeService().updateNotice(
+      widget.notice['id'],
+      title: _titleController.text.trim(),
+      description: _descController.text.trim(),
+      audience: audience,
+    );
+
     showDialog(
       context: context,
       builder:
           (_) => ActionFeedbackDialog(
             icon: Icons.check_circle_outline,
             title: "Notice Updated",
-            subtitle:
-                "The notice has been successfully updated for $audience users.",
+            subtitle: "Notice updated successfully.",
             buttonText: "OK",
             onPressed: () {
               Navigator.pop(context);

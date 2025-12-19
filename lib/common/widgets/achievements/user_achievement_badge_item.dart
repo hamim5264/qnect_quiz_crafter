@@ -16,14 +16,13 @@ class UserAchievementBadgeItem extends StatelessWidget {
 
     final parts = badge.name.split(' ');
     final first = parts.first;
-    final second =
-    parts.length > 1 ? parts.sublist(1).join(" ") : "";
+    final second = parts.length > 1 ? parts.sublist(1).join(" ") : "";
 
     return Stack(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: AppColors.white.withOpacity(0.25),
+            color: AppColors.white.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white12),
           ),
@@ -32,25 +31,28 @@ class UserAchievementBadgeItem extends StatelessWidget {
             children: [
               Opacity(
                 opacity: locked ? 0.3 : 1,
-                child: Lottie.asset(
-                  badge.lottiePath,
-                  height: 60,
-                ),
+                child: Lottie.asset(badge.lottiePath, height: 60),
               ),
               const SizedBox(height: 6),
-              Text(first,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: AppTypography.family,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12)),
+              Text(
+                first,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: AppTypography.family,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
               if (second.isNotEmpty)
-                Text(second,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppTypography.family,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12)),
+                Text(
+                  second,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: AppTypography.family,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
             ],
           ),
         ),
@@ -68,15 +70,16 @@ class UserAchievementBadgeItem extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (_) => UserAchievementInfoDialog(
-                  badgeName: badge.name,
-                  requiredXp: badge.requiredXp,
-                  requiredLevel: badge.requiredLevel,
-                ),
+                builder:
+                    (_) => UserAchievementInfoDialog(
+                      badgeName: badge.name,
+                      requiredXp: badge.requiredXp,
+                      requiredLevel: badge.requiredLevel,
+                    ),
               );
             },
           ),
-        )
+        ),
       ],
     );
   }

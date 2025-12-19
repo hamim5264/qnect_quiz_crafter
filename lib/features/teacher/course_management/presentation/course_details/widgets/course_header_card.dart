@@ -34,7 +34,6 @@ class CourseDetailsHeader extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // MAIN CARD
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
@@ -209,7 +208,7 @@ class CourseDetailsHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: bgColor.withOpacity(0.35),
+        color: bgColor.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

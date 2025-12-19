@@ -1,5 +1,3 @@
-// lib/common/widgets/achievements/user_achievement_badge_grid.dart
-
 import 'package:flutter/material.dart';
 import '../../../ui/design_system/tokens/colors.dart';
 import '../../../ui/design_system/tokens/typography.dart';
@@ -32,11 +30,10 @@ class UserAchievementBadgeGrid extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         GridView.builder(
-          itemCount: badges.length + 2, // 10 + 2 "coming soon"
+          itemCount: badges.length + 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             mainAxisSpacing: 14,
             crossAxisSpacing: 14,
@@ -44,7 +41,6 @@ class UserAchievementBadgeGrid extends StatelessWidget {
           ),
           itemBuilder: (context, index) {
             if (index >= badges.length) {
-              // Coming soon slot
               return Container(
                 decoration: BoxDecoration(
                   color: AppColors.white.withValues(alpha: 0.16),
@@ -55,8 +51,7 @@ class UserAchievementBadgeGrid extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.lock_clock,
-                          color: Colors.white70),
+                      Icon(Icons.lock_clock, color: Colors.white70),
                       SizedBox(height: 6),
                       Text(
                         "Coming\nSoon!",
@@ -73,9 +68,7 @@ class UserAchievementBadgeGrid extends StatelessWidget {
               );
             }
 
-            return UserAchievementBadgeItem(
-              badge: badges[index],
-            );
+            return UserAchievementBadgeItem(badge: badges[index]);
           },
         ),
       ],

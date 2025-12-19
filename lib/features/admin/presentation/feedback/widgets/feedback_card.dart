@@ -11,7 +11,9 @@ class FeedbackCard extends StatelessWidget {
   final String course;
   final String comment;
   final double average;
-  final VoidCallback onDelete;
+  final String? profileImage;
+
+  final VoidCallback? onDelete;
 
   const FeedbackCard({
     super.key,
@@ -21,7 +23,8 @@ class FeedbackCard extends StatelessWidget {
     required this.course,
     required this.comment,
     required this.average,
-    required this.onDelete,
+    this.profileImage,
+    this.onDelete,
   });
 
   @override
@@ -37,11 +40,21 @@ class FeedbackCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 20,
-                backgroundImage: AssetImage(
-                  'assets/images/admin/sample_teacher.png',
-                ),
+                backgroundColor: AppColors.chip2,
+                backgroundImage:
+                    (profileImage != null && profileImage!.isNotEmpty)
+                        ? NetworkImage(profileImage!)
+                        : null,
+                child:
+                    (profileImage == null || profileImage!.isEmpty)
+                        ? const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 22,
+                        )
+                        : null,
               ),
               const SizedBox(width: 10),
               Text(
@@ -55,14 +68,16 @@ class FeedbackCard extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 10),
 
           Row(
             children: List.generate(
               stars,
-              (index) => const Icon(Icons.star, color: Colors.amber, size: 18),
+              (_) => const Icon(Icons.star, color: Colors.amber, size: 18),
             ),
           ),
+
           const SizedBox(height: 6),
 
           Text(
@@ -74,6 +89,7 @@ class FeedbackCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
+
           const SizedBox(height: 10),
 
           Container(
@@ -93,6 +109,7 @@ class FeedbackCard extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(height: 12),
 
           Row(
@@ -118,38 +135,41 @@ class FeedbackCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed:
-                      () => showDialog(
-                        context: context,
-                        builder:
-                            (_) => ActionFeedbackDialog(
-                              icon: CupertinoIcons.delete,
-                              title: 'Delete Feedback?',
-                              subtitle:
-                                  'Are you sure you want to remove this feedback permanently?',
-                              buttonText: 'Confirm Delete',
-                              onPressed: onDelete,
-                            ),
+
+              if (onDelete != null) ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed:
+                        () => showDialog(
+                          context: context,
+                          builder:
+                              (_) => ActionFeedbackDialog(
+                                icon: CupertinoIcons.delete,
+                                title: 'Delete Feedback?',
+                                subtitle:
+                                    'Are you sure you want to remove this feedback permanently?',
+                                buttonText: 'Confirm Delete',
+                                onPressed: onDelete!,
+                              ),
+                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                  child: const Text(
-                    'Delete',
-                    style: TextStyle(
-                      fontFamily: AppTypography.family,
-                      color: Colors.white,
-                      fontSize: 13,
+                    child: const Text(
+                      'Delete',
+                      style: TextStyle(
+                        fontFamily: AppTypography.family,
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ],

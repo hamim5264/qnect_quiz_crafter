@@ -15,16 +15,13 @@ class TeacherStatsGrid extends ConsumerWidget {
     final statsAsync = ref.watch(teacherStatsProvider);
 
     return statsAsync.when(
-      // loading:
-      //     () => const Center(
-      //       child: CircularProgressIndicator(color: Colors.white),
-      //     ),
-      loading: () => const Center(
-        child: CupertinoActivityIndicator(
-          color: AppColors.primaryLight,
-          radius: 14,
-        ),
-      ),
+      loading:
+          () => const Center(
+            child: CupertinoActivityIndicator(
+              color: AppColors.white,
+              radius: 14,
+            ),
+          ),
       error:
           (e, _) => Center(
             child: Text(

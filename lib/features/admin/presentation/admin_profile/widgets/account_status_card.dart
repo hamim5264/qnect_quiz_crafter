@@ -45,21 +45,16 @@ class AccountStatusCard extends StatelessWidget {
               _StatusButton(
                 label: 'Create Account',
                 enabled: !isLoggedIn,
-                onTap: () {
-                  // go to sign up
-                },
+                onTap: () {},
               ),
               const SizedBox(width: 10),
               _StatusButton(
                 label: 'Sign In',
                 enabled: !isLoggedIn,
-                onTap: () {
-                  // go to sign in
-                },
+                onTap: () {},
               ),
             ],
           ),
-
         ],
       ),
     );
@@ -81,15 +76,16 @@ class _StatusButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Opacity(
-        opacity: enabled ? 1 : 0.4, // glass effect
+        opacity: enabled ? 1 : 0.4,
         child: IgnorePointer(
-          ignoring: !enabled, // disable tap
+          ignoring: !enabled,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: enabled
-                  ? AppColors.primaryLight
-                  : Colors.white.withOpacity(0.30), // glassy background
+              color:
+                  enabled
+                      ? AppColors.primaryLight
+                      : Colors.white.withValues(alpha: 0.30),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: enabled ? Colors.transparent : Colors.white30,
@@ -103,9 +99,7 @@ class _StatusButton extends StatelessWidget {
                   fontFamily: AppTypography.family,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
-                  color: enabled
-                      ? AppColors.textPrimary
-                      : Colors.white70, // glassy text
+                  color: enabled ? AppColors.textPrimary : Colors.white70,
                 ),
               ),
             ),
@@ -115,4 +109,3 @@ class _StatusButton extends StatelessWidget {
     );
   }
 }
-

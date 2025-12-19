@@ -11,7 +11,6 @@ import 'package:qnect_quiz_crafter/features/admin/presentation/all_course/all_co
 import 'package:qnect_quiz_crafter/features/admin/presentation/app_ratings/app_ratings_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/course_details/course_details_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/dashboard/admin_dashboard_home_screen.dart';
-import 'package:qnect_quiz_crafter/features/admin/presentation/feedback/feedback_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/practice_quizzes/practice_quizzes_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/sales_report/sales_report_screen.dart';
 import 'package:qnect_quiz_crafter/features/admin/presentation/surprise_quiz_test/add/add_surprise_quiz_screen.dart';
@@ -31,19 +30,22 @@ import '../common/screens/no_internet_screen.dart';
 import '../common/screens/qc_vault/data/qc_vault_models.dart';
 import '../common/screens/quiz_genie/quiz_genie_screen.dart';
 import '../common/user_certificates/certificate_preview_screen.dart';
-import '../common/user_certificates/user_certificates_controller.dart';
 import '../common/user_certificates/user_certificates_screen.dart';
 import '../common/widgets/achievements/screen/user_achievements_screen.dart';
 import '../features/admin/presentation/admin_profile/admin_profile_screen.dart';
+import '../features/admin/presentation/app_ratings/add_app_rating_screen.dart';
 import '../features/admin/presentation/certificates/certificates_screen.dart';
 import '../features/admin/presentation/certificates/generated_certificates_screen.dart';
 import '../features/admin/presentation/certificates/templates_screen.dart';
 import '../features/admin/presentation/course_edit/edit_course_screen.dart';
 import '../features/admin/presentation/edit_quiz/edit_quiz_screen.dart';
+import '../features/admin/presentation/feedback/add_feedback_screen.dart';
+import '../features/admin/presentation/feedback/feedback_screen.dart';
 import '../features/admin/presentation/invoice/invoice_screen.dart';
 import '../features/admin/presentation/manage_users/manage_users_screen.dart';
 import '../features/admin/presentation/notify_hub/add_notice_screen.dart';
 import '../features/admin/presentation/notify_hub/edit_notice_screen.dart';
+import '../features/admin/presentation/notify_hub/notice_feed_screen.dart';
 import '../features/admin/presentation/notify_hub/notify_hub_screen.dart';
 import '../features/admin/presentation/quiz_details/quiz_details_screen.dart';
 import '../features/admin/presentation/quiz_questions_info/quiz_questions_info_screen.dart';
@@ -57,6 +59,8 @@ import '../features/auth/presentation/set_password/set_password_screen.dart';
 import '../features/auth/presentation/sign_in/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up/sign_up_screen.dart';
 import '../features/auth/presentation/verify_email/verify_email_screen.dart';
+import '../features/classroom/presentation/classroom_screen.dart';
+import '../features/faq/faq_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_buy_course_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_course_details_screen.dart';
 import '../features/guest_and_student/paid_courses/presentation/screens/student_my_courses_screen.dart';
@@ -66,7 +70,18 @@ import '../features/guest_and_student/quiz/presentation/screens/student_quiz_att
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_details_screen.dart';
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_instruction_screen.dart';
 import '../features/guest_and_student/quiz/presentation/screens/student_quiz_result_screen.dart';
+import '../features/guest_and_student/student_practice_quiz/student_practice_quiz_attempt_screen.dart';
+import '../features/guest_and_student/student_practice_quiz/student_practice_quiz_details_screen.dart';
+import '../features/guest_and_student/student_practice_quiz/student_practice_quiz_instruction_screen.dart';
+import '../features/guest_and_student/student_practice_quiz/student_practice_quiz_list_screen.dart';
 import '../features/guest_and_student/student_profile/student_profile_screen.dart';
+import '../features/guest_and_student/student_surprise_quizzes/presentation/screens/student_surprise_quiz_attempt_screen.dart';
+import '../features/guest_and_student/student_surprise_quizzes/presentation/screens/student_surprise_quiz_list_screen.dart';
+import '../features/guest_quiz/presentation/screens/guest_quiz_attempt_screen.dart';
+import '../features/guest_quiz/presentation/screens/guest_quiz_result_screen.dart';
+import '../features/guest_quiz/presentation/screens/guest_quiz_warning_screen.dart';
+import '../features/planner/planner_screen.dart';
+import '../features/teacher/admin_feedback/teacher_admin_feedback_screen.dart';
 import '../features/teacher/course_management/models/teacher_course_model.dart';
 import '../features/teacher/course_management/presentation/add_course/add_course_screen.dart';
 import '../features/teacher/course_management/presentation/add_quiz/add_quiz_screen.dart';
@@ -81,7 +96,6 @@ import '../features/teacher/presentation/teacher_status/teacher_status_screen.da
 
 final router = GoRouter(
   routes: [
-    /// Common Screens Routing
     GoRoute(
       path: '/',
       name: 'startup',
@@ -114,11 +128,6 @@ final router = GoRouter(
       builder: (_, __) => const DevInfoScreen(),
     ),
 
-    // GoRoute(
-    //   path: '/notification',
-    //   name: 'notification',
-    //   builder: (_, __) => const NotificationScreen(),
-    // ),
     GoRoute(
       name: "notification",
       path: "/notification",
@@ -191,7 +200,6 @@ final router = GoRouter(
       },
     ),
 
-    /// Auth Screens Routing
     GoRoute(
       path: '/sign-in',
       name: 'signIn',
@@ -256,7 +264,6 @@ final router = GoRouter(
       },
     ),
 
-    /// Admin Features Screens Routing
     GoRoute(
       path: '/admin-home',
       name: 'adminHome',
@@ -315,16 +322,6 @@ final router = GoRouter(
       builder: (context, state) => const InvoiceScreen(),
     ),
     GoRoute(
-      path: '/course-feedback',
-      name: 'courseFeedback',
-      builder: (context, state) => const FeedbackScreen(),
-    ),
-    GoRoute(
-      path: '/app-ratings',
-      name: 'appRatings',
-      builder: (context, state) => const AppRatingsScreen(),
-    ),
-    GoRoute(
       path: '/sales-report',
       name: 'salesReport',
       builder: (context, state) => const SalesReportScreen(),
@@ -335,26 +332,6 @@ final router = GoRouter(
       builder: (context, state) => const TeacherRequestScreen(),
     ),
 
-    GoRoute(
-      name: 'notifyHub',
-      path: '/notify-hub',
-      builder: (context, state) => const NotifyHubScreen(),
-    ),
-
-    GoRoute(
-      name: 'addNotice',
-      path: '/add-notice',
-      builder: (context, state) => const AddNoticeScreen(),
-    ),
-    GoRoute(
-      path: '/edit-notice',
-      builder: (context, state) {
-        final extra = state.extra;
-        final Map<String, dynamic> notice =
-            (extra is Map<String, dynamic>) ? extra : <String, dynamic>{};
-        return EditNoticeScreen(notice: notice);
-      },
-    ),
     GoRoute(
       name: 'adminAchievementBadge',
       path: '/admin-achievement-badge',
@@ -426,7 +403,6 @@ final router = GoRouter(
       },
     ),
 
-
     GoRoute(
       name: 'adminSurpriseQuiz',
       path: '/admin-surprise-quiz',
@@ -465,7 +441,6 @@ final router = GoRouter(
       },
     ),
 
-    /// Teacher Dashboard
     GoRoute(
       path: '/teacher-status',
       builder: (context, state) {
@@ -491,7 +466,6 @@ final router = GoRouter(
       },
     ),
 
-    /// Student Dashboard
     GoRoute(
       path: '/student-profile',
       builder: (context, state) {
@@ -698,6 +672,176 @@ final router = GoRouter(
       builder: (context, state) => const StudentPurchaseHistoryScreen(),
     ),
 
+    GoRoute(
+      path: '/practice-quizzes',
+      name: 'studentPracticeQuizList',
+      builder: (context, state) => const StudentPracticeQuizListScreen(),
+    ),
 
+    GoRoute(
+      path: '/practice-quiz/instruction',
+      name: 'studentPracticeQuizInstruction',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return StudentPracticeQuizInstructionScreen(
+          quizId: extra['quizId'] as String,
+          title: extra['title'] as String,
+          durationSeconds: extra['durationSeconds'] as int,
+          questions: (extra['questions'] as List).cast<Map<String, dynamic>>(),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/practice-quiz/attempt',
+      name: 'studentPracticeQuizAttempt',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return StudentPracticeQuizAttemptScreen(
+          quizId: extra['quizId'] as String,
+          title: extra['title'] as String,
+          durationSeconds: extra['durationSeconds'] as int,
+          questions: (extra['questions'] as List).cast<Map<String, dynamic>>(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/practice-quiz/details',
+      name: 'studentPracticeQuizDetails',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+
+        return StudentPracticeQuizDetailsScreen(
+          quizId: extra['quizId'] as String,
+          title: extra['title'] as String,
+          questions: (extra['questions'] as List).cast<Map<String, dynamic>>(),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/student-surprise-quizzes',
+      name: 'studentSurpriseQuizList',
+      builder: (context, state) {
+        return const StudentSurpriseQuizListScreen();
+      },
+    ),
+
+    GoRoute(
+      path: '/student-surprise-quiz-attempt',
+      name: 'studentSurpriseQuizAttempt',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+
+        return StudentSurpriseQuizAttemptScreen(
+          quizId: extra['quizId'] as String,
+          title: extra['title'] as String,
+          durationSeconds: extra['durationSeconds'] as int,
+          questions: List<Map<String, dynamic>>.from(
+            extra['questions'] as List,
+          ),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/guest-quiz-warning',
+      name: 'guestQuizWarning',
+      builder: (context, state) {
+        return const GuestQuizWarningScreen();
+      },
+    ),
+
+    GoRoute(
+      path: '/guest-quiz-attempt',
+      name: 'guestQuizAttempt',
+      builder: (context, state) {
+        return const GuestQuizAttemptScreen();
+      },
+    ),
+
+    GoRoute(
+      path: '/guest-quiz-result',
+      name: 'guestQuizResult',
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+
+        return GuestQuizResultScreen(
+          correct: data['correct'] as int,
+          total: data['total'] as int,
+          reason: data['reason'] as String,
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/classroom',
+      name: 'classroom',
+      builder: (context, state) => const ClassroomScreen(),
+    ),
+
+    GoRoute(
+      path: '/feedback',
+      name: 'feedback',
+      builder: (_, __) => const FeedbackScreen(),
+    ),
+
+    GoRoute(
+      path: '/add-feedback',
+      name: 'addFeedback',
+      builder: (_, __) => const AddFeedbackScreen(),
+    ),
+
+    GoRoute(
+      path: '/app-ratings',
+      name: 'appRatings',
+      builder: (context, state) => const AppRatingsScreen(),
+    ),
+
+    GoRoute(
+      path: '/add-app-rating',
+      name: 'addAppRating',
+      builder: (context, state) => const AddAppRatingScreen(),
+    ),
+
+    GoRoute(
+      path: '/teacher-admin-feedback',
+      name: 'teacherAdminFeedback',
+      builder: (context, state) => const TeacherAdminFeedbackScreen(),
+    ),
+
+    GoRoute(
+      path: '/notify-hub',
+      name: 'notifyHub',
+      builder: (context, state) => const NotifyHubScreen(),
+    ),
+
+    GoRoute(
+      path: '/add-notice',
+      name: 'addNotice',
+      builder: (context, state) => const AddNoticeScreen(),
+    ),
+
+    GoRoute(
+      path: '/edit-notice',
+      name: 'editNotice',
+      builder:
+          (context, state) =>
+              EditNoticeScreen(notice: state.extra as Map<String, dynamic>),
+    ),
+
+    GoRoute(
+      path: '/notice-feed',
+      name: 'noticeFeed',
+      builder:
+          (context, state) => NoticeFeedScreen(role: state.extra as String),
+    ),
+    GoRoute(
+      path: '/planner',
+      name: 'planner',
+      builder: (context, state) => const PlannerScreen(),
+    ),
+
+    GoRoute(path: '/faq', name: 'faq', builder: (_, __) => const FaqScreen()),
   ],
 );

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'widgets/quiz_card.dart';
 import 'widgets/quiz_date_filter.dart';
@@ -15,8 +16,6 @@ import '../../../../../common/widgets/common_confirm_dialog.dart';
 import '../../../../../common/widgets/success_failure_dialog.dart';
 
 class PracticeQuizzesScreen extends StatefulWidget {
-  /// For now you'll pass "admin" here from Admin route.
-  /// Later you can reuse this screen for teacher: role = "teacher"
   final String role;
 
   const PracticeQuizzesScreen({super.key, required this.role});
@@ -101,6 +100,21 @@ class _PracticeQuizzesScreenState extends State<PracticeQuizzesScreen> {
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
       appBar: const CommonRoundedAppBar(title: "Practice Quizzes"),
+      floatingActionButton:
+          widget.role.toLowerCase() == "teacher"
+              ? FloatingActionButton(
+                backgroundColor: AppColors.secondaryDark,
+                elevation: 6,
+                onPressed: () {
+                  context.push('/quizgenie/teacher');
+                },
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: AppColors.textPrimary,
+                  size: 30,
+                ),
+              )
+              : null,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),

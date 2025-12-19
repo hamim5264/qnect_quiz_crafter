@@ -171,9 +171,6 @@ class _TeacherAddQuizScreenState extends ConsumerState<TeacherAddQuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dateRangeText =
-        "${_formatShort(widget.course.startDate)} - ${_formatShort(widget.course.endDate)}";
-
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
       appBar: const CommonRoundedAppBar(title: "Add New Quiz"),

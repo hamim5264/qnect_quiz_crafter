@@ -4,21 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final adminStatsProvider = FutureProvider<AdminStats>((ref) async {
   final firestore = FirebaseFirestore.instance;
 
-  // Fetch Students
   final studentSnap =
-  await firestore.collection('users').where('role', isEqualTo: 'student').get();
+      await firestore
+          .collection('users')
+          .where('role', isEqualTo: 'student')
+          .get();
   final studentCount = studentSnap.docs.length;
 
-  // Fetch Teachers
   final teacherSnap =
-  await firestore.collection('users').where('role', isEqualTo: 'teacher').get();
+      await firestore
+          .collection('users')
+          .where('role', isEqualTo: 'teacher')
+          .get();
   final teacherCount = teacherSnap.docs.length;
 
-  // Fetch Blocked Users
-  final blockedSnap = await firestore
-      .collection('users')
-      .where('accountStatus', isEqualTo: 'blocked')
-      .get();
+  final blockedSnap =
+      await firestore
+          .collection('users')
+          .where('accountStatus', isEqualTo: 'blocked')
+          .get();
   final blockedCount = blockedSnap.docs.length;
 
   final total = studentCount + teacherCount + blockedCount;

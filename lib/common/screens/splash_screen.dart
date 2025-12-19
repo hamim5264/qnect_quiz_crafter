@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../features/auth/providers/auth_providers.dart';
 import '../../../ui/design_system/tokens/colors.dart';
-import '../../../common/widgets/app_loader.dart';
+import 'dart:async';
+import 'package:lottie/lottie.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -14,10 +15,37 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
+  final List<String> _messages = [
+    "Getting things ready for you…",
+    "Warming up the experience…",
+    "Almost there, hang tight…",
+    "Preparing your learning journey…",
+    "Just a moment more…",
+  ];
+
+  int _currentIndex = 0;
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+    _startMessageRotation();
     checkInternetAndNavigate();
+  }
+
+  void _startMessageRotation() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % _messages.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<bool> _hasInternet() async {
@@ -102,16 +130,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.secondaryDark,
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            AppLoader(size: 60),
-            SizedBox(height: 18),
-            Text(
-              "Checking your connection\nand preparing your journey...",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+          children: [
+            Lottie.asset(
+              'assets/animations/walk.json',
+              height: 140,
+              repeat: true,
+            ),
+            const SizedBox(height: 20),
+
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Text(
+                _messages[_currentIndex],
+                key: ValueKey(_currentIndex),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              ),
             ),
           ],
         ),

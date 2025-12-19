@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:qnect_quiz_crafter/common/services/user_achievements_controller.dart';
 import 'package:qnect_quiz_crafter/common/widgets/app_loader.dart';
 import 'package:qnect_quiz_crafter/common/widgets/common_rounded_app_bar.dart';
@@ -9,41 +8,37 @@ import '../../../../ui/design_system/tokens/colors.dart';
 import '../../../../ui/design_system/tokens/typography.dart';
 import '../user_achievement_badge_item.dart';
 
-
-
 class UserAchievementsScreen extends ConsumerWidget {
-  final String role; // "student" or "teacher"
+  final String role;
 
   const UserAchievementsScreen({super.key, required this.role});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(userAchievementsControllerProvider(role));
-    final controller =
-    ref.read(userAchievementsControllerProvider(role).notifier);
+    final controller = ref.read(
+      userAchievementsControllerProvider(role).notifier,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      appBar:CommonRoundedAppBar(title: "Achievements",),
+      appBar: CommonRoundedAppBar(title: "Achievements"),
 
-      // --------------------------- BODY ------------------------------
       body: RefreshIndicator(
         onRefresh: () => controller.refresh(),
         color: AppColors.secondaryDark,
         backgroundColor: AppColors.primaryLight,
-        child: state.loading
-            ? const _LoadingState()
-            : state.error != null
-            ? _ErrorState(message: state.error!)
-            : _AchievementsBody(state: state),
+        child:
+            state.loading
+                ? const _LoadingState()
+                : state.error != null
+                ? _ErrorState(message: state.error!)
+                : _AchievementsBody(state: state),
       ),
     );
   }
 }
 
-/// ------------------------------------------------------------
-/// MAIN SUCCESS BODY
-/// ------------------------------------------------------------
 class _AchievementsBody extends StatelessWidget {
   final UserAchievementsState state;
 
@@ -60,9 +55,7 @@ class _AchievementsBody extends StatelessWidget {
           _currentStreakCard(),
 
           const SizedBox(height: 24),
-          //_quickOverview(),
 
-          //const SizedBox(height: 24),
           _levelProgress(),
 
           const SizedBox(height: 28),
@@ -83,9 +76,6 @@ class _AchievementsBody extends StatelessWidget {
     );
   }
 
-  // ------------------------------------------------------------
-  // STREAK CARD (Top Card)
-  // ------------------------------------------------------------
   Widget _currentStreakCard() {
     return Container(
       width: double.infinity,
@@ -97,40 +87,13 @@ class _AchievementsBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 7 Days, Growth %
-          // Row(
-          //   children: [
-          //     Container(
-          //       padding:
-          //       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          //       decoration: BoxDecoration(
-          //         color: Colors.white,
-          //         borderRadius: BorderRadius.circular(16),
-          //       ),
-          //       child: const Text(
-          //         "7 Days",
-          //         style: TextStyle(
-          //           fontFamily: AppTypography.family,
-          //           fontWeight: FontWeight.w600,
-          //           color: Colors.black,
-          //         ),
-          //       ),
-          //     ),
-          //     const SizedBox(width: 10),
-          //     const Text(
-          //       "+ 9.59%",
-          //       style: TextStyle(
-          //         fontFamily: AppTypography.family,
-          //         color: Colors.black87,
-          //         fontSize: 14,
-          //       ),
-          //     )
-          //   ],
-          // ),
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.secondaryDark,
                   borderRadius: BorderRadius.circular(16),
@@ -155,7 +118,6 @@ class _AchievementsBody extends StatelessWidget {
               ),
             ],
           ),
-
 
           const SizedBox(height: 16),
 
@@ -227,13 +189,12 @@ class _AchievementsBody extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
-
 
   Widget _levelProgress() {
     final currentXp = state.xp % 1000;
@@ -280,17 +241,13 @@ class _AchievementsBody extends StatelessWidget {
     );
   }
 
-  // ------------------------------------------------------------
-  // BADGES GRID
-  // ------------------------------------------------------------
   Widget _badgesGrid() {
     return GridView.builder(
       shrinkWrap: true,
       itemCount: state.badges.length,
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
-      gridDelegate:
-      const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
@@ -305,23 +262,15 @@ class _AchievementsBody extends StatelessWidget {
   }
 }
 
-/// ------------------------------------------------------------
-/// LOADING WIDGET
-/// ------------------------------------------------------------
 class _LoadingState extends StatelessWidget {
   const _LoadingState();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: AppLoader(),
-    );
+    return const Center(child: AppLoader());
   }
 }
 
-/// ------------------------------------------------------------
-/// ERROR VIEW
-/// ------------------------------------------------------------
 class _ErrorState extends StatelessWidget {
   final String message;
 
