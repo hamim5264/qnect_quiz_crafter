@@ -50,7 +50,7 @@ class TeacherProfileScreen extends ConsumerWidget {
                       ref.invalidate(adminControllerProvider);
 
                       if (context.mounted) {
-                        context.go('/onboarding');
+                        context.go('/sign-in');
                       }
                     },
                   ),

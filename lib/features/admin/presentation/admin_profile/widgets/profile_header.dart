@@ -134,7 +134,7 @@ class ProfileHeader extends ConsumerWidget {
                       ),
                       onPressed: () async {
                         await ref.read(authServiceProvider).signOut();
-                        if (context.mounted) context.go('/onboarding');
+                        if (context.mounted) context.go('/sign-in');
                       },
                       icon: const Icon(Icons.logout_rounded, size: 16),
                       label: const Text(

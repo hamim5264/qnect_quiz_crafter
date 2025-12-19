@@ -63,7 +63,7 @@ class _StartupGateState extends ConsumerState<StartupGate> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return context.go('/sign-in');
+      return context.go('/onboarding');
     }
 
     final snap =

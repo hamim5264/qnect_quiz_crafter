@@ -49,7 +49,7 @@ class StudentProfileScreen extends ConsumerWidget {
 
                         ref.invalidate(studentControllerProvider);
 
-                        context.go('/onboarding');
+                        context.go('/sign-in');
                       }
                     },
                   ),
